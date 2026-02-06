@@ -7,7 +7,7 @@
 | Name | GitHub | Email |
 |------|--------|-------|
 | Name 1 | [@ZoyaS](https://github.com/ZoyaS) | zoya.shamak@sjsu.edu |
-| Name 2 | [@username](https://github.com/username) | name@sjsu.edu |
+| Name 2 | [@github210878](https://github.com/github210878) | isa.pudiyapura@sjsu.edu |
 | Name 3 | [@username](https://github.com/username) | name@sjsu.edu |
 | Name 4 | [@username](https://github.com/username) | name@sjsu.edu |
 

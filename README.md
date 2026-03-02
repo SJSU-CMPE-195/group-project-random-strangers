@@ -11,7 +11,7 @@
 | Name 3 | [@eiechuang](https://github.com/eiechuang) | eric.huang01@sjsu.edu |
 | Name 4 | [@username](https://github.com/username) | name@sjsu.edu |
 
-**Advisor:** [Advisor Name]
+**Advisor:** [Prof. Wencen Wu]
 
 ---
 

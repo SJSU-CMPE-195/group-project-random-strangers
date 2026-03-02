@@ -8,7 +8,7 @@
 |------|--------|-------|
 | Name 1 | [@ZoyaS](https://github.com/ZoyaS) | zoya.shamak@sjsu.edu |
 | Name 2 | [@github210878](https://github.com/github210878) | isa.pudiyapura@sjsu.edu |
-| Name 3 | [@username](https://github.com/username) | name@sjsu.edu |
+| Name 3 | [@eiechuang](https://github.com/eiechuang) | eric.huang01@sjsu.edu |
 | Name 4 | [@username](https://github.com/username) | name@sjsu.edu |
 
 **Advisor:** [Advisor Name]
@@ -21,7 +21,7 @@
 
 ## Solution
 
-[2-3 sentences describing your solution approach]
+TBD LOL
 
 ### Key Features
 

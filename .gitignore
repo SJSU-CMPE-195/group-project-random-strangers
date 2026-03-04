@@ -65,7 +65,7 @@ out/
 # ===========================
 
 # VS Code
-.vscode/
+**.vscode/
 *.code-workspace
 
 # JetBrains (IntelliJ, PyCharm, WebStorm)
@@ -161,3 +161,9 @@ docker-data/
 # Project Specific
 # ===========================
 # Add project-specific ignores below
+
+# executables and outputs
+**.out
+**.exe
+**.o
+

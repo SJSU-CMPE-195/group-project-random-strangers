@@ -1,32 +1,45 @@
 //Captures a set amount of data from the camera
 
 //Optitrack Libraries
-#include <NatNetTypes.h>
+#include <NatNetTypes.h> 
 #include <NatNetClient.h>
 
 //GNU Libraries
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <unordered_map>
-#include <chrono>
-#include <thread>
-#include <mutex>
+#include <iostream> //printing to console
+#include <fstream> //output to csv
+#include <filesystem> //path checking
+#include <unordered_map> //ID to human readable bone data
+#include <chrono> //wait time and record time
+#include <thread> //wait time and record time
+#include <mutex> //file write synchronization
 #include <string>
+#include <limits> //Quiet_NaN
 using std::cout, std::cerr;
 
+//global NatNet Descriptions
 NatNetClient* global_client = nullptr;
 sNatNetClientConnectParams global_connect_params;
 sServerDescription global_server_description;
 sDataDescriptions* global_data_defs = nullptr;
+
+struct bone_details{
+    int ID;
+    std::string name;
+    int parent_ID;
+    uint8_t first_column;
+    bone_details(const int t_ID,std::string t_name, int t_parent_ID): ID(t_ID), name(std::move(t_name)), parent_ID(t_parent_ID){};
+    bone_details() = delete; //no default constructor
+};
+
+//global program data
 std::ofstream output_file;
-std::unordered_map<int, uint8_t> bone_ID_to_first_column;
-std::unordered_map<int, std::string> bone_ID_to_name;
+std::unordered_map<int, bone_details> bone_ID_to_details;
 
-std::mutex file_mutex;
-
+//handles asynchronous data events from NetNat API
 void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData);
 
+//ensures that file writes happen synchronously
+std::mutex file_mutex;
 
 int main(int argc, char* argv[]){
     if(argc < 3 || argc > 4){
@@ -63,6 +76,16 @@ int main(int argc, char* argv[]){
 
         if(output_file.bad()){
         cerr << argv[0] << ": output_file could not be opened\n";
+        }
+    }
+
+    //parse wait time
+    float wait_time;
+    if(argc == 4){
+        try{
+            wait_time = std::stof(argv[3]);
+        } catch (const std::exception){
+            cerr << argv[0] << ": Invalid wait_time\n";
         }
     }
 
@@ -112,9 +135,11 @@ int main(int argc, char* argv[]){
                 }
                 found_skeleton_data = 1;
                 sSkeletonDescription* pSK = global_data_defs->arrDataDescriptions[i].Data.SkeletonDescription;
-                for(int j = 0; j < pSK->nRigidBodies; j++){
+                for(int j = 0; j < pSK->nRigidBodies; j++){ //put the skeleton data into the map
                     sRigidBodyDescription* pRB = &pSK->RigidBodies[j];
-                    bone_ID_to_name.emplace(pRB->ID, pRB->szName);
+
+                    bone_details b(pRB->ID, pRB->szName, pRB->parentID);
+                    bone_ID_to_details.emplace(pRB->ID, b);
                 }
 
                 //send configuration to file
@@ -126,35 +151,36 @@ int main(int argc, char* argv[]){
 
     cout << "Finished Motive Connection... Recording to \"" << std::filesystem::absolute(output_file_path) << "\"\n";
 
-    //parse wait time
     if(argc == 4){
-        try{
-            float wait_time = std::stof(argv[3]);
-            cout << "Waiting " << wait_time << "seconds...\n";
-            std::this_thread::sleep_for(std::chrono::duration<float>(wait_time));
-        } catch (const std::exception){
-            cerr << argv[0] << ": Invalid wait_time\n";
-        }
+        cout << "Waiting " << wait_time << "seconds...\n";
+        std::this_thread::sleep_for(std::chrono::duration<float>(wait_time));
     }
 
-    //use rigid body names to print CSV header
+    //print bone mapping to the file
+    output_file << "Bone ID,Name,Parent ID\n";
+    for(const auto& [id, desc] : bone_ID_to_details){
+        output_file << desc.ID << ',';
+        output_file << desc.name << ',';
+        output_file << desc.parent_ID << '\n';
+    }
 
+    //use rigid body names to print data header
     //first line of header is joint name
     output_file << ","; //make space for timestamp and skeletonID
     {
         uint8_t current_column = 0;
-        for(auto& pair : bone_ID_to_name){
-            bone_ID_to_first_column.emplace(pair.first, current_column);
+        for(auto& [id, desc] : bone_ID_to_details){
+            desc.first_column = current_column;
             current_column += 7;
-            for(unsigned int i = 0; i < 7; i++){ //each rigid body has 6 parameters
-                output_file << ',' << pair.second;
+            for(unsigned int i = 0; i < 7; i++){ //each rigid body has 7 parameters, print what bone the parameter will be
+                output_file << ',' << desc.name;
             }
         }
     }
 
     //second line is measurememnt
     output_file << "\ntimestamp,skeletonID,";
-    for(unsigned int i = 0; i < bone_ID_to_name.size(); i++){
+    for(unsigned int i = 0; i < bone_ID_to_details.size(); i++){
         output_file << "x,y,z,qw,qx,qy,qz";
     }
     output_file << '\n';
@@ -177,15 +203,18 @@ void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData){
     std::lock_guard<std::mutex> lock(file_mutex);
     
     //print each skeleton's data
-    const size_t column_count = bone_ID_to_first_column.size() * 7;
-    static float* column_data = new float[column_count]; //initialize the memory once
-    std::fill(column_data, column_data + column_count, std::numeric_limits<float>::quiet_NaN()); //intialize every column to NaN
+    const size_t column_count = bone_ID_to_details.size() * 7;
+    static std::vector<float> column_data(column_count); //initialize the memory once
+    if(column_count != column_data.size()) //need to extend the column_data vector
+        column_data.resize(column_count);
+    
+    std::fill(column_data.begin(), column_data.end(), std::numeric_limits<float>::quiet_NaN()); //intialize every column to NaN
 
     for(unsigned int i = 0; i < data->nSkeletons; i++){ //for each skeleton in data
         output_file << timestamp << ',' << data->Skeletons[i].skeletonID;
         for(unsigned int j = 0; j < data->Skeletons[i].nRigidBodies; j++){ //for each rigidbody in skeleton
             try{
-                size_t start_column = bone_ID_to_first_column.at(data->Skeletons[i].RigidBodyData[j].ID);
+                size_t start_column = bone_ID_to_details.at(data->Skeletons[i].RigidBodyData[j].ID).first_column;
                 column_data[start_column + 0] = data->Skeletons[i].RigidBodyData[j].x;
                 column_data[start_column + 1] = data->Skeletons[i].RigidBodyData[j].y;
                 column_data[start_column + 2] = data->Skeletons[i].RigidBodyData[j].z;
@@ -194,7 +223,7 @@ void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData){
                 column_data[start_column + 5] = data->Skeletons[i].RigidBodyData[j].qy;
                 column_data[start_column + 6] = data->Skeletons[i].RigidBodyData[j].qz;
             } catch (const std::exception){
-                cerr << "warning, boneID not mapped to name\n";
+                cerr << "warning, boneID not mapped\n";
             }
         }
 

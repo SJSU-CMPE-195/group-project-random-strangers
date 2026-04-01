@@ -161,9 +161,13 @@ docker-data/
 # Project Specific
 # ===========================
 # Add project-specific ignores below
+<<<<<<< HEAD
 
 # executables and outputs
 **.out
 **.exe
 **.o
 
+=======
+src/ML/aerobics_skeleton_dataset.csv
+>>>>>>> 7fbe14c9 (accidentally pushed a folder incorrectly, cleaning)

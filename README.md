@@ -1,6 +1,6 @@
 # Project Title
 
-> One-line description of what your project does
+> Workout form detector using Motion Capture cameras
 
 ## Team
 
@@ -17,7 +17,8 @@
 
 ## Problem Statement
 
-[2-3 sentences describing the problem you're solving and why it matters]
+Working out can be challenging for people who are unsure of their form, or are generally unfamiliar with the gym. While
+weight training brings numerous health benefits, intimidation remains a barrier of access for many who do not. 
 
 ## Solution
 

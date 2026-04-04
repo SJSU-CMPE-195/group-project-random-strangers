@@ -130,4 +130,4 @@ if __name__ == "__main__": #only run this file if directly run. No need to repea
 
     saveData(out_path, X, y_score, y_movement, y_error)
 
-    #with the data flattened, normalized, and parsed, next is to train the mode. 
+    #with the data flattened, normalized, and parsed, next is to train the model. 

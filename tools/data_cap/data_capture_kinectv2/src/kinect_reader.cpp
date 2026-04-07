@@ -45,13 +45,6 @@ public:
             return E_FAIL;
         }
 
-        //initialize the sensor interface
-        if (kinect_sensor){
-            kinect_sensor->Close();
-            kinect_sensor->Release();
-            kinect_sensor = nullptr;
-        }
-
         result = kinect_sensor->Open();
         if(FAILED(result)) {
             cerr << "Failed to start interface. Kinect not ready...\n";
@@ -71,14 +64,13 @@ public:
         }
 
         //initialize the body frame source
-        IBodyFrameSource* fs;
+        IBodyFrameSource* fs = nullptr;
         result = kinect_sensor->get_BodyFrameSource(&fs);
         if(FAILED(result)){
             cerr << "Failed to initialize body frame source. Kinect not ready...\n";
             if(fs) fs->Release();
             return result;
         }
-        if(fs) fs->Release();
 
         //initialize the body frame reader
         if(body_reader){
@@ -89,8 +81,10 @@ public:
         result = fs->OpenReader(&body_reader);
         if(FAILED(result)) {
             cerr << "Failed to initialize body frame reader. Kinect not ready...\n";
+            if(fs) fs->Release();
             return result;
         }
+        if(fs) fs->Release();
 
         //create the notification event
         result = body_reader->SubscribeFrameArrived(&event_notifier);

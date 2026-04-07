@@ -216,7 +216,7 @@ int main(int argc, char* argv[]) {
 
 	output_file << "\ntimestamp,skeletonID,";
 	for (unsigned int i = 0; i < bone_layout.size(); i++) {
-		output_file << "x,y,z,qw,qx,qy,qz";
+		output_file << "x,y,z,qw,qx,qy,qz,";
 	}
 	output_file << '\n';
 
@@ -236,12 +236,18 @@ int main(int argc, char* argv[]) {
 
 	cout << "Finished Kinect Connection...\n";
 
+	cout << "Waiting " << wait_time << "seconds...\n";
+	
 	if (argc == 4) {
-		cout << "Waiting " << wait_time << "seconds...\n";
-		std::this_thread::sleep_for(std::chrono::duration<float>(wait_time));
+		for(unsigned int time_left = wait_time; time_left != 0; time_left--){
+			cout << time_left << '\n';
+			std::this_thread::sleep_for(std::chrono::duration<float>(1));
+		}
 	}
 
-	const auto stop_time = std::chrono::steady_clock::now() + std::chrono::duration<float>(recording_time);
+	cout << "Recording!\n";
+
+	const auto stop_time = std::chrono::steady_clock::now() + std::chrono::duration<float, std::ratio<60>>(recording_time);
 
 	while (std::chrono::steady_clock::now() < stop_time) {
 		const DWORD wait_result = WaitForSingleObject(reinterpret_cast<HANDLE>(event_notifier), 50);

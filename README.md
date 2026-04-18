@@ -20,23 +20,19 @@
 Working out can be challenging for people who are unsure of their form, or are generally unfamiliar with the gym. While
 weight training brings numerous health benefits, intimidation remains a barrier of access for many who do not. 
 
+## Proof of Concept Scope
+
+This POC is intended to demonstrate that we have a working flow. While a live demonstration is not possible yet, since we continue to configure the cameras, the project skeleton has been fleshed out. Cameras capture data, send it to a backend model, which then updates a website for the ease of use to the user. 
+
 ## Solution
 
-TBD LOL
+Cameras that detect a workout being performed, and analyzes error between live process and ideal form through a trained model. 
 
 ### Key Features
 
-- Feature 1
-- Feature 2
-- Feature 3
-
----
-
-## Demo
-
-[Link to demo video or GIF]
-
-**Live Demo:** [URL if deployed]
+- Motion Capture Cameras
+- Internal workout model
+- Live Feedback Website
 
 ---
 
@@ -44,7 +40,7 @@ TBD LOL
 
 | Feature | Screenshot |
 |---------|------------|
-| [Feature 1] | ![Screenshot](docs/screenshots/feature1.png) |
+| [Online Server] | ![Screenshot](notes/ec2webserver.png) |
 | [Feature 2] | ![Screenshot](docs/screenshots/feature2.png) |
 
 ---
@@ -53,29 +49,32 @@ TBD LOL
 
 | Category | Technology |
 |----------|------------|
-| Frontend | |
-| Backend | |
-| Database | |
-| Deployment | |
+| Frontend | Next.JS, hosted online with Ec2 instance |
+| Backend | Python Flask |
+| Deployment | Kinect Studio/Optitrack Motive|
 
 ---
 
 ## Getting Started
 
+This program is intended to run online, with no download for the user. Simply stand in front of the cameras and begin moving!
+
+
 ### Prerequisites
 
-- [Prerequisite 1] v.X.X+
-- [Prerequisite 2] v.X.X+
+To run the project ~
+- Next.JS v.10.0+
+- Ultralytics YOLO v26
+- 
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/[org]/[repo].git
-cd [repo]
+git clone https://github.com/SJSU-CMPE-195/group-project-random-strangers.git
 
 # Install dependencies
-[install command]
+(need a full package manager list)
 
 # Set up environment variables
 cp .env.example .env
@@ -89,9 +88,10 @@ cp .env.example .env
 
 ```bash
 # Development mode
-[dev command]
+npm run build
+npm run start
 
-# The app will be available at http://localhost:XXXX
+# The app will be available at http://localhost:3000
 ```
 
 ### Running Tests
@@ -101,8 +101,15 @@ cp .env.example .env
 ```
 
 ---
+## Technical Stack
+
+- Python, C++, HTML, JS, CSS, .TSX
+= Next, Ultralytics, numpy, tensorflow
+- Motion Capture Cameras, live Display 
 
 ## API Reference
+
+- Need to be updated once website is live, probably next semester
 
 <details>
 <summary>Click to expand API endpoints</summary>
@@ -132,28 +139,13 @@ cp .env.example .env
 
 ---
 
-## Contributing
+## What's Next (195B)
 
-1. Create a feature branch (`git checkout -b feature/amazing-feature`)
-2. Commit your changes (`git commit -m 'Add amazing feature'`)
-3. Push to the branch (`git push origin feature/amazing-feature`)
-4. Open a Pull Request
+Change cameras from Temporary xbox kinects to cooler Optitrack motion cameras
+decrease error percentage for weirdly shaped people
+Live feedback, like workout coaching
+Play around with motion capture technologies
 
-### Branch Naming
-
-- `feature/` - New features
-- `fix/` - Bug fixes
-- `docs/` - Documentation updates
-- `refactor/` - Code refactoring
-
-### Commit Messages
-
-Use clear, descriptive commit messages:
-- `Add user authentication endpoint`
-- `Fix database connection timeout issue`
-- `Update README with setup instructions`
-
----
 
 ## Acknowledgments
 

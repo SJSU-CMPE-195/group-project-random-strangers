@@ -221,7 +221,7 @@ int main(int argc, char* argv[]) {
 	output_file << '\n';
 
 	cout << "getting reader...\n";
-	reader kinect_reader;
+	device kinect_reader;
 	const HRESULT init_result = kinect_reader.initialize();
 	if (FAILED(init_result)) {
 		cerr << "Failed to initialize Kinect reader (HRESULT=" << std::hex << init_result << ")\n";

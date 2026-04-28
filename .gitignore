@@ -167,3 +167,4 @@ docker-data/
 **.exe
 **.o
 
+**.vscode/

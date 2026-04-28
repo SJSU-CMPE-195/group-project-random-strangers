@@ -87,13 +87,14 @@ public:
         if(fs) fs->Release();
 
         //create the notification event
-        result = body_reader->SubscribeFrameArrived(&event_notifier);
+        event_notifier = CreateEvent(NULL, FALSE, FALSE, NULL);
+        result = body_reader->SubscribeFrameArrived(std::bit_cast<WAITABLE_HANDLE*>(&event_notifier));
 
         return result;
     }
 
     std::pair<WAITABLE_HANDLE, IBodyFrameReader*>  get_notifier(){
-        return std::make_pair(event_notifier, body_reader);
+        return std::make_pair(std::bit_cast<WAITABLE_HANDLE>(event_notifier), body_reader);
     }
 
     ~reader(){
@@ -118,7 +119,7 @@ public:
     }
     
 private:
-    WAITABLE_HANDLE     event_notifier;
+    HANDLE     event_notifier;
     IKinectSensor*      kinect_sensor;
     ICoordinateMapper*  coordinate_mapper;
     IBodyFrameReader*   body_reader;

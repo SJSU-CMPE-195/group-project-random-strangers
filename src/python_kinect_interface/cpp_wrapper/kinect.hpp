@@ -1,3 +1,5 @@
+#pragma once
+
 // Windows headers
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -28,7 +30,7 @@ struct Body_Data_t {
     std::array<JointOrientation, JointType_Count> orientations{};
 };
 
-class device {
+class kinect {
 private:
     WAITABLE_HANDLE event_notifier = NULL;
     ComPtr<IKinectSensor> kinect_sensor;
@@ -43,13 +45,13 @@ private:
     }
 
 public:
-    device() = default;
+    kinect() = default;
 
-    device(const device&) = delete;
-    device& operator=(const device&) = delete;
+    kinect(const kinect&) = delete;
+    kinect& operator=(const kinect&) = delete;
 
-    device(device&&) = delete;
-    device& operator=(device&&) = delete;
+    kinect(kinect&&) = delete;
+    kinect& operator=(kinect&&) = delete;
 
     HRESULT initialize() {
         cleanup_reader_subscription();
@@ -110,7 +112,7 @@ public:
         return {event_notifier, body_reader.Get()};
     }
 
-    ~device() {
+    ~kinect() {
         cleanup_reader_subscription();
 
         body_reader.Reset();
@@ -190,6 +192,20 @@ public:
         return {time, std::move(out)};
     }
 
+    HRESULT wait_for_next_frame(uint32_t timeout){
+        if (!event_notifier) {
+            return E_INVALIDARG;
+        }
+
+        HRESULT wait_result = WaitForSingleObject(reinterpret_cast<HANDLE>(event_notifier), timeout);
+
+        if (wait_result == WAIT_FAILED) {
+            return GetLastError();
+        }
+
+        return wait_result;
+    }
+
     std::pair<TIMESPAN, std::vector<Body_Data_t>> get_next_joint_data() {
         if (!event_notifier) {
             return {-6, {}};
@@ -202,5 +218,17 @@ public:
         }
 
         return get_latest_joint_data();
+    }
+
+    void deinnit(){
+        cleanup_reader_subscription();
+
+        body_reader.Reset();
+        coordinate_mapper.Reset();
+
+        if (kinect_sensor) {
+            kinect_sensor->Close();
+            kinect_sensor.Reset();
+        }
     }
 };

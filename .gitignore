@@ -161,13 +161,63 @@ docker-data/
 # Project Specific
 # ===========================
 # Add project-specific ignores below
-<<<<<<< HEAD
 
 # executables and outputs
 **.out
 **.exe
 **.o
 
-=======
-src/ML/aerobics_skeleton_dataset.csv
->>>>>>> 7fbe14c9 (accidentally pushed a folder incorrectly, cleaning)
+# --- Datasets ---
+# Exclude actual images and labels to keep repo size small
+datasets/
+data/images/
+data/labels/
+*.zip
+*.tar
+*.gz
+
+# --- Model Weights ---
+# Exclude pre-trained and locally trained weights
+*.pt
+*.onnx
+*.engine
+*.pb
+*.tflite
+weights/
+yolov8*.pt
+yolov11*.pt
+yolov12*.pt
+
+# --- Training Outputs & Logs ---
+# Exclude the 'runs' folder where training results/plots are saved
+runs/
+wandb/
+mlruns/
+lightning_logs/
+results/
+*.log
+
+# --- Python & Environment ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+bin/
+lib/
+develop-eggs/
+dist/
+eggs/
+lib64/
+parts/
+sdist/
+var/
+
+# --- IDEs & OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+

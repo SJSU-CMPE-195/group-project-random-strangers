@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h> //I love well defined data-type
+#include <stdint.h>
 
 #ifdef _WIN32
 #define DLLCALL __declspec(dllexport)
@@ -11,27 +11,27 @@
 
 extern "C" {
 
-//define sensor constants
+//sensor constants for Kinect v2.
 const uint32_t KINECT_JOINT_COUNT = 25;
 const uint32_t KINECT_MAX_BODIES = 6;
 const uint32_t KINECT_COLOR_WIDTH = 1920;
 const uint32_t KINECT_COLOR_HEIGHT = 1080;
 const uint32_t KINECT_COLOR_BYTES_PER_PIXEL = 4; // BGRA/ARGB32-compatible bytes.
 
-//store joint coordinates
+//store joint coordinates in meters.
 typedef struct coordinate_3dC {
     float x;
     float y;
     float z;
 } coordinate_3dC;
 
-//store joint angle
 //store a projected 2-D point in Kinect color-image pixel coordinates.
 typedef struct coordinate_2dC {
     float x;
     float y;
 } coordinate_2dC;
 
+//store joint orientation.
 typedef struct quaternionC {
     float x;
     float y;
@@ -39,15 +39,16 @@ typedef struct quaternionC {
     float w;
 } quaternionC;
 
-//represents all data about a single joint
+//represents all data about a single joint.
 typedef struct JointC {
     int32_t joint_type;
     int32_t tracking_state;
     coordinate_3dC position;
     quaternionC orientation;
+    coordinate_2dC color_position;
 } JointC;
 
-//represents the joints in a given body
+//represents the joints in a given body.
 typedef struct BodyDataC {
     uint64_t body_id;
     JointC joints[KINECT_JOINT_COUNT];

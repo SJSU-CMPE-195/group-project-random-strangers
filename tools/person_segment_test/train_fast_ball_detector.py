@@ -322,7 +322,7 @@ def main():
         data=str(data_yaml),
         epochs=args.epochs,
         imgsz=args.imgsz,
-        batch=24,
+        batch=-1,
         device=device,
         amp=use_cuda,
         workers=args.cpu_workers,

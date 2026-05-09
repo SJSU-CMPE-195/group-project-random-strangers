@@ -53,7 +53,13 @@
           "min_clearance": 0.25
         }
       },
-      "diff_pair_dimensions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
       "drc_exclusions": [],
       "meta": {
         "version": 2
@@ -187,7 +193,9 @@
           "td_width_to_size_filter_ratio": 0.9
         }
       ],
-      "track_widths": [],
+      "track_widths": [
+        0.0
+      ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
           "corner_radius_percentage": 80,
@@ -214,7 +222,12 @@
           "spacing": 0.6
         }
       },
-      "via_dimensions": [],
+      "via_dimensions": [
+        {
+          "diameter": 0.0,
+          "drill": 0.0
+        }
+      ],
       "zones_allow_external_fillets": false
     },
     "ipc2581": {
@@ -632,7 +645,7 @@
         "uuid": "0dffc378-5905-459a-b0cb-e8e514a8bbef"
       }
     ],
-    "used_designators": "J1,J201-202,J601,Rsns1-3,Rsns101-103,Rsns301,Rsns401,Rsns501,Rsns701,Rsns801,Rsns901,R1-3,Q1-8,Q101-106,Q301-302,Q401-402,Q501-502,Q701-702,Q801-802,Q901-902,#PWR1,#PWR5-6,#PWR101-103,#PWR201-204,#PWR301,#PWR401,#PWR501,#PWR601-602,#PWR701,#PWR801,#PWR901,C6-7,C101-103,C201-204,C301,C401,C501,C601-602,C701,C801,C901,U101,U201-202,U601",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [

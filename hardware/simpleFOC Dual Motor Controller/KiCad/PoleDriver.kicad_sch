@@ -748,7 +748,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Irms:\n	I/sqrt(2) = 35A/sqrt(2) = 24.75A\n\nPower:\n	Irms^2 * R = 24.75A^2 * 0.001Ω = 0.6125W\n\nOutput Range:\n	I = 1.4/(20V/v*0.001Ω) = ±70A\n\nOutput Volts:\n	Vso = 0.001Ω * 20V/V = 0.02V/A"
+	(text "Irms:\n	I/sqrt(2) = 35A/sqrt(2) = 24.75A\n\nPower:\n	Irms^2 * R = 24.75A^2 * 0.001Ω = 0.6125W\n\nOutput Range:\n	I = 1.4/(40V/V*0.001Ω) = ±35A\n\nOutput Volts:\n	Vso = 0.001Ω * 40V/V = 0.040V/A"
 		(exclude_from_sim no)
 		(at 153.67 78.486 0)
 		(effects

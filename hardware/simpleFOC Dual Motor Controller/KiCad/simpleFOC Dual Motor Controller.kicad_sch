@@ -1094,7 +1094,7 @@
 	)
 	(symbol
 		(lib_id "MCU_ST_STM32F1:STM32F103C8Tx")
-		(at 59.69 92.71 0)
+		(at 102.87 76.2 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1105,7 +1105,7 @@
 		(fields_autoplaced yes)
 		(uuid "8eb84ed0-c057-49dd-b226-7a0175d2884c")
 		(property "Reference" "U101"
-			(at 64.3733 133.35 0)
+			(at 107.5533 116.84 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1116,7 +1116,7 @@
 			)
 		)
 		(property "Value" "STM32F103C8Tx"
-			(at 64.3733 135.89 0)
+			(at 107.5533 119.38 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1127,7 +1127,7 @@
 			)
 		)
 		(property "Footprint" "Package_QFP:LQFP-48_7x7mm_P0.5mm"
-			(at 44.45 130.81 0)
+			(at 87.63 114.3 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1139,7 +1139,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.st.com/resource/en/datasheet/stm32f103c8.pdf"
-			(at 59.69 92.71 0)
+			(at 102.87 76.2 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1150,7 +1150,7 @@
 			)
 		)
 		(property "Description" "STMicroelectronics Arm Cortex-M3 MCU, 64KB flash, 20KB RAM, 72 MHz, 2.0-3.6V, 37 GPIO, LQFP48"
-			(at 59.69 92.71 0)
+			(at 102.87 76.2 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1161,7 +1161,7 @@
 			)
 		)
 		(property "KiLib_Generator" "package/gullwing"
-			(at 59.69 92.71 0)
+			(at 102.87 76.2 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

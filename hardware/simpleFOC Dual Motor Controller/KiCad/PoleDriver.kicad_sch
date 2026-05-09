@@ -303,6 +303,147 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:R_Small"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.254)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "R"
+				(at 0 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.016 1.016)
+					)
+				)
+			)
+			(property "Value" "R_Small"
+				(at 1.778 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Resistor, small symbol"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "R resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "R_Small_0_1"
+				(rectangle
+					(start -0.762 1.778)
+					(end 0.762 -1.778)
+					(stroke
+						(width 0.2032)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_Small_1_1"
+				(pin passive line
+					(at 0 2.54 270)
+					(length 0.762)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -2.54 90)
+					(length 0.762)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "easyeda2kicad:MS6001Y"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -782,6 +923,18 @@
 		(uuid "67db76ff-7c1e-4cc3-ad3e-1feaef61ff45")
 	)
 	(junction
+		(at 83.82 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "004fba2d-6efb-4028-b4de-9f82c4122bb5")
+	)
+	(junction
+		(at 100.33 40.64)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1ececfee-acbc-4a42-9d59-c9b8b0c9dfdf")
+	)
+	(junction
 		(at 102.87 39.37)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -798,6 +951,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "abce9e34-f40d-426b-9c5c-3f04133441ea")
+	)
+	(junction
+		(at 83.82 33.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b4a22154-b179-475f-b93a-c2a7eb16a9f8")
 	)
 	(junction
 		(at 62.23 21.59)
@@ -842,6 +1001,46 @@
 			(type default)
 		)
 		(uuid "2d17aca2-f951-4b2c-8922-7119e183e44d")
+	)
+	(wire
+		(pts
+			(xy 83.82 63.5) (xy 100.33 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "320332a8-19db-450f-8933-220976317fd2")
+	)
+	(wire
+		(pts
+			(xy 83.82 63.5) (xy 83.82 62.23)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "32bae327-7f4f-4bd7-ad9d-f178759b27c1")
+	)
+	(wire
+		(pts
+			(xy 100.33 40.64) (xy 100.33 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "33ea6a31-6cea-446f-8655-050e5195a313")
+	)
+	(wire
+		(pts
+			(xy 83.82 55.88) (xy 92.71 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3599d612-2e2e-49a9-9b78-e7da7d654002")
 	)
 	(wire
 		(pts
@@ -965,7 +1164,7 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 33.02) (xy 92.71 33.02)
+			(xy 81.28 33.02) (xy 83.82 33.02)
 		)
 		(stroke
 			(width 0)
@@ -991,7 +1190,17 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "b03b1338-4dcb-4bdd-80eb-e154eb2313ad")
+		(uuid "a63c012f-5381-4256-9336-4913f45e6a1b")
+	)
+	(wire
+		(pts
+			(xy 83.82 55.88) (xy 83.82 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a8a92129-26db-4817-8ed3-31ebce4bd686")
 	)
 	(wire
 		(pts
@@ -1012,6 +1221,36 @@
 			(type default)
 		)
 		(uuid "bb88da38-e672-4141-8ffd-aa1ee1c27a7a")
+	)
+	(wire
+		(pts
+			(xy 83.82 33.02) (xy 92.71 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c01c0650-f800-4fed-ab6e-0ec19c92d58b")
+	)
+	(wire
+		(pts
+			(xy 83.82 40.64) (xy 100.33 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ccd2561f-f280-4857-a3a3-9bfc3935a202")
+	)
+	(wire
+		(pts
+			(xy 83.82 40.64) (xy 83.82 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ced8d668-a2df-4547-aaed-7d854f8a1c37")
 	)
 	(wire
 		(pts
@@ -1045,7 +1284,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 39.37) (xy 100.33 44.45)
+			(xy 100.33 39.37) (xy 100.33 40.64)
 		)
 		(stroke
 			(width 0)
@@ -1065,7 +1304,7 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 55.88) (xy 92.71 55.88)
+			(xy 81.28 55.88) (xy 83.82 55.88)
 		)
 		(stroke
 			(width 0)
@@ -1082,6 +1321,16 @@
 			(type default)
 		)
 		(uuid "ef93f4cc-0b0a-4399-9766-850f0cb07ba0")
+	)
+	(wire
+		(pts
+			(xy 83.82 33.02) (xy 83.82 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f72d2061-f92b-4166-9eef-50a733db9fa3")
 	)
 	(hierarchical_label "GL"
 		(shape passive)
@@ -1505,6 +1754,109 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R_Small")
+		(at 83.82 36.83 0)
+		(mirror y)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5752f30d-0a33-4c6b-a6b2-fc316c9719c3")
+		(property "Reference" "R302"
+			(at 86.36 38.1001 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "47k"
+			(at 86.36 35.5601 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 83.82 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 83.82 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 83.82 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "462f1051-e622-4e9a-a71f-62e9f40ae012")
+		)
+		(pin "2"
+			(uuid "7034c270-2a87-4788-8b18-3eae434923c9")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "R502")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "R302")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "R402")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "R802")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "R902")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "R702")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "easyeda2kicad:MS6001Y")
 		(at 99.06 33.02 0)
 		(unit 1)
@@ -1643,6 +1995,109 @@
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
 					(reference "Q701")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 83.82 59.69 0)
+		(mirror y)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "81750901-579d-49d0-a5e1-480f85b3aeaa")
+		(property "Reference" "R301"
+			(at 86.36 60.9601 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "47k"
+			(at 86.36 58.4201 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 83.82 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 83.82 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 83.82 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "34549bf0-d18f-4e05-8f87-be6ed6449e10")
+		)
+		(pin "2"
+			(uuid "7365de9e-9658-4560-9902-ef8989d11667")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "R501")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "R301")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "R401")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "R801")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "R901")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "R701")
 					(unit 1)
 				)
 			)

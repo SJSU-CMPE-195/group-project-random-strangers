@@ -108,7 +108,7 @@
 		(symbol "DRV8323HRTAT_0_1"
 			(rectangle
 				(start -25.4 27.94)
-				(end 24.892 -36.83)
+				(end 25.4 -49.53)
 				(stroke
 					(width 0)
 					(type default)
@@ -118,7 +118,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 11.43 -39.37 90)
+				(at 11.43 -52.07 90)
 				(length 2.54)
 				(name "CPL"
 					(effects
@@ -136,7 +136,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 16.51 -39.37 90)
+				(at 16.51 -52.07 90)
 				(length 2.54)
 				(name "CPH"
 					(effects
@@ -298,7 +298,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -17.78 180)
+				(at 27.94 -22.86 180)
 				(length 2.54)
 				(name "SNB"
 					(effects
@@ -316,7 +316,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -15.24 180)
+				(at 27.94 -20.32 180)
 				(length 2.54)
 				(name "SPB"
 					(effects
@@ -334,7 +334,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -12.7 180)
+				(at 27.94 -17.78 180)
 				(length 2.54)
 				(name "GLB"
 					(effects
@@ -352,7 +352,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -10.16 180)
+				(at 27.94 -15.24 180)
 				(length 2.54)
 				(name "SHB"
 					(effects
@@ -370,7 +370,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -7.62 180)
+				(at 27.94 -12.7 180)
 				(length 2.54)
 				(name "GHB"
 					(effects
@@ -388,7 +388,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -22.86 180)
+				(at 27.94 -33.02 180)
 				(length 2.54)
 				(name "GHC"
 					(effects
@@ -406,7 +406,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -25.4 180)
+				(at 27.94 -35.56 180)
 				(length 2.54)
 				(name "SHC"
 					(effects
@@ -424,7 +424,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -27.94 180)
+				(at 27.94 -38.1 180)
 				(length 2.54)
 				(name "GLC"
 					(effects
@@ -442,7 +442,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -30.48 180)
+				(at 27.94 -40.64 180)
 				(length 2.54)
 				(name "SPC"
 					(effects
@@ -460,7 +460,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 27.94 -33.02 180)
+				(at 27.94 -43.18 180)
 				(length 2.54)
 				(name "SNC"
 					(effects
@@ -568,7 +568,7 @@
 				)
 			)
 			(pin unspecified line
-				(at 3.81 -39.37 90)
+				(at 3.81 -52.07 90)
 				(length 2.54)
 				(name "MODE"
 					(effects
@@ -586,7 +586,7 @@
 				)
 			)
 			(pin unspecified line
-				(at -2.54 -39.37 90)
+				(at -2.54 -52.07 90)
 				(length 2.54)
 				(name "IDRIVE"
 					(effects
@@ -604,7 +604,7 @@
 				)
 			)
 			(pin unspecified line
-				(at -15.24 -39.37 90)
+				(at -15.24 -52.07 90)
 				(length 2.54)
 				(name "VDS"
 					(effects
@@ -622,7 +622,7 @@
 				)
 			)
 			(pin unspecified line
-				(at -8.89 -39.37 90)
+				(at -8.89 -52.07 90)
 				(length 2.54)
 				(name "GAIN"
 					(effects
@@ -848,6 +848,335 @@
 					)
 				)
 				(number "41"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
+	(symbol "MS6001Y"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "Q"
+			(at 0 10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "MS6001Y"
+			(at 0 -10.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:TDSON-8_L5.9-W5.2-P1.27-BL"
+			(at 0 -12.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C17702010.pdf"
+			(at 0 -15.24 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "MP(美禄科技)"
+			(at 0 -17.78 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "MS6001Y"
+			(at 0 -20.32 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C17702010"
+			(at 0 -22.86 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ki_keywords" "MOSFETs"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(symbol "MS6001Y_0_1"
+			(polyline
+				(pts
+					(xy -3.81 0) (xy -1.78 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.78 2.29) (xy -1.78 -2.29)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.27 2.29) (xy -1.27 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.27 1.78) (xy 1.27 1.78) (xy 1.27 2.54) (xy 3.81 2.54) (xy 3.81 0.51)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.27 0) (xy 0.25 -0.51) (xy 0.25 0.51) (xy -1.27 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.27 0) (xy 1.27 0) (xy 1.27 -2.54) (xy 6.35 -2.54) (xy 3.81 -2.54) (xy 3.81 -0.76)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.27 -0.51) (xy -1.27 0.51)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.27 -2.29) (xy -1.27 -1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 -1.78) (xy -1.27 -1.78)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 3.81 0.51) (xy 3.05 -0.76) (xy 4.57 -0.76) (xy 3.81 0.51)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(polyline
+				(pts
+					(xy 4.83 0.51) (xy 4.32 0.51) (xy 3.3 0.51) (xy 2.79 0.51)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(pin unspecified line
+				(at 1.27 -5.08 90)
+				(length 2.54)
+				(name "S"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin unspecified line
+				(at 3.81 -5.08 90)
+				(length 2.54)
+				(name "S"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin unspecified line
+				(at 6.35 -5.08 90)
+				(length 2.54)
+				(name "S"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin unspecified line
+				(at -6.35 0 0)
+				(length 2.54)
+				(name "G"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin unspecified line
+				(at 1.27 5.08 270)
+				(length 2.54)
+				(name "D"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
 					(effects
 						(font
 							(size 1.27 1.27)

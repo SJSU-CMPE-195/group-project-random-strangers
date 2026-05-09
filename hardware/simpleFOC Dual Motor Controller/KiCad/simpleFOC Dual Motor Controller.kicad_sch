@@ -1104,7 +1104,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8eb84ed0-c057-49dd-b226-7a0175d2884c")
-		(property "Reference" "U1"
+		(property "Reference" "U101"
 			(at 64.3733 133.35 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1150,6 +1150,17 @@
 			)
 		)
 		(property "Description" "STMicroelectronics Arm Cortex-M3 MCU, 64KB flash, 20KB RAM, 72 MHz, 2.0-3.6V, 37 GPIO, LQFP48"
+			(at 59.69 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "KiLib_Generator" "package/gullwing"
 			(at 59.69 92.71 0)
 			(hide yes)
 			(show_name no)
@@ -1307,7 +1318,7 @@
 		(instances
 			(project "simpleFOC Dual Motor Controller"
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
-					(reference "U1")
+					(reference "U101")
 					(unit 1)
 				)
 			)
@@ -1355,6 +1366,52 @@
 			(project "simpleFOC Dual Motor Controller"
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
 					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 177.8 82.55)
+		(size 76.835 24.765)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "e842f42e-62e8-4809-9799-e9078ef99b24")
+		(property "Sheetname" "Motor Driver 2"
+			(at 177.8 81.8384 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "DriverStage.kicad_sch"
+			(at 177.8 107.8996 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
+					(page "6")
 				)
 			)
 		)

@@ -2,8 +2,11 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "65ff312f-215a-4056-97ef-eddec8781d41")
+	(uuid "fd5a6ebd-3c9f-4b5d-83c8-a753f8755dd9")
 	(paper "A5")
+	(title_block
+		(title "Motor Pole Half-Bridge")
+	)
 	(lib_symbols
 		(symbol "Device:C"
 			(pin_numbers
@@ -160,14 +163,20 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:SP60N10GDNK"
+		(symbol "Device:R"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "Q"
-				(at 0 5.08 0)
+			(property "Reference" "R"
+				(at 2.032 0 90)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -176,8 +185,8 @@
 					)
 				)
 			)
-			(property "Value" "SP60N10GDNK"
-				(at 0 -5.08 0)
+			(property "Value" "R"
+				(at 0 0 90)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -186,8 +195,8 @@
 					)
 				)
 			)
-			(property "Footprint" "easyeda2kicad:DFN-8_L5.5-W5.2-P1.27-LS6.0-BL-EP2"
-				(at 0 -7.62 0)
+			(property "Footprint" ""
+				(at -1.778 0 90)
 				(show_name no)
 				(do_not_autoplace no)
 				(hide yes)
@@ -197,8 +206,142 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C22466776.pdf"
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "R res resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "R_0_1"
+				(rectangle
+					(start -1.016 -2.54)
+					(end 1.016 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "easyeda2kicad:MS6001Y"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "Q"
+				(at 0 10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MS6001Y"
 				(at 0 -10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "easyeda2kicad:TDSON-8_L5.9-W5.2-P1.27-BL"
+				(at 0 -12.7 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C17702010.pdf"
+				(at 0 -15.24 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(hide yes)
@@ -219,29 +362,7 @@
 					)
 				)
 			)
-			(property "Manufacturer" "Siliup(矽普)"
-				(at 0 -12.7 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "MPN" "SP60N10GDNK"
-				(at 0 -15.24 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "LCSC Part" "C22466776"
+			(property "Manufacturer" "MP(美禄科技)"
 				(at 0 -17.78 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -252,10 +373,43 @@
 					)
 				)
 			)
-			(symbol "SP60N10GDNK_1_1"
+			(property "MPN" "MS6001Y"
+				(at 0 -20.32 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC Part" "C17702010"
+				(at 0 -22.86 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "MOSFETs"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "MS6001Y_0_1"
 				(polyline
 					(pts
-						(xy -5.08 0) (xy -3.05 0)
+						(xy -3.81 0) (xy -1.78 0)
 					)
 					(stroke
 						(width 0)
@@ -267,7 +421,7 @@
 				)
 				(polyline
 					(pts
-						(xy -3.05 2.29) (xy -3.05 -2.29)
+						(xy -1.78 2.29) (xy -1.78 -2.29)
 					)
 					(stroke
 						(width 0)
@@ -279,7 +433,7 @@
 				)
 				(polyline
 					(pts
-						(xy -2.54 2.29) (xy -2.54 1.27)
+						(xy -1.27 2.29) (xy -1.27 1.27)
 					)
 					(stroke
 						(width 0)
@@ -291,7 +445,7 @@
 				)
 				(polyline
 					(pts
-						(xy -2.54 1.78) (xy 0 1.78) (xy 0 2.54) (xy 2.54 2.54) (xy 2.54 2.54) (xy 2.54 2.54) (xy 2.54 0.51)
+						(xy -1.27 1.78) (xy 1.27 1.78) (xy 1.27 2.54) (xy 3.81 2.54) (xy 3.81 0.51)
 					)
 					(stroke
 						(width 0)
@@ -303,7 +457,7 @@
 				)
 				(polyline
 					(pts
-						(xy -2.54 0) (xy -1.02 -0.51) (xy -1.02 0.51) (xy -2.54 0)
+						(xy -1.27 0) (xy 0.25 -0.51) (xy 0.25 0.51) (xy -1.27 0)
 					)
 					(stroke
 						(width 0)
@@ -315,7 +469,7 @@
 				)
 				(polyline
 					(pts
-						(xy -2.54 0) (xy 0 0) (xy 0 -2.54) (xy 2.54 -2.54) (xy 2.54 0)
+						(xy -1.27 0) (xy 1.27 0) (xy 1.27 -2.54) (xy 6.35 -2.54) (xy 3.81 -2.54) (xy 3.81 -0.76)
 					)
 					(stroke
 						(width 0)
@@ -327,7 +481,7 @@
 				)
 				(polyline
 					(pts
-						(xy -2.54 -0.51) (xy -2.54 0.51)
+						(xy -1.27 -0.51) (xy -1.27 0.51)
 					)
 					(stroke
 						(width 0)
@@ -339,7 +493,7 @@
 				)
 				(polyline
 					(pts
-						(xy -2.54 -2.29) (xy -2.54 -1.27)
+						(xy -1.27 -2.29) (xy -1.27 -1.27)
 					)
 					(stroke
 						(width 0)
@@ -351,7 +505,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 -1.78) (xy -2.54 -1.78)
+						(xy 1.27 -1.78) (xy -1.27 -1.78)
 					)
 					(stroke
 						(width 0)
@@ -363,19 +517,7 @@
 				)
 				(polyline
 					(pts
-						(xy 1.52 0.76) (xy 2.03 0.76) (xy 3.05 0.76) (xy 3.56 0.76)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.54 0.76) (xy 3.3 -0.51) (xy 1.78 -0.51) (xy 2.54 0.76)
+						(xy 3.81 0.51) (xy 3.05 -0.76) (xy 4.57 -0.76) (xy 3.81 0.51)
 					)
 					(stroke
 						(width 0)
@@ -383,12 +525,24 @@
 					)
 					(fill
 						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy 4.83 0.51) (xy 4.32 0.51) (xy 3.3 0.51) (xy 2.79 0.51)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
 					)
 				)
 				(pin unspecified line
-					(at 0 -5.08 90)
+					(at 1.27 -5.08 90)
 					(length 2.54)
-					(name "S1"
+					(name "S"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -404,9 +558,9 @@
 					)
 				)
 				(pin unspecified line
-					(at -7.62 0 0)
+					(at 3.81 -5.08 90)
 					(length 2.54)
-					(name "G1"
+					(name "S"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -422,161 +576,9 @@
 					)
 				)
 				(pin unspecified line
-					(at 0 5.08 270)
+					(at 6.35 -5.08 90)
 					(length 2.54)
-					(name "D1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "SP60N10GDNK_2_1"
-				(polyline
-					(pts
-						(xy -5.08 0) (xy -3.05 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -3.05 2.29) (xy -3.05 -2.29)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.54 2.29) (xy -2.54 1.27)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.54 1.78) (xy 0 1.78) (xy 0 2.54) (xy 2.54 2.54) (xy 2.54 2.54) (xy 2.54 0.51)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.54 0) (xy -1.02 -0.51) (xy -1.02 0.51) (xy -2.54 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.54 0) (xy 0 0) (xy 0 -2.54) (xy 2.54 -2.54) (xy 2.54 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.54 -0.51) (xy -2.54 0.51)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.54 -2.29) (xy -2.54 -1.27)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 -1.78) (xy -2.54 -1.78)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.52 0.76) (xy 2.03 0.76) (xy 3.05 0.76) (xy 3.56 0.76)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.54 0.76) (xy 3.3 -0.51) (xy 1.78 -0.51) (xy 2.54 0.76)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin unspecified line
-					(at 0 -5.08 90)
-					(length 2.54)
-					(name "S2"
+					(name "S"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -592,9 +594,9 @@
 					)
 				)
 				(pin unspecified line
-					(at -7.62 0 0)
+					(at -6.35 0 0)
 					(length 2.54)
-					(name "G2"
+					(name "G"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -610,9 +612,9 @@
 					)
 				)
 				(pin unspecified line
-					(at 0 5.08 270)
+					(at 1.27 5.08 270)
 					(length 2.54)
-					(name "D2"
+					(name "D"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -746,21 +748,94 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "Irms:\n	I/sqrt(2) = 35A/sqrt(2) = 24.75A\n\nPower:\n	Irms^2 * R = 24.75A^2 * 0.001Ω = 0.6125W\n\nOutput Range:\n	I = 1.4/(20V/v*0.001Ω) = ±70A\n\nOutput Volts:\n	Vso = 0.001Ω * 20V/V = 0.02V/A"
+		(exclude_from_sim no)
+		(at 153.67 78.486 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1588)
+			)
+		)
+		(uuid "33ee9ce6-c41c-4aab-af80-23950969899a")
+	)
+	(text_box "Sense Resistor Calculations\n"
+		(exclude_from_sim no)
+		(at 125.73 62.23 0)
+		(size 59.944 33.274)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "67db76ff-7c1e-4cc3-ad3e-1feaef61ff45")
+	)
 	(junction
-		(at 62.23 38.1)
+		(at 102.87 39.37)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "62bc35c4-f18c-4a64-a695-8ce64364fde8")
+	)
+	(junction
+		(at 100.33 68.58)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "66e4266e-052a-4370-a164-d92f6beea62a")
+	)
+	(junction
+		(at 100.33 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "abce9e34-f40d-426b-9c5c-3f04133441ea")
+	)
+	(junction
+		(at 62.23 21.59)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c0402177-df19-45cf-b279-4de00a8080be")
 	)
 	(junction
-		(at 100.33 60.96)
+		(at 100.33 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c12c99c5-ec5d-460f-80e2-d3050372c5cd")
 	)
+	(junction
+		(at 100.33 39.37)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f9271180-9dce-4aef-b003-e60370f7d905")
+	)
+	(junction
+		(at 102.87 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fabba5ad-6fac-4156-a07a-06aaf5b27d76")
+	)
 	(wire
 		(pts
-			(xy 100.33 60.96) (xy 116.84 60.96)
+			(xy 105.41 60.96) (xy 105.41 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "19b170a3-4fdc-47be-8c86-315a114ead13")
+	)
+	(wire
+		(pts
+			(xy 100.33 44.45) (xy 116.84 44.45)
 		)
 		(stroke
 			(width 0)
@@ -770,7 +845,7 @@
 	)
 	(wire
 		(pts
-			(xy 62.23 38.1) (xy 62.23 45.72)
+			(xy 62.23 21.59) (xy 62.23 29.21)
 		)
 		(stroke
 			(width 0)
@@ -780,7 +855,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 54.61) (xy 100.33 60.96)
+			(xy 100.33 38.1) (xy 100.33 39.37)
 		)
 		(stroke
 			(width 0)
@@ -790,7 +865,17 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 38.1) (xy 100.33 44.45)
+			(xy 100.33 68.58) (xy 100.33 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5a673da1-2414-4b37-b846-b21942401b5c")
+	)
+	(wire
+		(pts
+			(xy 100.33 21.59) (xy 100.33 27.94)
 		)
 		(stroke
 			(width 0)
@@ -800,7 +885,7 @@
 	)
 	(wire
 		(pts
-			(xy 57.15 38.1) (xy 62.23 38.1)
+			(xy 57.15 21.59) (xy 62.23 21.59)
 		)
 		(stroke
 			(width 0)
@@ -810,7 +895,27 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 60.96) (xy 100.33 60.96)
+			(xy 58.42 87.63) (xy 100.33 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "65e41be2-341e-4289-91fd-b3e6ca2e981b")
+	)
+	(wire
+		(pts
+			(xy 100.33 87.63) (xy 100.33 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "786f89fd-868d-4ff8-ab57-f3b89e4434dc")
+	)
+	(wire
+		(pts
+			(xy 81.28 44.45) (xy 100.33 44.45)
 		)
 		(stroke
 			(width 0)
@@ -820,7 +925,47 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 49.53) (xy 92.71 49.53)
+			(xy 102.87 63.5) (xy 100.33 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7a86fa2f-b664-4da5-a83a-cf99dc3944b8")
+	)
+	(wire
+		(pts
+			(xy 102.87 39.37) (xy 100.33 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8b4d8f38-7ae7-44a4-87a8-c3a5263d25da")
+	)
+	(wire
+		(pts
+			(xy 105.41 63.5) (xy 102.87 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "941ee808-df24-4c07-a52b-60b3c3a6d738")
+	)
+	(wire
+		(pts
+			(xy 100.33 63.5) (xy 100.33 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9458456a-1442-4dac-9f5b-cd8f32f2750c")
+	)
+	(wire
+		(pts
+			(xy 81.28 33.02) (xy 92.71 33.02)
 		)
 		(stroke
 			(width 0)
@@ -830,7 +975,17 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 60.96) (xy 100.33 67.31)
+			(xy 105.41 38.1) (xy 105.41 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a511a815-c1bf-4e99-9f40-07673f9ad427")
+	)
+	(wire
+		(pts
+			(xy 100.33 44.45) (xy 100.33 50.8)
 		)
 		(stroke
 			(width 0)
@@ -840,7 +995,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 85.09) (xy 100.33 77.47)
+			(xy 100.33 68.58) (xy 100.33 63.5)
 		)
 		(stroke
 			(width 0)
@@ -850,7 +1005,27 @@
 	)
 	(wire
 		(pts
-			(xy 58.42 85.09) (xy 100.33 85.09)
+			(xy 102.87 39.37) (xy 105.41 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bb88da38-e672-4141-8ffd-aa1ee1c27a7a")
+	)
+	(wire
+		(pts
+			(xy 102.87 60.96) (xy 102.87 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d0830220-144c-4ef8-91fd-4168482bbc4e")
+	)
+	(wire
+		(pts
+			(xy 58.42 68.58) (xy 100.33 68.58)
 		)
 		(stroke
 			(width 0)
@@ -860,7 +1035,7 @@
 	)
 	(wire
 		(pts
-			(xy 62.23 53.34) (xy 62.23 59.69)
+			(xy 62.23 36.83) (xy 62.23 43.18)
 		)
 		(stroke
 			(width 0)
@@ -870,7 +1045,17 @@
 	)
 	(wire
 		(pts
-			(xy 62.23 38.1) (xy 100.33 38.1)
+			(xy 100.33 39.37) (xy 100.33 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d7668252-df57-4b80-a2be-6e573319db6c")
+	)
+	(wire
+		(pts
+			(xy 62.23 21.59) (xy 100.33 21.59)
 		)
 		(stroke
 			(width 0)
@@ -880,7 +1065,7 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 72.39) (xy 92.71 72.39)
+			(xy 81.28 55.88) (xy 92.71 55.88)
 		)
 		(stroke
 			(width 0)
@@ -888,9 +1073,19 @@
 		)
 		(uuid "ea72698f-c778-4192-ab0b-03e616d59870")
 	)
+	(wire
+		(pts
+			(xy 102.87 38.1) (xy 102.87 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ef93f4cc-0b0a-4399-9766-850f0cb07ba0")
+	)
 	(hierarchical_label "GL"
 		(shape passive)
-		(at 81.28 72.39 180)
+		(at 81.28 55.88 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -899,9 +1094,20 @@
 		)
 		(uuid "1d5e4f79-8b68-4b07-9843-e834d6b2352c")
 	)
+	(hierarchical_label "SN"
+		(shape passive)
+		(at 58.42 87.63 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1e32047c-318e-465e-952f-a928dd2a0c4c")
+	)
 	(hierarchical_label "V+"
 		(shape passive)
-		(at 57.15 38.1 180)
+		(at 57.15 21.59 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -912,7 +1118,7 @@
 	)
 	(hierarchical_label "PoleOut"
 		(shape passive)
-		(at 116.84 60.96 0)
+		(at 116.84 44.45 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -923,7 +1129,7 @@
 	)
 	(hierarchical_label "GH"
 		(shape passive)
-		(at 81.28 49.53 180)
+		(at 81.28 33.02 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -934,7 +1140,7 @@
 	)
 	(hierarchical_label "SH"
 		(shape passive)
-		(at 81.28 60.96 180)
+		(at 81.28 44.45 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -943,9 +1149,9 @@
 		)
 		(uuid "c2cbc7ae-f07d-443e-b9e6-8271b888fe44")
 	)
-	(hierarchical_label "V-"
+	(hierarchical_label "SP"
 		(shape passive)
-		(at 58.42 85.09 180)
+		(at 58.42 68.58 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -956,7 +1162,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 62.23 49.53 0)
+		(at 62.23 33.02 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -966,8 +1172,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0c40ef4d-f13d-4837-9331-c3d1eb1ce612")
-		(property "Reference" "C1"
-			(at 66.04 48.2599 0)
+		(property "Reference" "C301"
+			(at 66.04 31.7499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -978,7 +1184,7 @@
 			)
 		)
 		(property "Value" "10u"
-			(at 66.04 50.7999 0)
+			(at 66.04 34.2899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -988,8 +1194,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 63.1952 53.34 0)
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+			(at 63.1952 36.83 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1000,7 +1206,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 62.23 49.53 0)
+			(at 62.23 33.02 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1011,6 +1217,208 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 62.23 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "c9589117-d5fc-4921-9673-6f7bb3efcbf2")
+		)
+		(pin "1"
+			(uuid "e87d6e37-697b-4394-a256-870ddf8d10e8")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "C501")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "C301")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "C401")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "C801")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "C901")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "C701")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "easyeda2kicad:MS6001Y")
+		(at 99.06 55.88 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "26f4644d-8652-4cad-b725-9d002add8d34")
+		(property "Reference" "Q302"
+			(at 106.68 54.6099 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MS6001Y"
+			(at 106.68 57.1499 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:TDSON-8_L5.9-W5.2-P1.27-BL"
+			(at 99.06 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C17702010.pdf"
+			(at 99.06 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "MP(美禄科技)"
+			(at 99.06 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "MS6001Y"
+			(at 99.06 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C17702010"
+			(at 99.06 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "02bcce7a-724c-4120-8cde-50302091bb34")
+		)
+		(pin "4"
+			(uuid "42422111-a105-4946-9e00-0b26c63cb043")
+		)
+		(pin "3"
+			(uuid "19eeea44-3258-4688-b12b-5eb528a8aff8")
+		)
+		(pin "1"
+			(uuid "49dcdf75-5240-45e7-ab65-0dd86c1e6f2e")
+		)
+		(pin "5"
+			(uuid "42a08789-f41a-4e7f-85e4-19f0511e54d9")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q502")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q302")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q402")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q802")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q902")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q702")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 62.23 43.18 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3bdf45b5-04ed-4213-aa07-5af35207da0f")
+		(property "Reference" "#PWR0301"
 			(at 62.23 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -1021,300 +1429,8 @@
 				)
 			)
 		)
-		(pin "2"
-			(uuid "d90f8db8-63e9-4d51-8512-6369f2fad9da")
-		)
-		(pin "1"
-			(uuid "ee6a0820-2990-4f17-8c58-f51c37f3f380")
-		)
-		(instances
-			(project "simpleFOC Dual Motor Controller"
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "C1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "easyeda2kicad:SP60N10GDNK")
-		(at 100.33 49.53 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "31d6f925-0054-4b56-9b64-d5210754b104")
-		(property "Reference" "Q1"
-			(at 105.41 48.2599 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "SP60N10GDNK"
-			(at 105.41 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:DFN-8_L5.5-W5.2-P1.27-LS6.0-BL-EP2"
-			(at 100.33 57.15 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C22466776.pdf"
-			(at 100.33 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 100.33 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Siliup(矽普)"
-			(at 100.33 62.23 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "SP60N10GDNK"
-			(at 100.33 64.77 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC Part" "C22466776"
-			(at 100.33 67.31 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "24ab3830-50dc-4333-a09a-f98cdb1dc880")
-		)
-		(pin "2"
-			(uuid "58fb9388-f121-4cb7-b4be-8f85a680addd")
-		)
-		(pin "6"
-			(uuid "cfaffa9d-a33b-4d87-a329-55767fb11980")
-		)
-		(pin "3"
-			(uuid "0e4fefcb-5ea4-4559-af69-defd1dd22c9d")
-		)
-		(pin "4"
-			(uuid "205cc9fb-3af6-4a73-bc8d-af891c509d5e")
-		)
-		(pin "5"
-			(uuid "3d98ca31-6d8b-4a52-a4df-f5d062b675d7")
-		)
-		(instances
-			(project "simpleFOC Dual Motor Controller"
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "easyeda2kicad:SP60N10GDNK")
-		(at 100.33 72.39 0)
-		(unit 2)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "3625286c-494a-4f8e-b70e-35a6032f1534")
-		(property "Reference" "Q1"
-			(at 105.41 71.1199 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "SP60N10GDNK"
-			(at 105.41 73.6599 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:DFN-8_L5.5-W5.2-P1.27-LS6.0-BL-EP2"
-			(at 100.33 80.01 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C22466776.pdf"
-			(at 100.33 82.55 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 100.33 72.39 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Siliup(矽普)"
-			(at 100.33 85.09 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "SP60N10GDNK"
-			(at 100.33 87.63 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC Part" "C22466776"
-			(at 100.33 90.17 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "24ab3830-50dc-4333-a09a-f98cdb1dc880")
-		)
-		(pin "2"
-			(uuid "58fb9388-f121-4cb7-b4be-8f85a680addd")
-		)
-		(pin "6"
-			(uuid "cfaffa9d-a33b-4d87-a329-55767fb11980")
-		)
-		(pin "3"
-			(uuid "0e4fefcb-5ea4-4559-af69-defd1dd22c9d")
-		)
-		(pin "4"
-			(uuid "205cc9fb-3af6-4a73-bc8d-af891c509d5e")
-		)
-		(pin "5"
-			(uuid "3d98ca31-6d8b-4a52-a4df-f5d062b675d7")
-		)
-		(instances
-			(project "simpleFOC Dual Motor Controller"
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q1")
-					(unit 2)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 62.23 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "3bdf45b5-04ed-4213-aa07-5af35207da0f")
-		(property "Reference" "#PWR01"
-			(at 62.23 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Value" "GND"
-			(at 62.23 64.77 0)
+			(at 62.23 48.26 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1324,7 +1440,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 62.23 59.69 0)
+			(at 62.23 43.18 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1335,7 +1451,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 62.23 59.69 0)
+			(at 62.23 43.18 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1346,7 +1462,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 62.23 59.69 0)
+			(at 62.23 43.18 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1357,12 +1473,300 @@
 			)
 		)
 		(pin "1"
-			(uuid "6e11de9a-2780-4b2b-b63f-cbe7b7ec0a68")
+			(uuid "7cc075b7-b41d-4af2-9258-ffd7510bef8d")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "#PWR0501")
+					(unit 1)
+				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "#PWR01")
+					(reference "#PWR0301")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "#PWR0401")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "#PWR0801")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "#PWR0901")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "#PWR0701")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "easyeda2kicad:MS6001Y")
+		(at 99.06 33.02 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7b3e9981-937d-4ea0-a919-6b11a7c216a3")
+		(property "Reference" "Q301"
+			(at 106.68 31.7499 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MS6001Y"
+			(at 106.68 34.2899 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:TDSON-8_L5.9-W5.2-P1.27-BL"
+			(at 99.06 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C17702010.pdf"
+			(at 99.06 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "MP(美禄科技)"
+			(at 99.06 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "MS6001Y"
+			(at 99.06 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C17702010"
+			(at 99.06 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "cc80ec01-66f5-4d7d-9048-3927107e0c3c")
+		)
+		(pin "4"
+			(uuid "a8c26190-db06-4652-9e88-698254c73200")
+		)
+		(pin "3"
+			(uuid "22b84222-3cd5-4f32-9bb7-d358e19fd7d4")
+		)
+		(pin "1"
+			(uuid "b914560f-1d44-413d-8911-a6d0a5d68ebb")
+		)
+		(pin "5"
+			(uuid "bb805b44-7607-4201-aac5-bcbc3c746eb4")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q501")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q301")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q401")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q801")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q901")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q701")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 100.33 78.74 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "dee86f02-d3be-4867-a2ee-0c2c1c3c5b98")
+		(property "Reference" "Rsns301"
+			(at 102.87 77.4699 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "0.001"
+			(at 102.87 80.0099 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_2512_6332Metric"
+			(at 98.552 78.74 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 100.33 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 100.33 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Power" "2W"
+			(at 103.124 82.296 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(color 0 72 72 1)
+				)
+				(justify left)
+			)
+		)
+		(property "KiLib_Generator" "SMD_2terminal_chip_molded"
+			(at 100.33 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2856fce1-10f5-4d4f-b4e1-df04308113b8")
+		)
+		(pin "2"
+			(uuid "5a84b94f-e138-4bf2-9c0e-52fdc30cfa9e")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Rsns501")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Rsns301")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Rsns401")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Rsns801")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Rsns901")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Rsns701")
 					(unit 1)
 				)
 			)

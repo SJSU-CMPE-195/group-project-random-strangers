@@ -645,7 +645,7 @@
         "uuid": "0dffc378-5905-459a-b0cb-e8e514a8bbef"
       }
     ],
-    "used_designators": "C203-206,C603-606,#PWR203-207,#PWR603-607,R201-202,R301-302,R401-402,R501-502,R601-602,R701-702,R801-802,R901-902",
+    "used_designators": "H101-102",
     "variants": []
   },
   "sheets": [

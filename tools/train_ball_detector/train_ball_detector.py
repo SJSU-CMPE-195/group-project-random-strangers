@@ -13,6 +13,7 @@ import requests
 import torch
 from tqdm import tqdm
 from ultralytics import YOLO
+from pathlib import Path
 
 
 ROOT = Path("datasets/coco_person_ball_subset")
@@ -31,9 +32,6 @@ NEW_CLASS_MAP = {
 
 
 def download_file(url, dest, show_progress=True, max_retries=3, timeout=60):
-    if dest.exists():
-        print(f"[OK] {dest}")
-        return
 
     dest.parent.mkdir(parents=True, exist_ok=True)
 
@@ -64,7 +62,6 @@ def download_file(url, dest, show_progress=True, max_retries=3, timeout=60):
 
             # move temp file to final destination
             os.replace(str(temp_path), str(dest))
-            print(f"[OK] {dest}")
             return
 
         except Exception as e:
@@ -277,8 +274,8 @@ def main():
     parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--max-train", type=int, default=10000)
     parser.add_argument("--max-val", type=int, default=1000)
-    parser.add_argument("--download_workers", type=int, default=16)
-    parser.add_argument("--cpu_workers", type=int, default=8)
+    parser.add_argument("--download-workers", type=int, default=16)
+    parser.add_argument("--cpu-workers", type=int, default=8)
     parser.add_argument("--cache", default="disk", choices=["disk", "ram", "false"])
     parser.add_argument("--background-ratio", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=42)
@@ -322,16 +319,16 @@ def main():
         data=str(data_yaml),
         epochs=args.epochs,
         imgsz=args.imgsz,
-        batch=-1,
+        batch=0.8,
         device=device,
         amp=use_cuda,
         workers=args.cpu_workers,
         project="runs/person_ball",
-        name="subset_person_ball",
+        name=f"subset_person_ball_{Path(args.model).stem}",
         pretrained=True,
         patience=20,
         cache = True if args.cache == "ram" else 'disk' if args.cache == "disk" else False,
-        resume=True,
+        exist_ok=False,
     )
 
 

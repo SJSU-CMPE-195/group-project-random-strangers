@@ -1,0 +1,1 @@
+python.exe train_ball_detector.py --epochs 200 --max-train 5000 --max-val 1000 --download-workers 24 --cpu-workers 6 --cache disk --min-ball-ratio 0.5 --model yolo26s --min-det-area 256

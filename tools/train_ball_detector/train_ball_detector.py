@@ -13,12 +13,12 @@ import requests
 import torch
 from tqdm import tqdm
 from ultralytics import YOLO
-from pathlib import Path
 
 
 ROOT = Path("datasets/coco_person_ball_subset")
 RAW = ROOT / "raw"
 OUT = ROOT / "yolo"
+EVAL_LIST = Path("eval_images.txt")
 
 ANN_URL = "http://images.cocodataset.org/annotations/annotations_trainval2017.zip"
 
@@ -315,6 +315,112 @@ def convert_and_download_split(
                 pbar.update(1)
 
 
+def _benchmark_inference(model, device, imgsz, eval_images, runs=20, warmup=5):
+    for _ in range(warmup):
+        _ = model.predict(source=eval_images, imgsz=imgsz, device=device, verbose=False)
+
+    if device.startswith("cuda"):
+        torch.cuda.synchronize()
+
+    start = time.perf_counter()
+    for _ in range(runs):
+        _ = model.predict(source=eval_images, imgsz=imgsz, device=device, verbose=False)
+
+    if device.startswith("cuda"):
+        torch.cuda.synchronize()
+
+    elapsed = time.perf_counter() - start
+    return (elapsed / runs) * 1000.0
+
+
+def _select_export_sizes(model, device, target_latencies_ms, eval_images, max_size=(1080, 1920)):
+    candidates = [
+        (256, 256),
+        (320, 320),
+        (384, 384),
+        (448, 448),
+        (512, 512),
+        (640, 640),
+        (768, 768),
+        (896, 896),
+        (1024, 1024),
+        (1280, 1280),
+        (1536, 1536),
+        max_size,
+    ]
+
+    timings = []
+    for size in candidates:
+        ms = _benchmark_inference(model, device, size, eval_images)
+        print(f"[BENCH] imgsz={size[0]}x{size[1]} avg={ms:.2f}ms")
+        timings.append((size, ms))
+
+    selected = {}
+    for target_ms in target_latencies_ms:
+        eligible = [size for size, ms in timings if ms <= target_ms]
+        if eligible:
+            chosen = max(eligible, key=lambda s: s[0] * s[1])
+        else:
+            chosen = min(candidates, key=lambda s: s[0] * s[1])
+
+        selected[target_ms] = chosen
+        if chosen == max_size:
+            break
+
+    return selected
+
+
+def _load_eval_images(list_path, base_dir):
+    if not list_path.exists():
+        return []
+
+    images = []
+    for line in list_path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        path = Path(line)
+        if not path.is_absolute():
+            path = base_dir / path
+        images.append(str(path))
+
+    return images
+
+
+def _ensure_eval_images(list_path, base_dir, parser):
+    if not list_path.exists():
+        parser.error(f"Eval list missing: {list_path}")
+
+    images = _load_eval_images(list_path, base_dir)
+    if not images:
+        parser.error(f"Eval list empty: {list_path}")
+
+    for image_path in images:
+        path = Path(image_path)
+        if path.exists():
+            continue
+
+        try:
+            rel_path = path.relative_to(base_dir)
+        except ValueError:
+            parser.error(f"Eval image missing and not under {base_dir}: {path}")
+
+        parts = rel_path.parts
+        if len(parts) < 3 or parts[0] != "images":
+            parser.error(f"Eval image path must be under images/<split>: {path}")
+
+        split = parts[1]
+        filename = parts[-1]
+        url = f"http://images.cocodataset.org/{split}/{filename}"
+
+        try:
+            download_file(url, path, show_progress=False)
+        except Exception as exc:
+            parser.error(f"Failed to download eval image {filename}: {exc}")
+
+    return images
+
+
 def write_yaml():
     yaml_path = OUT / "coco_person_ball_subset.yaml"
     yaml_path.write_text(f"""
@@ -343,12 +449,16 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min-ball-ratio", type=float, default=0.35)
     parser.add_argument("--min-det-area", type=int, default=0, help="Minimum bbox area in pixels for person/ball detections in both training and validation sets. Images containing a smaller detection are skipped.")
+    parser.add_argument("--batch-size", type=float, default=24, help="Training batch size passed to YOLO.")
     args = parser.parse_args()
+
+    eval_images = _ensure_eval_images(EVAL_LIST, OUT, parser)
 
     RAW.mkdir(parents=True, exist_ok=True)
 
     ann_zip = RAW / "annotations_trainval2017.zip"
-    download_file(ANN_URL, ann_zip)
+    if not ann_zip.exists():
+        download_file(ANN_URL, ann_zip)
     unzip(ann_zip, RAW)
 
     # parallelize downloads/conversion using requested worker count
@@ -380,11 +490,20 @@ def main():
 
     model = YOLO(args.model)
 
-    model.train(
+    if args.batch_size == -1:
+        batch_size = int(args.batch_size)
+    elif 0 < args.batch_size < 1:
+        batch_size = float(args.batch_size)
+    elif args.batch_size > 1:
+        batch_size = int(args.batch_size)
+    else:
+        parser.error("--batch-size must be -1, >0 and <1, or >1")
+
+    results = model.train(
         data=str(data_yaml),
         epochs=args.epochs,
         imgsz=args.imgsz,
-        batch=24,
+        batch=batch_size,
         device=device,
         amp=use_cuda,
         workers=args.cpu_workers,
@@ -395,6 +514,42 @@ def main():
         cache = True if args.cache == "ram" else 'disk' if args.cache == "disk" else False,
         exist_ok=False,
     )
+
+    weights_dir = Path(results.save_dir) / "weights"
+    best_weights = weights_dir / "best.pt"
+    if not best_weights.exists():
+        best_weights = weights_dir / "last.pt"
+
+    export_model = YOLO(best_weights)
+    model_stem = Path(args.model).stem
+    export_root = Path("trained_models") / model_stem
+    export_root.mkdir(parents=True, exist_ok=True)
+
+    target_latencies_ms = [20, 10, 5]
+    selected_sizes = _select_export_sizes(export_model, device, target_latencies_ms, eval_images)
+
+    exported = set()
+    for target_ms in target_latencies_ms:
+        if target_ms not in selected_sizes:
+            continue
+        size = selected_sizes[target_ms]
+        if size in exported:
+            continue
+
+        export_path = export_model.export(
+            format="engine",
+            imgsz=size,
+            device=device,
+            half=use_cuda,
+            optimize=True,
+            simplify=True,
+            int8=False,
+        )
+
+        height, width = size
+        dest_path = export_root / f"{model_stem}_{width}x{height}.engine"
+        shutil.move(str(export_path), dest_path)
+        exported.add(size)
 
 
 if __name__ == "__main__":

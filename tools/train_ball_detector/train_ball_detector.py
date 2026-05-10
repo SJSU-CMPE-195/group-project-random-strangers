@@ -50,7 +50,6 @@ def download_file(url, dest, show_progress=True, max_retries=3, timeout=60):
                             unit="B",
                             unit_scale=True,
                             desc=dest.name,
-			    ascii=True,
                         ) as bar:
                             for chunk in r.iter_content(1024 * 1024):
                                 if chunk:
@@ -310,7 +309,7 @@ def convert_and_download_split(
     # use a ThreadPoolExecutor for I/O-bound downloads
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as ex:
         futures = {ex.submit(_process_item, it): it for it in items}
-        with tqdm(total=len(futures), desc=split, ascii=True,) as pbar:
+        with tqdm(total=len(futures), desc=split) as pbar:
             for fut in concurrent.futures.as_completed(futures):
                 _ = fut.result()
                 pbar.update(1)
@@ -343,7 +342,7 @@ def main():
     parser.add_argument("--background-ratio", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min-ball-ratio", type=float, default=0.35)
-    parser.add_argument("--min-det-area", type=int, default=0, help="Minimum bbox area in pixels for person/ball detections in the training set. Images containing a smaller detection are skipped.")
+    parser.add_argument("--min-det-area", type=int, default=0, help="Minimum bbox area in pixels for person/ball detections in both training and validation sets. Images containing a smaller detection are skipped.")
     args = parser.parse_args()
 
     RAW.mkdir(parents=True, exist_ok=True)
@@ -369,7 +368,7 @@ def main():
         background_ratio=args.background_ratio,
         seed=args.seed,
         min_ball_ratio=args.min_ball_ratio,
-        min_det_area=0,
+        min_det_area=args.min_det_area,
     )
 
     data_yaml = write_yaml()
@@ -385,7 +384,7 @@ def main():
         data=str(data_yaml),
         epochs=args.epochs,
         imgsz=args.imgsz,
-        batch=0.8,
+        batch=24,
         device=device,
         amp=use_cuda,
         workers=args.cpu_workers,

@@ -50,6 +50,7 @@ def download_file(url, dest, show_progress=True, max_retries=3, timeout=60):
                             unit="B",
                             unit_scale=True,
                             desc=dest.name,
+			    ascii=True,
                         ) as bar:
                             for chunk in r.iter_content(1024 * 1024):
                                 if chunk:
@@ -100,52 +101,115 @@ def coco_to_yolo_bbox(bbox, width, height):
         h / height,
     )
     
-def stratified_sample_items(labels_by_image, max_images, seed=42, min_ball_ratio=0.35):
+def _target_counts(max_images, background_ratio, min_ball_ratio):
+    """Return target counts for background, ball, and other labeled images.
+
+    The counts always sum to at most max_images. `min_ball_ratio` is interpreted
+    as the desired ball-image share of the whole exported split, not just the
+    positive subset.
+    """
+    if max_images is None:
+        return None, None, None
+
+    max_images = max(0, int(max_images))
+    background_ratio = min(max(background_ratio, 0.0), 1.0)
+    min_ball_ratio = min(max(min_ball_ratio, 0.0), 1.0)
+
+    target_background = int(round(max_images * background_ratio))
+    target_background = min(target_background, max_images)
+
+    remaining_after_background = max_images - target_background
+    target_ball = int(round(max_images * min_ball_ratio))
+    target_ball = min(target_ball, remaining_after_background)
+
+    target_other_labeled = max_images - target_background - target_ball
+    return target_background, target_ball, target_other_labeled
+
+
+def _take(items, count):
+    if count <= 0:
+        return [], items
+    return items[:count], items[count:]
+
+
+def stratified_sample_items(
+    labels_by_image,
+    background_candidates,
+    max_images,
+    seed=42,
+    background_ratio=0.05,
+    min_ball_ratio=0.35,
+):
     rng = random.Random(seed)
 
     ball_items = []
-    person_only_items = []
+    other_labeled_items = []
 
     for image_id, lines in labels_by_image.items():
         classes = {int(line.split()[0]) for line in lines}
 
-        if 1 in classes:  # ball
+        if 1 in classes:  # contains a ball, with or without a person
             ball_items.append((image_id, lines))
-        elif 0 in classes:  # person only
-            person_only_items.append((image_id, lines))
+        else:  # labeled, non-ball sample such as person-only
+            other_labeled_items.append((image_id, lines))
+
+    background_items = [(img_id, []) for img_id in background_candidates]
 
     rng.shuffle(ball_items)
-    rng.shuffle(person_only_items)
+    rng.shuffle(other_labeled_items)
+    rng.shuffle(background_items)
 
-    if not max_images:
-        return ball_items + person_only_items
+    if max_images is None:
+        selected = ball_items + other_labeled_items + background_items
+        rng.shuffle(selected)
+        return selected
 
-    target_ball = int(max_images * min_ball_ratio)
+    target_background, target_ball, target_other_labeled = _target_counts(
+        max_images,
+        background_ratio=background_ratio,
+        min_ball_ratio=min_ball_ratio,
+    )
 
-    selected_ball = ball_items[:target_ball]
-    remaining = max_images - len(selected_ball)
+    selected_background, background_left = _take(background_items, target_background)
+    selected_ball, ball_left = _take(ball_items, target_ball)
+    selected_other_labeled, other_labeled_left = _take(other_labeled_items, target_other_labeled)
 
-    selected_person = person_only_items[:remaining]
+    selected = selected_background + selected_ball + selected_other_labeled
 
-    # If not enough person-only images, fill with extra ball images.
-    if len(selected_person) < remaining:
-        extra_needed = remaining - len(selected_person)
-        selected_person += ball_items[target_ball:target_ball + extra_needed]
+    # Fill shortages from remaining candidates without exceeding max_images. This
+    # keeps downloading replacement images when min-det-area or class shortages
+    # remove candidates from one bucket.
+    shortfall = max_images - len(selected)
+    if shortfall > 0:
+        filler_pool = other_labeled_left + ball_left + background_left
+        rng.shuffle(filler_pool)
+        selected.extend(filler_pool[:shortfall])
 
-    selected = selected_ball + selected_person
+    selected = selected[:max_images]
     rng.shuffle(selected)
 
+    selected_background_count = sum(1 for _id, lines in selected if not lines)
+    selected_ball_count = sum(1 for _id, lines in selected if any(l.split()[0] == "1" for l in lines))
+    selected_other_labeled_count = len(selected) - selected_background_count - selected_ball_count
+
     print(
-        f"[SAMPLE] requested={max_images}, "
-        f"selected={len(selected)}, "
-        f"ball_images={len(selected_ball)}, "
-        f"person_only_images={len(selected_person)}"
+        f"[SAMPLE] requested={max_images}, selected={len(selected)}, "
+        f"background={selected_background_count}/{target_background}, "
+        f"ball={selected_ball_count}/{target_ball}, "
+        f"other_labeled={selected_other_labeled_count}/{target_other_labeled}"
     )
 
     return selected
 
-
-def convert_and_download_split(split, max_images=None, workers=8, background_ratio=0.05, seed=42, min_ball_ratio=0.35):
+def convert_and_download_split(
+    split,
+    max_images=None,
+    workers=8,
+    background_ratio=0.05,
+    seed=42,
+    min_ball_ratio=0.35,
+    min_det_area=0,
+):
     ann_path = RAW / "annotations" / f"instances_{split}.json"
 
     out_img_dir = OUT / "images" / split
@@ -158,6 +222,8 @@ def convert_and_download_split(split, max_images=None, workers=8, background_rat
 
     images = {img["id"]: img for img in data["images"]}
     labels_by_image = {}
+    rejected_small_det_image_ids = set()
+    min_det_area = max(0, int(min_det_area or 0))
 
     for ann in data["annotations"]:
         cat_id = ann["category_id"]
@@ -172,49 +238,46 @@ def convert_and_download_split(split, max_images=None, workers=8, background_rat
         if w <= 1 or h <= 1:
             continue
 
-        img = images[ann["image_id"]]
+        image_id = ann["image_id"]
+        if min_det_area and (w * h) < min_det_area:
+            rejected_small_det_image_ids.add(image_id)
+            continue
+
+        img = images[image_id]
         cls = NEW_CLASS_MAP[cat_id]
         box = coco_to_yolo_bbox(ann["bbox"], img["width"], img["height"])
 
         line = f"{cls} " + " ".join(f"{v:.6f}" for v in box)
-        labels_by_image.setdefault(ann["image_id"], []).append(line)
+        labels_by_image.setdefault(image_id, []).append(line)
 
-    positive_items = stratified_sample_items(
-            labels_by_image,
-            max_images=max_images,
-            seed=seed,
-            min_ball_ratio=min_ball_ratio,
-        )
+    if rejected_small_det_image_ids:
+        # Drop the whole image if any person/ball detection in it is too small.
+        for image_id in rejected_small_det_image_ids:
+            labels_by_image.pop(image_id, None)
 
-    # Add a small proportion of true background images (no person/ball labels).
-    # Keep the final ratio close to `background_ratio` of the whole split export.
     all_image_ids = set(images.keys())
-    positive_image_ids = set(labels_by_image.keys())
-    background_candidates = list(all_image_ids - positive_image_ids)
+    labeled_image_ids = set(labels_by_image.keys())
+    background_candidates = list(all_image_ids - labeled_image_ids - rejected_small_det_image_ids)
 
-    rng = random.Random(seed)
-    rng.shuffle(background_candidates)
+    items = stratified_sample_items(
+        labels_by_image,
+        background_candidates,
+        max_images=max_images,
+        seed=seed,
+        background_ratio=background_ratio,
+        min_ball_ratio=min_ball_ratio,
+    )
 
-    if background_ratio <= 0:
-        background_count = 0
-    elif background_ratio >= 1:
-        background_count = len(background_candidates)
-    else:
-        # Solve for backgrounds so that backgrounds/(positives+backgrounds) ~= ratio.
-        background_count = int(round(len(positive_items) * background_ratio / (1 - background_ratio)))
-
-    background_count = min(background_count, len(background_candidates))
-    background_items = [(img_id, []) for img_id in background_candidates[:background_count]]
-
-    items = positive_items + background_items
-
-    labeled_count = len(positive_items)
-    ball_count = sum(1 for _id, lines in positive_items if any(l.split()[0] == "1" for l in lines))
-    person_count = sum(1 for _id, lines in positive_items if any(l.split()[0] == "0" for l in lines))
+    background_count = sum(1 for _id, lines in items if not lines)
+    labeled_count = len(items) - background_count
+    ball_count = sum(1 for _id, lines in items if any(l.split()[0] == "1" for l in lines))
+    person_count = sum(1 for _id, lines in items if any(l.split()[0] == "0" for l in lines))
 
     print(
         f"[{split}] Downloading/converting {len(items)} images "
-        f"({labeled_count} labeled: {ball_count} with ball, {person_count} with person; {len(background_items)} background, workers={workers})"
+        f"({labeled_count} labeled: {ball_count} with ball, {person_count} with person; "
+        f"{background_count} background, rejected_small_det={len(rejected_small_det_image_ids)}, "
+        f"min_det_area={min_det_area}, workers={workers})"
     )
 
     def _process_item(item):
@@ -247,7 +310,7 @@ def convert_and_download_split(split, max_images=None, workers=8, background_rat
     # use a ThreadPoolExecutor for I/O-bound downloads
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as ex:
         futures = {ex.submit(_process_item, it): it for it in items}
-        with tqdm(total=len(futures), desc=split) as pbar:
+        with tqdm(total=len(futures), desc=split, ascii=True,) as pbar:
             for fut in concurrent.futures.as_completed(futures):
                 _ = fut.result()
                 pbar.update(1)
@@ -280,6 +343,7 @@ def main():
     parser.add_argument("--background-ratio", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min-ball-ratio", type=float, default=0.35)
+    parser.add_argument("--min-det-area", type=int, default=0, help="Minimum bbox area in pixels for person/ball detections in the training set. Images containing a smaller detection are skipped.")
     args = parser.parse_args()
 
     RAW.mkdir(parents=True, exist_ok=True)
@@ -296,6 +360,7 @@ def main():
         background_ratio=args.background_ratio,
         seed=args.seed,
         min_ball_ratio=args.min_ball_ratio,
+        min_det_area=args.min_det_area,
     )
     convert_and_download_split(
         "val2017",
@@ -304,6 +369,7 @@ def main():
         background_ratio=args.background_ratio,
         seed=args.seed,
         min_ball_ratio=args.min_ball_ratio,
+        min_det_area=0,
     )
 
     data_yaml = write_yaml()

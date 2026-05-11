@@ -444,7 +444,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:MS6001Y"
+		(symbol "easyeda2kicad:AGM6014AP"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -460,7 +460,7 @@
 					)
 				)
 			)
-			(property "Value" "MS6001Y"
+			(property "Value" "AGM6014AP"
 				(at 0 -10.16 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -470,7 +470,7 @@
 					)
 				)
 			)
-			(property "Footprint" "easyeda2kicad:TDSON-8_L5.9-W5.2-P1.27-BL"
+			(property "Footprint" "easyeda2kicad:PDFN-8_L3.1-W3.0-P0.65-LS3.3-BL"
 				(at 0 -12.7 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -481,7 +481,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C17702010.pdf"
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C6719405.pdf"
 				(at 0 -15.24 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -503,7 +503,7 @@
 					)
 				)
 			)
-			(property "Manufacturer" "MP(美禄科技)"
+			(property "Manufacturer" "AGMSEMI(芯控源)"
 				(at 0 -17.78 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -514,7 +514,7 @@
 					)
 				)
 			)
-			(property "MPN" "MS6001Y"
+			(property "MPN" "AGM6014AP"
 				(at 0 -20.32 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -525,7 +525,7 @@
 					)
 				)
 			)
-			(property "LCSC Part" "C17702010"
+			(property "LCSC Part" "C6719405"
 				(at 0 -22.86 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -547,7 +547,7 @@
 					)
 				)
 			)
-			(symbol "MS6001Y_0_1"
+			(symbol "AGM6014AP_0_1"
 				(polyline
 					(pts
 						(xy -3.81 0) (xy -1.78 0)
@@ -586,7 +586,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 1.78) (xy 1.27 1.78) (xy 1.27 2.54) (xy 3.81 2.54) (xy 3.81 0.51)
+						(xy -1.27 1.78) (xy 1.27 1.78) (xy 1.27 2.54) (xy 3.81 2.54) (xy 3.81 2.54) (xy 3.81 0.51)
 					)
 					(stroke
 						(width 0)
@@ -610,7 +610,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 0) (xy 1.27 0) (xy 1.27 -2.54) (xy 6.35 -2.54) (xy 3.81 -2.54) (xy 3.81 -0.76)
+						(xy -1.27 0) (xy 1.27 0) (xy 1.27 -2.54) (xy 3.81 -2.54) (xy 6.35 -2.54) (xy 3.81 -2.54) (xy 3.81 0)
 					)
 					(stroke
 						(width 0)
@@ -1512,150 +1512,6 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:MS6001Y")
-		(at 99.06 55.88 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "26f4644d-8652-4cad-b725-9d002add8d34")
-		(property "Reference" "Q302"
-			(at 106.68 54.6099 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MS6001Y"
-			(at 106.68 57.1499 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:TDSON-8_L5.9-W5.2-P1.27-BL"
-			(at 99.06 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C17702010.pdf"
-			(at 99.06 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 99.06 55.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "MP(美禄科技)"
-			(at 99.06 73.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "MS6001Y"
-			(at 99.06 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC Part" "C17702010"
-			(at 99.06 78.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "02bcce7a-724c-4120-8cde-50302091bb34")
-		)
-		(pin "4"
-			(uuid "42422111-a105-4946-9e00-0b26c63cb043")
-		)
-		(pin "3"
-			(uuid "19eeea44-3258-4688-b12b-5eb528a8aff8")
-		)
-		(pin "1"
-			(uuid "49dcdf75-5240-45e7-ab65-0dd86c1e6f2e")
-		)
-		(pin "5"
-			(uuid "42a08789-f41a-4e7f-85e4-19f0511e54d9")
-		)
-		(instances
-			(project "simpleFOC Dual Motor Controller"
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q502")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q302")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q402")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q802")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q902")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q702")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 62.23 43.18 0)
 		(unit 1)
@@ -1857,7 +1713,7 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:MS6001Y")
+		(lib_id "easyeda2kicad:AGM6014AP")
 		(at 99.06 33.02 0)
 		(unit 1)
 		(body_style 1)
@@ -1867,7 +1723,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "7b3e9981-937d-4ea0-a919-6b11a7c216a3")
+		(uuid "66c45808-5244-4ed4-8549-952895303ac0")
 		(property "Reference" "Q301"
 			(at 106.68 31.7499 0)
 			(show_name no)
@@ -1879,7 +1735,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "MS6001Y"
+		(property "Value" "AGM6014AP"
 			(at 106.68 34.2899 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1890,7 +1746,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "easyeda2kicad:TDSON-8_L5.9-W5.2-P1.27-BL"
+		(property "Footprint" "easyeda2kicad:PDFN-8_L3.1-W3.0-P0.65-LS3.3-BL"
 			(at 99.06 45.72 0)
 			(hide yes)
 			(show_name no)
@@ -1901,7 +1757,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C17702010.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C6719405.pdf"
 			(at 99.06 48.26 0)
 			(hide yes)
 			(show_name no)
@@ -1923,7 +1779,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "MP(美禄科技)"
+		(property "Manufacturer" "AGMSEMI(芯控源)"
 			(at 99.06 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -1934,7 +1790,7 @@
 				)
 			)
 		)
-		(property "MPN" "MS6001Y"
+		(property "MPN" "AGM6014AP"
 			(at 99.06 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -1945,7 +1801,7 @@
 				)
 			)
 		)
-		(property "LCSC Part" "C17702010"
+		(property "LCSC Part" "C6719405"
 			(at 99.06 55.88 0)
 			(hide yes)
 			(show_name no)
@@ -1957,19 +1813,19 @@
 			)
 		)
 		(pin "2"
-			(uuid "cc80ec01-66f5-4d7d-9048-3927107e0c3c")
+			(uuid "b3fac20b-3a53-4596-b40c-e354d20ade15")
 		)
 		(pin "4"
-			(uuid "a8c26190-db06-4652-9e88-698254c73200")
-		)
-		(pin "3"
-			(uuid "22b84222-3cd5-4f32-9bb7-d358e19fd7d4")
-		)
-		(pin "1"
-			(uuid "b914560f-1d44-413d-8911-a6d0a5d68ebb")
+			(uuid "47a6b065-9f20-4bfc-a0f4-1325969cc447")
 		)
 		(pin "5"
-			(uuid "bb805b44-7607-4201-aac5-bcbc3c746eb4")
+			(uuid "b0362458-b37d-47c5-b407-7cad45704c84")
+		)
+		(pin "1"
+			(uuid "d670f223-d464-4a1d-818f-7c88c2855c90")
+		)
+		(pin "3"
+			(uuid "900847fc-118a-40a6-ac7b-d815aaf0c3f5")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -1995,6 +1851,150 @@
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
 					(reference "Q701")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "easyeda2kicad:AGM6014AP")
+		(at 99.06 55.88 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "81332c5b-e3dd-4889-9753-9cb7f131b161")
+		(property "Reference" "Q303"
+			(at 106.68 54.6099 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AGM6014AP"
+			(at 106.68 57.1499 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:PDFN-8_L3.1-W3.0-P0.65-LS3.3-BL"
+			(at 99.06 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C6719405.pdf"
+			(at 99.06 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "AGMSEMI(芯控源)"
+			(at 99.06 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "AGM6014AP"
+			(at 99.06 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C6719405"
+			(at 99.06 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "b6671903-0c9e-462a-afc8-296ac4dcf89f")
+		)
+		(pin "4"
+			(uuid "e7eb035d-b840-40a5-b393-5f0cad8be38c")
+		)
+		(pin "5"
+			(uuid "ba1da4d9-7e31-4c17-b8e3-08785c469837")
+		)
+		(pin "1"
+			(uuid "a68d5727-080d-4999-a3a0-d49fc26d8dba")
+		)
+		(pin "3"
+			(uuid "846a9baf-7fe1-4c1c-8fde-07833d28322d")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q503")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q303")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q403")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q803")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q903")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q703")
 					(unit 1)
 				)
 			)

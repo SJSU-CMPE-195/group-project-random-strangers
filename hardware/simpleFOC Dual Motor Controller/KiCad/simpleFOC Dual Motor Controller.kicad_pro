@@ -645,7 +645,7 @@
         "uuid": "0dffc378-5905-459a-b0cb-e8e514a8bbef"
       }
     ],
-    "used_designators": "H101-102",
+    "used_designators": "NT201-203,NT601-603,H101-102,CN201,CN601,Q301,Q303,Q401,Q403,Q501,Q503,Q701,Q703,Q801,Q803,Q901,Q903,#PWR109,#PWR202,#PWR208-210,#PWR602,#PWR608-610,U102,J101",
     "variants": []
   },
   "sheets": [

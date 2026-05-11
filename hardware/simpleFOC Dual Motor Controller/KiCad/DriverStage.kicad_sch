@@ -5,228 +5,6 @@
 	(uuid "4d8c8610-1f54-4873-8545-e8429efe27c6")
 	(paper "A4")
 	(lib_symbols
-		(symbol "Connector:Conn_01x03_Pin"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "J"
-				(at 0 5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "Conn_01x03_Pin"
-				(at 0 -5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "Generic connector, single row, 01x03, script generated"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "connector"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "Connector*:*_1x??_*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "Conn_01x03_Pin_1_1"
-				(rectangle
-					(start 0.8636 2.667)
-					(end 0 2.413)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start 0.8636 0.127)
-					(end 0 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start 0.8636 -2.413)
-					(end 0 -2.667)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 2.54) (xy 0.8636 2.54)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy 0.8636 0)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -2.54) (xy 0.8636 -2.54)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at 5.08 2.54 180)
-					(length 3.81)
-					(name "Pin_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 0 180)
-					(length 3.81)
-					(name "Pin_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 -2.54 180)
-					(length 3.81)
-					(name "Pin_3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -521,6 +299,148 @@
 					(at 0 -2.54 90)
 					(length 2.032)
 					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:NetTie_2"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "NT"
+				(at 0 1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "NetTie_2"
+				(at 0 -1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Net tie, 2 pins"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "net tie short"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Net*Tie*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "NetTie_2_0_1"
+				(polyline
+					(pts
+						(xy -1.27 0) (xy 1.27 0)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "NetTie_2_1_1"
+				(pin passive line
+					(at -2.54 0 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 0 180)
+					(length 2.54)
+					(name "2"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1535,6 +1455,167 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "easyeda2kicad:MR60-F"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "CN"
+				(at 0 7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MR60-F"
+				(at 0 -7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "easyeda2kicad:CONN-TH_3P-P5.50_MR60-F"
+				(at 0 -10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C9900023305.pdf"
+				(at 0 -12.7 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "MPN" "MR60-F"
+				(at 0 -15.24 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC Part" "C9900023305"
+				(at 0 -17.78 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "MR60-F_0_1"
+				(rectangle
+					(start -1.27 5.08)
+					(end 3.81 -5.08)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(circle
+					(center 0 3.81)
+					(radius 0.38)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin unspecified line
+					(at -3.81 2.54 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -3.81 -2.54 0)
+					(length 2.54)
+					(name "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "power:GND"
 			(power global)
 			(pin_numbers
@@ -1801,10 +1882,10 @@
 		(uuid "f79c8ad5-2262-40f6-bfac-a111e48f9c19")
 	)
 	(junction
-		(at 152.4 123.19)
+		(at 151.13 123.19)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "0f4222b8-2d2f-4949-900e-10078366db72")
+		(uuid "05781bb4-8049-4ba5-8aa9-5268daedc170")
 	)
 	(junction
 		(at 121.92 62.23)
@@ -1813,10 +1894,10 @@
 		(uuid "23215cb4-bb3a-4698-bacd-c499ee99c08b")
 	)
 	(junction
-		(at 152.4 82.55)
+		(at 151.13 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "50fd942e-9c72-4077-946a-e371d76b9884")
+		(uuid "4253fa66-2d9b-4cc0-a684-ffd29b435c45")
 	)
 	(junction
 		(at 198.12 92.71)
@@ -1829,6 +1910,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "66708241-d82a-46a7-ac88-c52a03126bde")
+	)
+	(junction
+		(at 151.13 82.55)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7786bd5f-a017-49a4-b732-46acf14c73dc")
 	)
 	(junction
 		(at 198.12 72.39)
@@ -1878,22 +1965,6 @@
 		(color 0 0 0 0)
 		(uuid "e6d9c548-4f64-47a8-b335-0831f8e880fb")
 	)
-	(junction
-		(at 152.4 102.87)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f61de09b-180c-41ba-841e-cdacc004c5df")
-	)
-	(wire
-		(pts
-			(xy 115.57 82.55) (xy 152.4 82.55)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "080d49c1-d25f-427c-9233-10ebad585fc3")
-	)
 	(wire
 		(pts
 			(xy 38.1 132.08) (xy 44.45 132.08)
@@ -1936,13 +2007,13 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 102.87) (xy 152.4 102.87)
+			(xy 115.57 102.87) (xy 137.16 102.87)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "1ba42460-78f7-4fae-a47d-3b218ce8becd")
+		(uuid "1d2ac9ae-6a6c-4534-8f2b-f788b88d1cbc")
 	)
 	(wire
 		(pts
@@ -1966,6 +2037,16 @@
 	)
 	(wire
 		(pts
+			(xy 151.13 102.87) (xy 160.02 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "232c15a0-3e0f-4d0f-ba23-346d156392f0")
+	)
+	(wire
+		(pts
 			(xy 115.57 113.03) (xy 160.02 113.03)
 		)
 		(stroke
@@ -1983,16 +2064,6 @@
 			(type default)
 		)
 		(uuid "31da00e4-726e-4937-8af8-04405111d33e")
-	)
-	(wire
-		(pts
-			(xy 152.4 123.19) (xy 152.4 134.62)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "393a853c-d38a-4a01-a64e-7f102834719d")
 	)
 	(wire
 		(pts
@@ -2023,16 +2094,6 @@
 			(type default)
 		)
 		(uuid "3f360875-da81-469f-a3d4-8d31a8d18b40")
-	)
-	(wire
-		(pts
-			(xy 152.4 123.19) (xy 160.02 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "439031f2-09ce-4c37-a3c2-3e0dda7508e6")
 	)
 	(wire
 		(pts
@@ -2146,6 +2207,16 @@
 	)
 	(wire
 		(pts
+			(xy 151.13 123.19) (xy 160.02 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5ab44daa-8e9e-4fa1-a4b4-efcc36cc8667")
+	)
+	(wire
+		(pts
 			(xy 115.57 57.15) (xy 121.92 57.15)
 		)
 		(stroke
@@ -2216,6 +2287,16 @@
 	)
 	(wire
 		(pts
+			(xy 142.24 82.55) (xy 151.13 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "706456cb-5d06-4828-9041-d243864b4048")
+	)
+	(wire
+		(pts
 			(xy 193.04 92.71) (xy 198.12 92.71)
 		)
 		(stroke
@@ -2246,26 +2327,6 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 82.55) (xy 160.02 82.55)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "81bb8bf1-0ead-47ab-ae56-9b4f5c40d473")
-	)
-	(wire
-		(pts
-			(xy 152.4 102.87) (xy 152.4 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "81be7d63-b36f-4616-b52f-5ca3d8dd0b1d")
-	)
-	(wire
-		(pts
 			(xy 91.44 132.08) (xy 91.44 143.51)
 		)
 		(stroke
@@ -2283,6 +2344,16 @@
 			(type default)
 		)
 		(uuid "8e01c7fa-0d66-473b-a717-e7e71b26a27c")
+	)
+	(wire
+		(pts
+			(xy 151.13 82.55) (xy 160.02 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8f5e6fbf-92f5-47b3-88f8-d0b79a87dd4e")
 	)
 	(wire
 		(pts
@@ -2336,16 +2407,6 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 123.19) (xy 152.4 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "aa10ea9f-fd05-4995-8038-f930ad7eb5c3")
-	)
-	(wire
-		(pts
 			(xy 72.39 132.08) (xy 72.39 134.62)
 		)
 		(stroke
@@ -2373,6 +2434,26 @@
 			(type default)
 		)
 		(uuid "affddbda-2843-4c82-ad95-84bcd0149502")
+	)
+	(wire
+		(pts
+			(xy 115.57 82.55) (xy 137.16 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b528c975-5b92-4d1b-88b3-c25be23a5819")
+	)
+	(wire
+		(pts
+			(xy 115.57 123.19) (xy 137.16 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b6392f64-f73c-4bc9-a32e-6392f311ba50")
 	)
 	(wire
 		(pts
@@ -2413,6 +2494,16 @@
 			(type default)
 		)
 		(uuid "c68351a0-d58a-4924-a36c-774f0d3a0570")
+	)
+	(wire
+		(pts
+			(xy 142.24 123.19) (xy 151.13 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cbc48f78-50b4-4ff2-bd82-e506da2dafc5")
 	)
 	(wire
 		(pts
@@ -2466,13 +2557,13 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 102.87) (xy 160.02 102.87)
+			(xy 142.24 102.87) (xy 151.13 102.87)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "ec263b29-269a-439e-b269-6316a2432a61")
+		(uuid "ea56b497-200d-4a9a-8aeb-93b67f5fcccd")
 	)
 	(wire
 		(pts
@@ -2483,16 +2574,6 @@
 			(type default)
 		)
 		(uuid "eeb3f431-256c-4d77-a7a2-c7eeae7e5e5e")
-	)
-	(wire
-		(pts
-			(xy 152.4 82.55) (xy 152.4 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ef21429e-b325-4c52-928c-ff6e66b6fd84")
 	)
 	(wire
 		(pts
@@ -2668,6 +2749,87 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 151.13 82.55 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "0deec0f5-e0f3-4aa9-a617-ec103e7b22b8")
+		(property "Reference" "#PWR0202"
+			(at 151.13 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 151.13 86.36 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 151.13 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 151.13 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 151.13 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "c9590f69-ae86-4843-a204-6734a02f01ae")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "#PWR0202")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
+					(reference "#PWR0602")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C_Small")
 		(at 101.6 140.97 90)
 		(unit 1)
@@ -2746,6 +2908,87 @@
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
 					(reference "C603")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 151.13 123.19 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "1347fc6d-8b9b-4b7b-94dd-494636290fb6")
+		(property "Reference" "#PWR0208"
+			(at 151.13 129.54 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 151.13 127 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 151.13 123.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 151.13 123.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 151.13 123.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2068436a-9867-49eb-a5f5-e666ae574df7")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "#PWR0208")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
+					(reference "#PWR0608")
 					(unit 1)
 				)
 			)
@@ -2834,97 +3077,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Conn_01x03_Pin")
-		(at 234.95 97.79 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "21bf0e00-4b21-4531-9c38-597f8c56dd6d")
-		(property "Reference" "J201"
-			(at 236.22 96.5199 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "Conn_01x03_Pin"
-			(at 236.22 99.0599 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 234.95 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 234.95 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x03, script generated"
-			(at 234.95 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "3"
-			(uuid "c61c610b-b8ed-4568-9367-ed36d64b0753")
-		)
-		(pin "1"
-			(uuid "955bfaeb-14f9-4852-ab72-9e6385c53528")
-		)
-		(pin "2"
-			(uuid "0df561d3-7bc5-454f-bb9f-40c98c846524")
-		)
-		(instances
-			(project "simpleFOC Dual Motor Controller"
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
-					(reference "J201")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "J601")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
-		(at 152.4 134.62 0)
+		(at 151.13 102.87 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2932,10 +3086,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "3b83f9cf-e98b-4c53-9234-78ce035539eb")
-		(property "Reference" "#PWR0202"
-			(at 152.4 140.97 0)
+		(uuid "419f897a-3382-4171-b7d5-67a385ac48a2")
+		(property "Reference" "#PWR0209"
+			(at 151.13 109.22 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2946,7 +3099,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 152.4 139.7 0)
+			(at 151.13 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2956,7 +3109,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 152.4 134.62 0)
+			(at 151.13 102.87 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2967,7 +3120,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 152.4 134.62 0)
+			(at 151.13 102.87 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2978,7 +3131,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 152.4 134.62 0)
+			(at 151.13 102.87 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2989,16 +3142,16 @@
 			)
 		)
 		(pin "1"
-			(uuid "2023c64e-7771-4938-8a61-a9dfc28fd879")
+			(uuid "2795deb4-547c-43ee-83fa-862c69ee1302")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
-					(reference "#PWR0202")
+					(reference "#PWR0209")
 					(unit 1)
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0602")
+					(reference "#PWR0609")
 					(unit 1)
 				)
 			)
@@ -3081,6 +3234,94 @@
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
 					(reference "#PWR0606")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:NetTie_2")
+		(at 139.7 82.55 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5ff21938-b7d3-4187-8eab-1d366ce25c85")
+		(property "Reference" "NT201"
+			(at 140.9701 83.82 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "NetTie_2"
+			(at 138.4301 83.82 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "CustomNetTie:NetTie0.127mm"
+			(at 139.7 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Net tie, 2 pins"
+			(at 139.7 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "c75e000d-5e9e-442e-8326-c3971d2da92f")
+		)
+		(pin "2"
+			(uuid "f3ea2246-5bcc-4a1d-9758-40967fe28ca4")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "NT201")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
+					(reference "NT601")
 					(unit 1)
 				)
 			)
@@ -3594,6 +3835,94 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:NetTie_2")
+		(at 139.7 123.19 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9d17aafb-e369-4f97-ab79-911dbaeeb67d")
+		(property "Reference" "NT203"
+			(at 140.9701 124.46 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "NetTie_2"
+			(at 138.4301 124.46 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "CustomNetTie:NetTie0.127mm"
+			(at 139.7 123.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 123.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Net tie, 2 pins"
+			(at 139.7 123.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "3b2ca2c5-bd9a-4f1f-9863-189286cdf474")
+		)
+		(pin "2"
+			(uuid "48115877-6781-4379-922e-82f29a4a280e")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "NT203")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
+					(reference "NT603")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GNDA")
 		(at 133.35 62.23 0)
 		(unit 1)
@@ -3669,6 +3998,205 @@
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
 					(reference "#PWR0604")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "easyeda2kicad:MR60-F")
+		(at 233.68 97.79 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bb301dff-64e6-4894-bde1-f99759d31039")
+		(property "Reference" "CN201"
+			(at 238.76 96.5199 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MR60-F"
+			(at 238.76 99.0599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:CONN-TH_3P-P5.50_MR60-F"
+			(at 233.68 107.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C9900023305.pdf"
+			(at 233.68 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 233.68 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "MR60-F"
+			(at 233.68 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C9900023305"
+			(at 233.68 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "3e945249-e887-4dbb-bd21-d14be4e9225d")
+		)
+		(pin "2"
+			(uuid "5dd3a744-edf0-4415-bee3-fc94eee3f71c")
+		)
+		(pin "3"
+			(uuid "c9af49f8-5d76-4822-a75f-bbcb76be9cb3")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "CN201")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
+					(reference "CN601")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:NetTie_2")
+		(at 139.7 102.87 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "cc255cb5-4049-4156-8e35-e4eedcf95373")
+		(property "Reference" "NT202"
+			(at 140.9701 104.14 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "NetTie_2"
+			(at 138.4301 104.14 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "CustomNetTie:NetTie0.127mm"
+			(at 139.7 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Net tie, 2 pins"
+			(at 139.7 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "66f891e7-c710-48e8-9b99-75e14e9583a6")
+		)
+		(pin "2"
+			(uuid "59540344-3c4a-43dd-9954-4fc443246eab")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "NT202")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
+					(reference "NT602")
 					(unit 1)
 				)
 			)

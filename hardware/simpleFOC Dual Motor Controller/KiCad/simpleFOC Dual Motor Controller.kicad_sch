@@ -5,6 +5,280 @@
 	(uuid "0dffc378-5905-459a-b0cb-e8e514a8bbef")
 	(paper "A4")
 	(lib_symbols
+		(symbol "Connector_Generic:Conn_02x03_Counter_Clockwise"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 1.27 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_02x03_Counter_Clockwise"
+				(at 1.27 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, double row, 02x03, counter clockwise pin numbering scheme (similar to DIP package numbering), script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_2x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_02x03_Counter_Clockwise_1_1"
+				(rectangle
+					(start -1.27 3.81)
+					(end 3.81 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 3.81 2.667)
+					(end 2.54 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 3.81 0.127)
+					(end 2.54 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 3.81 -2.413)
+					(end 2.54 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -2.54 180)
+					(length 3.81)
+					(name "Pin_4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 0 180)
+					(length 3.81)
+					(name "Pin_5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 2.54 180)
+					(length 3.81)
+					(name "Pin_6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:C_Polarized_Small"
 			(pin_numbers
 				(hide yes)
@@ -1869,167 +2143,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:MR60-F"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "CN"
-				(at 0 7.62 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "MR60-F"
-				(at 0 -7.62 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "easyeda2kicad:CONN-TH_3P-P5.50_MR60-F"
-				(at 0 -10.16 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C9900023305.pdf"
-				(at 0 -12.7 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "MPN" "MR60-F"
-				(at 0 -15.24 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "LCSC Part" "C9900023305"
-				(at 0 -17.78 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "MR60-F_0_1"
-				(rectangle
-					(start -1.27 5.08)
-					(end 3.81 -5.08)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(circle
-					(center 0 3.81)
-					(radius 0.38)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin unspecified line
-					(at -3.81 2.54 0)
-					(length 2.54)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin unspecified line
-					(at -3.81 0 0)
-					(length 2.54)
-					(name "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin unspecified line
-					(at -3.81 -2.54 0)
-					(length 2.54)
-					(name "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "easyeda2kicad:SMF5.0A_C19077497"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -2228,6 +2341,171 @@
 					(at 5.08 0 180)
 					(length 2.54)
 					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "easyeda2kicad:XT60H-M"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at 0 6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "XT60H-M"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "easyeda2kicad:CONN-TH_XT60H-M"
+				(at 0 -8.89 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C5334533.pdf"
+				(at 0 -11.43 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "AMASS(艾迈斯)"
+				(at 0 -13.97 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "MPN" "XT60H-M"
+				(at 0 -16.51 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC Part" "C5334533"
+				(at 0 -19.05 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "plug"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "XT60H-M_0_1"
+				(rectangle
+					(start -1.27 3.81)
+					(end 3.81 -3.81)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(circle
+					(center 0 2.54)
+					(radius 0.38)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin unspecified line
+					(at -3.81 1.27 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -3.81 -1.27 0)
+					(length 2.54)
+					(name "2"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2503,7 +2781,7 @@
 	(text_box "Bulk Capacitance"
 		(exclude_from_sim no)
 		(at 85.344 18.542 0)
-		(size 20.574 39.878)
+		(size 20.574 43.942)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
@@ -2520,10 +2798,10 @@
 		)
 		(uuid "5787fc7f-798e-48f7-9827-9dae2007d5fd")
 	)
-	(text_box "Input Power"
+	(text_box "High Voltage Power"
 		(exclude_from_sim no)
 		(at 25.908 18.542 0)
-		(size 29.718 24.892)
+		(size 29.718 22.606)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
@@ -2543,7 +2821,7 @@
 	(text_box "Protection"
 		(exclude_from_sim no)
 		(at 55.626 18.542 0)
-		(size 29.718 39.878)
+		(size 29.718 49.784)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
@@ -2559,6 +2837,26 @@
 			(justify left top)
 		)
 		(uuid "914b01ab-a676-42cc-ab06-c8f86b0ab42b")
+	)
+	(text_box "Low Voltage"
+		(exclude_from_sim no)
+		(at 25.908 41.148 0)
+		(size 29.718 18.288)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "b37a777b-ab3e-499e-8a52-c1af53532851")
 	)
 	(junction
 		(at 229.87 72.39)
@@ -2621,6 +2919,18 @@
 		(uuid "9067d111-2816-4a87-9016-38d75bde3937")
 	)
 	(junction
+		(at 59.69 48.26)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "962e103c-db8c-4284-adc8-244a78013759")
+	)
+	(junction
+		(at 90.17 48.26)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9ab3347c-2f51-432c-9703-dbfa1d3f6ffc")
+	)
+	(junction
 		(at 148.59 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2631,18 +2941,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b1384c10-ad71-43a2-8f7b-d49721c8a53c")
-	)
-	(junction
-		(at 59.69 38.1)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "b1869e2e-e075-423f-8497-1b3a5cfa8e3c")
-	)
-	(junction
-		(at 90.17 38.1)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c3235b87-4378-4496-bb8a-bd11e2d6a2a5")
 	)
 	(junction
 		(at 115.57 57.15)
@@ -2736,6 +3034,16 @@
 	)
 	(wire
 		(pts
+			(xy 59.69 48.26) (xy 59.69 49.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "19376998-a603-4cb5-a02b-0c792b4f754c")
+	)
+	(wire
+		(pts
 			(xy 38.1 33.02) (xy 73.66 33.02)
 		)
 		(stroke
@@ -2746,7 +3054,7 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 38.1) (xy 113.03 57.15)
+			(xy 113.03 48.26) (xy 113.03 57.15)
 		)
 		(stroke
 			(width 0)
@@ -2816,13 +3124,13 @@
 	)
 	(wire
 		(pts
-			(xy 38.1 38.1) (xy 59.69 38.1)
+			(xy 90.17 48.26) (xy 113.03 48.26)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "4e32eb64-02b8-4d26-8255-a03670697446")
+		(uuid "4c995f3f-2376-4eab-8ace-4128c91f7218")
 	)
 	(wire
 		(pts
@@ -2863,16 +3171,6 @@
 			(type default)
 		)
 		(uuid "582a8fd2-7304-448e-a668-dd90f155dd1c")
-	)
-	(wire
-		(pts
-			(xy 90.17 39.37) (xy 90.17 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5c60567c-a45b-4c73-bdc4-767a583bc191")
 	)
 	(wire
 		(pts
@@ -2956,6 +3254,26 @@
 	)
 	(wire
 		(pts
+			(xy 45.72 50.8) (xy 53.34 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7af83c28-4b5c-4653-9890-5592ef734795")
+	)
+	(wire
+		(pts
+			(xy 26.67 53.34) (xy 33.02 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7b5eb004-c224-4c5c-817f-20bccc587b95")
+	)
+	(wire
+		(pts
 			(xy 90.17 33.02) (xy 229.87 33.02)
 		)
 		(stroke
@@ -2966,7 +3284,7 @@
 	)
 	(wire
 		(pts
-			(xy 90.17 45.72) (xy 90.17 44.45)
+			(xy 90.17 55.88) (xy 90.17 54.61)
 		)
 		(stroke
 			(width 0)
@@ -2983,6 +3301,16 @@
 			(type default)
 		)
 		(uuid "8a70e95d-4ba1-45e1-bb3a-0954cebb6597")
+	)
+	(wire
+		(pts
+			(xy 59.69 48.26) (xy 67.31 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "92a3e977-5982-4c04-b4eb-19bc8218beb0")
 	)
 	(wire
 		(pts
@@ -3026,6 +3354,16 @@
 	)
 	(wire
 		(pts
+			(xy 45.72 53.34) (xy 50.8 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a3bc53b7-6761-4ca5-b696-0976622a894a")
+	)
+	(wire
+		(pts
 			(xy 38.1 35.56) (xy 44.45 35.56)
 		)
 		(stroke
@@ -3043,6 +3381,16 @@
 			(type default)
 		)
 		(uuid "a79011df-221a-4883-84a6-d412cf1743b2")
+	)
+	(wire
+		(pts
+			(xy 45.72 48.26) (xy 59.69 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "acc264a7-d193-426e-838a-bf1802703de7")
 	)
 	(wire
 		(pts
@@ -3066,7 +3414,7 @@
 	)
 	(wire
 		(pts
-			(xy 59.69 50.8) (xy 59.69 49.53)
+			(xy 59.69 60.96) (xy 59.69 59.69)
 		)
 		(stroke
 			(width 0)
@@ -3086,16 +3434,6 @@
 	)
 	(wire
 		(pts
-			(xy 59.69 38.1) (xy 67.31 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cc5d0a5f-d816-437c-8828-50eb101a4ddc")
-	)
-	(wire
-		(pts
 			(xy 158.75 44.45) (xy 168.91 44.45)
 		)
 		(stroke
@@ -3106,13 +3444,13 @@
 	)
 	(wire
 		(pts
-			(xy 59.69 38.1) (xy 59.69 39.37)
+			(xy 90.17 48.26) (xy 90.17 49.53)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d0f0306e-27df-43a0-b2c4-cac90164c75d")
+		(uuid "dd043fc0-25b0-4d6e-8052-761d0d4fd4f1")
 	)
 	(wire
 		(pts
@@ -3123,16 +3461,6 @@
 			(type default)
 		)
 		(uuid "ddfdd138-e7de-4387-bc2f-df7aabb03bf9")
-	)
-	(wire
-		(pts
-			(xy 90.17 38.1) (xy 113.03 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ea2fe553-ba02-4b51-909f-ef4198542461")
 	)
 	(wire
 		(pts
@@ -3166,7 +3494,27 @@
 	)
 	(wire
 		(pts
-			(xy 77.47 38.1) (xy 90.17 38.1)
+			(xy 26.67 50.8) (xy 33.02 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f764ed27-b7fa-48b3-b09f-c0387e462ff3")
+	)
+	(wire
+		(pts
+			(xy 26.67 48.26) (xy 33.02 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f9a080ed-74f6-41a0-9c7d-47229d5b8e8b")
+	)
+	(wire
+		(pts
+			(xy 77.47 48.26) (xy 90.17 48.26)
 		)
 		(stroke
 			(width 0)
@@ -3194,9 +3542,49 @@
 		)
 		(uuid "ff8e39f1-1e2f-4a56-abdc-1221213647d6")
 	)
+	(label "h_sck"
+		(at 26.67 48.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0e5a50e8-1cde-462b-a330-05c08d790673")
+	)
+	(label "h_mosi"
+		(at 26.67 53.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "3f0bd9a9-41e9-4ddd-b9b3-d2a32633ce06")
+	)
+	(label "h_miso"
+		(at 26.67 50.8 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5545baf9-1e67-44ed-b00a-3aac9c8a41c4")
+	)
+	(label "h_cs"
+		(at 50.8 53.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "d561c5da-b4bb-4b64-bb45-e1687c9ea020")
+	)
 	(symbol
-		(lib_id "easyeda2kicad:MR60-F")
-		(at 34.29 35.56 180)
+		(lib_id "Connector_Generic:Conn_02x03_Counter_Clockwise")
+		(at 38.1 50.8 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3204,10 +3592,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "04bfc328-d083-44c5-a2d0-9503cace662a")
-		(property "Reference" "CN101"
-			(at 33.02 25.4 0)
+		(uuid "0212d90f-91a7-41a5-afa0-bddc6f648333")
+		(property "Reference" "J101"
+			(at 39.37 45.974 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3216,18 +3603,8 @@
 				)
 			)
 		)
-		(property "Value" "MR60-F"
-			(at 33.02 27.94 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:CONN-TH_3P-P5.50_MR60-F"
-			(at 34.29 25.4 0)
+		(property "Value" "Conn_02x03_Counter_Clockwise"
+			(at 39.37 44.45 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3237,8 +3614,8 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C9900023305.pdf"
-			(at 34.29 22.86 0)
+		(property "Footprint" ""
+			(at 38.1 50.8 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3248,8 +3625,8 @@
 				)
 			)
 		)
-		(property "Description" ""
-			(at 34.29 35.56 0)
+		(property "Datasheet" ""
+			(at 38.1 50.8 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3259,8 +3636,8 @@
 				)
 			)
 		)
-		(property "MPN" "MR60-F"
-			(at 34.29 20.32 0)
+		(property "Description" "Generic connector, double row, 02x03, counter clockwise pin numbering scheme (similar to DIP package numbering), script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 38.1 50.8 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3270,30 +3647,28 @@
 				)
 			)
 		)
-		(property "LCSC Part" "C9900023305"
-			(at 34.29 17.78 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "d29c8327-836b-4822-b17c-ac0039413609")
-		)
-		(pin "2"
-			(uuid "d12d3285-a8fd-4640-9a6d-0f5609286f4d")
+		(pin "5"
+			(uuid "7dee4e0b-4c11-4268-bb91-6206a1aef859")
 		)
 		(pin "3"
-			(uuid "94071518-502c-47af-9267-9da3d7cdf548")
+			(uuid "564d3382-3f6d-4225-8a38-661247dca45b")
+		)
+		(pin "4"
+			(uuid "3fc4788c-c823-4467-b902-2e111141803b")
+		)
+		(pin "1"
+			(uuid "3e80c3dd-49df-48ac-924a-e38ad3d78ae7")
+		)
+		(pin "2"
+			(uuid "412152fc-8bcc-4705-9891-87dcbbf8cfea")
+		)
+		(pin "6"
+			(uuid "d07c3d57-410a-49a4-baac-0f2748308d4f")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
-					(reference "CN101")
+					(reference "J101")
 					(unit 1)
 				)
 			)
@@ -3383,7 +3758,7 @@
 	)
 	(symbol
 		(lib_id "easyeda2kicad:SMF5.0A_C19077497")
-		(at 59.69 44.45 270)
+		(at 59.69 54.61 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3394,7 +3769,7 @@
 		(fields_autoplaced yes)
 		(uuid "13b2c9c9-7f93-47d9-89bd-a7d43de956ef")
 		(property "Reference" "D104"
-			(at 63.5 43.1799 90)
+			(at 63.5 53.3399 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3405,7 +3780,7 @@
 			)
 		)
 		(property "Value" "SMF5.0A_C19077497"
-			(at 63.5 45.7199 90)
+			(at 63.5 55.8799 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3417,7 +3792,7 @@
 			)
 		)
 		(property "Footprint" "easyeda2kicad:SOD-123FL_L2.7-W1.8-LS3.8-RD"
-			(at 52.07 44.45 0)
+			(at 52.07 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3428,7 +3803,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/C19077497.pdf"
-			(at 49.53 44.45 0)
+			(at 49.53 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3439,7 +3814,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 59.69 44.45 0)
+			(at 59.69 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3450,7 +3825,7 @@
 			)
 		)
 		(property "Manufacturer" "R+O(宏嘉诚)"
-			(at 46.99 44.45 0)
+			(at 46.99 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3461,7 +3836,7 @@
 			)
 		)
 		(property "MPN" "SMF5.0A"
-			(at 44.45 44.45 0)
+			(at 44.45 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3472,7 +3847,7 @@
 			)
 		)
 		(property "LCSC Part" "C19077497"
-			(at 41.91 44.45 0)
+			(at 41.91 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3492,6 +3867,119 @@
 			(project "simpleFOC Dual Motor Controller"
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
 					(reference "D104")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "easyeda2kicad:XT60H-M")
+		(at 34.29 34.29 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1dd729d3-64c6-474f-94b3-5bef6ae44d22")
+		(property "Reference" "U102"
+			(at 33.02 25.4 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "XT60H-M"
+			(at 33.02 27.94 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:CONN-TH_XT60H-M"
+			(at 34.29 25.4 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C5334533.pdf"
+			(at 34.29 22.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 34.29 34.29 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "AMASS(艾迈斯)"
+			(at 34.29 20.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "XT60H-M"
+			(at 34.29 17.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C5334533"
+			(at 34.29 15.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "f44a3850-6906-4624-9e94-a768e781a007")
+		)
+		(pin "1"
+			(uuid "6a6a3eb7-7842-4b12-887e-28eff2c09f6e")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
+					(reference "U102")
 					(unit 1)
 				)
 			)
@@ -3654,7 +4142,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 59.69 50.8 0)
+		(at 59.69 60.96 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3665,7 +4153,7 @@
 		(fields_autoplaced yes)
 		(uuid "3248e762-ad2b-4568-bfa9-5ac66b64715a")
 		(property "Reference" "#PWR0103"
-			(at 59.69 57.15 0)
+			(at 59.69 67.31 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3676,7 +4164,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 59.69 55.88 0)
+			(at 59.69 66.04 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3686,7 +4174,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 59.69 50.8 0)
+			(at 59.69 60.96 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3697,7 +4185,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 59.69 50.8 0)
+			(at 59.69 60.96 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3708,7 +4196,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 59.69 50.8 0)
+			(at 59.69 60.96 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3732,7 +4220,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Small")
-		(at 90.17 41.91 0)
+		(at 90.17 52.07 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3743,7 +4231,7 @@
 		(fields_autoplaced yes)
 		(uuid "51b6ec26-1b06-4bb6-8d59-eb36e0bb9f81")
 		(property "Reference" "C102"
-			(at 92.71 40.6462 0)
+			(at 92.71 50.8062 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3754,7 +4242,7 @@
 			)
 		)
 		(property "Value" "4.7u"
-			(at 92.71 43.1862 0)
+			(at 92.71 53.3462 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3765,7 +4253,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 90.17 41.91 0)
+			(at 90.17 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3776,7 +4264,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 90.17 41.91 0)
+			(at 90.17 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3787,7 +4275,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
-			(at 90.17 41.91 0)
+			(at 90.17 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4605,7 +5093,7 @@
 	)
 	(symbol
 		(lib_id "easyeda2kicad:DSK26_C7502712")
-		(at 72.39 38.1 0)
+		(at 72.39 48.26 0)
 		(mirror y)
 		(unit 1)
 		(body_style 1)
@@ -4616,7 +5104,7 @@
 		(dnp no)
 		(uuid "ac2c72ad-537e-4c6d-800f-45f9ba125562")
 		(property "Reference" "D103"
-			(at 72.39 41.656 0)
+			(at 72.39 51.816 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4626,7 +5114,7 @@
 			)
 		)
 		(property "Value" "DSK26_C7502712"
-			(at 72.39 41.91 0)
+			(at 72.39 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4637,7 +5125,7 @@
 			)
 		)
 		(property "Footprint" "easyeda2kicad:SOD-123FL_L2.7-W1.8-LS3.8-RD"
-			(at 72.39 45.72 0)
+			(at 72.39 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4648,7 +5136,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/C7502712.pdf"
-			(at 72.39 48.26 0)
+			(at 72.39 58.42 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4659,7 +5147,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 72.39 38.1 0)
+			(at 72.39 48.26 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4670,7 +5158,7 @@
 			)
 		)
 		(property "Manufacturer" "R+O(宏嘉诚)"
-			(at 72.39 50.8 0)
+			(at 72.39 60.96 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4681,7 +5169,7 @@
 			)
 		)
 		(property "MPN" "DSK26"
-			(at 72.39 53.34 0)
+			(at 72.39 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4692,7 +5180,7 @@
 			)
 		)
 		(property "LCSC Part" "C7502712"
-			(at 72.39 55.88 0)
+			(at 72.39 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4712,6 +5200,84 @@
 			(project "simpleFOC Dual Motor Controller"
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
 					(reference "D103")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 53.34 50.8 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ad1aebf0-7250-4d88-a6fa-e4afbc0a0176")
+		(property "Reference" "#PWR0109"
+			(at 53.34 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 53.34 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 53.34 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 53.34 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 53.34 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "14d5956f-1b67-411e-8aa6-878978b9f185")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
+					(reference "#PWR0109")
 					(unit 1)
 				)
 			)
@@ -4883,7 +5449,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 90.17 45.72 0)
+		(at 90.17 55.88 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4894,7 +5460,7 @@
 		(fields_autoplaced yes)
 		(uuid "baeb0eae-c9c6-4c6b-9482-45d5f91ff0b2")
 		(property "Reference" "#PWR0106"
-			(at 90.17 52.07 0)
+			(at 90.17 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4905,7 +5471,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 90.17 50.8 0)
+			(at 90.17 60.96 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4915,7 +5481,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 90.17 45.72 0)
+			(at 90.17 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4926,7 +5492,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 90.17 45.72 0)
+			(at 90.17 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4937,7 +5503,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 90.17 45.72 0)
+			(at 90.17 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

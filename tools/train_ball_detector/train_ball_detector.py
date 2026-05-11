@@ -1015,15 +1015,16 @@ def run_training_validation_and_export(args: argparse.Namespace) -> List[Path]:
     device = require_cuda_device(parser)
     eval_image_paths = ensure_eval_images_are_available(EVAL_LIST_PATH, YOLO_DIR, parser)
     print_latency_eval_set_summary(eval_image_paths)
+    data_yaml = prepare_yolo_dataset(args)
+    max_input_size = normalize_image_size(args.imgsz)
+    use_half_precision = True
+    exported_paths: List[Path] = []
 
     for model in args.model:
-        data_yaml = prepare_yolo_dataset(args)
         best_weights = train_model(args, data_yaml, device, parser, model)
 
         model_stem = Path(model).stem
         export_root = Path("trained_models") / model_stem
-        max_input_size = normalize_image_size(args.imgsz)
-        use_half_precision = True
 
         latency_model = load_cuda_compiled_yolo_model(
             best_weights,
@@ -1042,15 +1043,19 @@ def run_training_validation_and_export(args: argparse.Namespace) -> List[Path]:
             use_half_precision=use_half_precision,
         )
 
-        return export_selected_tensor_rt_engines(
-            best_weights,
-            selected_sizes_by_target_ms=selected_sizes_by_target_ms,
-            model_stem=model_stem,
-            export_root=export_root,
-            max_input_size=max_input_size,
-            device=device,
-            use_half_precision=use_half_precision,
+        exported_paths.extend(
+            export_selected_tensor_rt_engines(
+                best_weights,
+                selected_sizes_by_target_ms=selected_sizes_by_target_ms,
+                model_stem=model_stem,
+                export_root=export_root,
+                max_input_size=max_input_size,
+                device=device,
+                use_half_precision=use_half_precision,
+            )
         )
+
+    return exported_paths
 
 
 

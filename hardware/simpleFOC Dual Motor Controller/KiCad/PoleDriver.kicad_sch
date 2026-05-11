@@ -1477,10 +1477,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "c9589117-d5fc-4921-9673-6f7bb3efcbf2")
+			(uuid "f470f23b-05af-44b9-9952-e7306034dc44")
 		)
 		(pin "1"
-			(uuid "e87d6e37-697b-4394-a256-870ddf8d10e8")
+			(uuid "fb781a74-8809-40df-a531-91e6b218243b")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -1496,16 +1496,16 @@
 					(reference "C401")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "C801")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "C110")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "C901")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "C108")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "C701")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "C109")
 					(unit 1)
 				)
 			)
@@ -1578,7 +1578,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "7cc075b7-b41d-4af2-9258-ffd7510bef8d")
+			(uuid "bc9826a3-a9ba-4187-9edf-213d62f99380")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -1594,16 +1594,16 @@
 					(reference "#PWR0401")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "#PWR0801")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "#PWR0112")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "#PWR0901")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "#PWR0110")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "#PWR0701")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "#PWR0111")
 					(unit 1)
 				)
 			)
@@ -1644,7 +1644,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 83.82 36.83 0)
 			(hide yes)
 			(show_name no)
@@ -1678,10 +1678,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "462f1051-e622-4e9a-a71f-62e9f40ae012")
+			(uuid "dde75c04-02f4-4410-8ebd-5b5ca631d50b")
 		)
 		(pin "2"
-			(uuid "7034c270-2a87-4788-8b18-3eae434923c9")
+			(uuid "9896da4e-83be-41a6-8ba2-b176b9bf47de")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -1697,16 +1697,16 @@
 					(reference "R402")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "R802")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "R103")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "R902")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "R101")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "R702")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "R102")
 					(unit 1)
 				)
 			)
@@ -1813,19 +1813,19 @@
 			)
 		)
 		(pin "2"
-			(uuid "b3fac20b-3a53-4596-b40c-e354d20ade15")
+			(uuid "13448268-fa3d-4d23-9afb-b06b50714f26")
 		)
 		(pin "4"
-			(uuid "47a6b065-9f20-4bfc-a0f4-1325969cc447")
+			(uuid "b602930c-2fb6-4c21-ae74-9b635fcf027d")
 		)
 		(pin "5"
-			(uuid "b0362458-b37d-47c5-b407-7cad45704c84")
+			(uuid "7933e71f-9cb1-466c-a226-09a49b973ab9")
 		)
 		(pin "1"
-			(uuid "d670f223-d464-4a1d-818f-7c88c2855c90")
+			(uuid "64ce57a6-c816-4bf5-ad2e-a095e179cb01")
 		)
 		(pin "3"
-			(uuid "900847fc-118a-40a6-ac7b-d815aaf0c3f5")
+			(uuid "5e75fa71-1426-4d7a-a004-ba8e8f3a39f3")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -1841,16 +1841,16 @@
 					(reference "Q401")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q801")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q103")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q901")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q101")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q701")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q102")
 					(unit 1)
 				)
 			)
@@ -1957,19 +1957,19 @@
 			)
 		)
 		(pin "2"
-			(uuid "b6671903-0c9e-462a-afc8-296ac4dcf89f")
+			(uuid "0c48c12d-fc4d-4e9b-9b07-9d6f4b5ae296")
 		)
 		(pin "4"
-			(uuid "e7eb035d-b840-40a5-b393-5f0cad8be38c")
+			(uuid "eea3cf16-667a-470e-aa26-92703a4542b8")
 		)
 		(pin "5"
-			(uuid "ba1da4d9-7e31-4c17-b8e3-08785c469837")
+			(uuid "90805871-1ee2-4677-89a3-aefb673fa676")
 		)
 		(pin "1"
-			(uuid "a68d5727-080d-4999-a3a0-d49fc26d8dba")
+			(uuid "5cc1b1fa-4178-4c69-94b6-00977ef69f7a")
 		)
 		(pin "3"
-			(uuid "846a9baf-7fe1-4c1c-8fde-07833d28322d")
+			(uuid "c1324d60-cbee-4b3c-be6e-a1b1a5562e52")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -1985,16 +1985,16 @@
 					(reference "Q403")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q803")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q106")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q903")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q104")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q703")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q105")
 					(unit 1)
 				)
 			)
@@ -2035,7 +2035,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 83.82 59.69 0)
 			(hide yes)
 			(show_name no)
@@ -2069,10 +2069,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "34549bf0-d18f-4e05-8f87-be6ed6449e10")
+			(uuid "9b4642d5-08f4-4475-adf0-bc44faa27a44")
 		)
 		(pin "2"
-			(uuid "7365de9e-9658-4560-9902-ef8989d11667")
+			(uuid "66dca9fa-2481-481f-bd4e-92d49916baca")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -2088,16 +2088,16 @@
 					(reference "R401")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "R801")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "R106")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "R901")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "R104")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "R701")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "R105")
 					(unit 1)
 				)
 			)
@@ -2193,10 +2193,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "2856fce1-10f5-4d4f-b4e1-df04308113b8")
+			(uuid "3d046471-eca8-4540-b9c3-4aa7c7f84c7b")
 		)
 		(pin "2"
-			(uuid "5a84b94f-e138-4bf2-9c0e-52fdc30cfa9e")
+			(uuid "105cd3ae-853d-4130-ba4f-968f2573bf74")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -2212,16 +2212,16 @@
 					(reference "Rsns401")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Rsns801")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Rsns103")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Rsns901")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Rsns101")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Rsns701")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Rsns102")
 					(unit 1)
 				)
 			)

@@ -599,6 +599,142 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "PCM_SparkFun-PowerSymbol:3.3V"
+			(power global)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "3.3V"
+				(at 0 3.81 0)
+				(show_name no)
+				(do_not_autoplace yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"3.3V\""
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "SparkFun global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "3.3V_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "3.3V_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(hide yes)
+					(name "3.3V"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "easyeda2kicad:DRV8323HRTAT"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -1859,6 +1995,26 @@
 		)
 		(uuid "523a3d3a-f95e-4405-b783-68d57640827a")
 	)
+	(text_box "Signal Defaults"
+		(exclude_from_sim no)
+		(at 222.25 16.51 0)
+		(size 57.15 57.785)
+		(margins 0.9525 0.9525 0.9525 0.9525)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "a356b52a-6eef-46da-a03b-d2fe8a5ff9bf")
+	)
 	(text_box "Configuration Selection"
 		(exclude_from_sim no)
 		(at 66.294 153.67 0)
@@ -1918,10 +2074,22 @@
 		(uuid "7786bd5f-a017-49a4-b732-46acf14c73dc")
 	)
 	(junction
+		(at 254 48.26)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7a497db5-9164-49ae-b318-2dccb2985ec6")
+	)
+	(junction
 		(at 198.12 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "807cdc95-d69f-478a-b61a-7e4634ca176b")
+	)
+	(junction
+		(at 254 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "83c742bb-d7b4-4212-99d3-7f8cdb7a6c94")
 	)
 	(junction
 		(at 50.8 54.61)
@@ -1936,10 +2104,22 @@
 		(uuid "9ae54078-0a51-4a5f-9c64-f9a55a3e9e7d")
 	)
 	(junction
+		(at 254 54.61)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a6880534-ce0a-441e-b83c-36b806e5baa1")
+	)
+	(junction
 		(at 38.1 54.61)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b72a1e59-069b-459c-af9b-732adee7d4cf")
+	)
+	(junction
+		(at 254 35.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b892dce4-d124-4a61-8be1-405e05db58b4")
 	)
 	(junction
 		(at 38.1 24.13)
@@ -1954,16 +2134,54 @@
 		(uuid "bc14cb8d-a863-4af7-9c7f-161560216504")
 	)
 	(junction
+		(at 254 29.21)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "cccf12a8-31ee-4e90-a71e-1165497b9407")
+	)
+	(junction
 		(at 142.24 24.13)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d614f197-1321-49ca-8cc1-e691f142da88")
 	)
 	(junction
+		(at 254 41.91)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e69b87a0-cf3c-4e74-a09d-9cdc4557f3e5")
+	)
+	(junction
 		(at 38.1 132.08)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e6d9c548-4f64-47a8-b335-0831f8e880fb")
+	)
+	(junction
+		(at 254 67.31)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f328be7f-3524-4b9c-a387-c1ba89d4780e")
+	)
+	(wire
+		(pts
+			(xy 247.65 41.91) (xy 254 41.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "08270b85-665d-4233-9223-a9e426b1b2d3")
+	)
+	(wire
+		(pts
+			(xy 54.61 67.31) (xy 59.69 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0bd12f60-98b6-42f4-820e-6d00c5524540")
 	)
 	(wire
 		(pts
@@ -1997,6 +2215,16 @@
 	)
 	(wire
 		(pts
+			(xy 234.95 29.21) (xy 242.57 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "17a62108-eec7-4eaf-a282-145f7ac52588")
+	)
+	(wire
+		(pts
 			(xy 215.9 100.33) (xy 229.87 100.33)
 		)
 		(stroke
@@ -2007,6 +2235,16 @@
 	)
 	(wire
 		(pts
+			(xy 234.95 67.31) (xy 242.57 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1c2ac332-8682-4cf2-9b57-e13c94ad2f0c")
+	)
+	(wire
+		(pts
 			(xy 115.57 102.87) (xy 137.16 102.87)
 		)
 		(stroke
@@ -2014,6 +2252,16 @@
 			(type default)
 		)
 		(uuid "1d2ac9ae-6a6c-4534-8f2b-f788b88d1cbc")
+	)
+	(wire
+		(pts
+			(xy 254 54.61) (xy 254 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1e30d8e8-2565-43b8-ac0f-4c5a8127b883")
 	)
 	(wire
 		(pts
@@ -2037,6 +2285,16 @@
 	)
 	(wire
 		(pts
+			(xy 254 29.21) (xy 254 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "22a436c8-5ebb-4dca-a144-b1f7ce6d5eda")
+	)
+	(wire
+		(pts
 			(xy 151.13 102.87) (xy 160.02 102.87)
 		)
 		(stroke
@@ -2054,6 +2312,26 @@
 			(type default)
 		)
 		(uuid "29a72bb9-ec76-45b7-8d52-0fca1a79d42e")
+	)
+	(wire
+		(pts
+			(xy 234.95 35.56) (xy 242.57 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "30bf66ba-08eb-4181-9682-228d653da0f5")
+	)
+	(wire
+		(pts
+			(xy 254 22.86) (xy 254 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "317f1ec9-2a5e-414f-ac5d-579db9352322")
 	)
 	(wire
 		(pts
@@ -2097,6 +2375,16 @@
 	)
 	(wire
 		(pts
+			(xy 266.7 53.34) (xy 264.16 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "40e4a449-ecd6-4a19-8991-8629fdf33323")
+	)
+	(wire
+		(pts
 			(xy 115.57 80.01) (xy 160.02 80.01)
 		)
 		(stroke
@@ -2114,6 +2402,36 @@
 			(type default)
 		)
 		(uuid "46c72edd-587e-4897-b532-4c3b09a07a78")
+	)
+	(wire
+		(pts
+			(xy 254 60.96) (xy 254 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "46ee68c1-6217-4f16-a7c6-7cab6e6b967f")
+	)
+	(wire
+		(pts
+			(xy 234.95 48.26) (xy 242.57 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "491e11a0-9af8-4f3e-8651-d8138f465d66")
+	)
+	(wire
+		(pts
+			(xy 247.65 54.61) (xy 254 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "49e87aaa-8ba6-433a-9abd-31c27c18f244")
 	)
 	(wire
 		(pts
@@ -2167,6 +2485,16 @@
 	)
 	(wire
 		(pts
+			(xy 234.95 54.61) (xy 242.57 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "506b72f7-b9ad-4f7d-b470-914b07daad72")
+	)
+	(wire
+		(pts
 			(xy 85.09 139.7) (xy 85.09 143.51)
 		)
 		(stroke
@@ -2194,6 +2522,16 @@
 			(type default)
 		)
 		(uuid "579e55bb-5d99-4992-8321-814e5814cf87")
+	)
+	(wire
+		(pts
+			(xy 54.61 72.39) (xy 59.69 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "585b5783-b019-4b00-aa79-06280766dc48")
 	)
 	(wire
 		(pts
@@ -2227,6 +2565,16 @@
 	)
 	(wire
 		(pts
+			(xy 54.61 101.6) (xy 59.69 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5cc76ef5-c770-4e64-b837-6004f60405f1")
+	)
+	(wire
+		(pts
 			(xy 115.57 95.25) (xy 160.02 95.25)
 		)
 		(stroke
@@ -2234,6 +2582,46 @@
 			(type default)
 		)
 		(uuid "5e660f02-26bf-4e8e-b0c3-60d25f1b5734")
+	)
+	(wire
+		(pts
+			(xy 254 67.31) (xy 254 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "617927e4-3bf4-42be-be48-1fc63956c2d4")
+	)
+	(wire
+		(pts
+			(xy 254 41.91) (xy 254 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64dc8421-e319-484f-84ee-c8a3a00b3859")
+	)
+	(wire
+		(pts
+			(xy 247.65 48.26) (xy 254 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64fbe650-ea63-4a16-8d91-b555fb925fa9")
+	)
+	(wire
+		(pts
+			(xy 247.65 60.96) (xy 254 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "65a00b6a-bc0e-4df8-a1f3-b85181ab78c5")
 	)
 	(wire
 		(pts
@@ -2297,6 +2685,16 @@
 	)
 	(wire
 		(pts
+			(xy 54.61 99.06) (xy 59.69 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "706ed1f3-f477-477b-accc-c748f24bbfb5")
+	)
+	(wire
+		(pts
 			(xy 193.04 92.71) (xy 198.12 92.71)
 		)
 		(stroke
@@ -2327,6 +2725,36 @@
 	)
 	(wire
 		(pts
+			(xy 234.95 41.91) (xy 242.57 41.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7cf71ec0-618d-4470-a135-103e7a4ac4f8")
+	)
+	(wire
+		(pts
+			(xy 247.65 22.86) (xy 254 22.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7dd76d30-c906-481d-b27a-2e3ebabb7db5")
+	)
+	(wire
+		(pts
+			(xy 54.61 77.47) (xy 59.69 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "817f1d31-6fac-450c-8c6e-d3d509aeedfd")
+	)
+	(wire
+		(pts
 			(xy 91.44 132.08) (xy 91.44 143.51)
 		)
 		(stroke
@@ -2334,6 +2762,16 @@
 			(type default)
 		)
 		(uuid "8a201f77-b7ff-4f85-b9a6-41db3718e12a")
+	)
+	(wire
+		(pts
+			(xy 54.61 90.17) (xy 59.69 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8cc066c0-c027-409c-b896-3a1b97c34220")
 	)
 	(wire
 		(pts
@@ -2367,6 +2805,16 @@
 	)
 	(wire
 		(pts
+			(xy 247.65 35.56) (xy 254 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "959abaed-ea76-45d6-831f-723b0039a940")
+	)
+	(wire
+		(pts
 			(xy 215.9 95.25) (xy 229.87 95.25)
 		)
 		(stroke
@@ -2374,6 +2822,26 @@
 			(type default)
 		)
 		(uuid "95d3202c-9bba-44ee-a8a8-d3625dcd0405")
+	)
+	(wire
+		(pts
+			(xy 54.61 80.01) (xy 59.69 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9620acb9-f423-4ea1-be74-0b93143be7f4")
+	)
+	(wire
+		(pts
+			(xy 234.95 60.96) (xy 242.57 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "97a5c31d-310c-4cbb-a9f5-969dcd07639e")
 	)
 	(wire
 		(pts
@@ -2447,6 +2915,16 @@
 	)
 	(wire
 		(pts
+			(xy 271.78 53.34) (xy 275.59 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5f1f7a6-060a-4a4e-b54f-b5bf1f9d4678")
+	)
+	(wire
+		(pts
 			(xy 115.57 123.19) (xy 137.16 123.19)
 		)
 		(stroke
@@ -2457,6 +2935,16 @@
 	)
 	(wire
 		(pts
+			(xy 247.65 67.31) (xy 254 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b77b8546-77ad-47bb-85d7-1c476cee6e92")
+	)
+	(wire
+		(pts
 			(xy 38.1 114.3) (xy 59.69 114.3)
 		)
 		(stroke
@@ -2464,6 +2952,26 @@
 			(type default)
 		)
 		(uuid "c02e43b9-59ec-49eb-a5fd-6dfdeee462b3")
+	)
+	(wire
+		(pts
+			(xy 254 35.56) (xy 254 41.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c0cc4feb-a1c3-44e9-84c2-6f6fbbb9da40")
+	)
+	(wire
+		(pts
+			(xy 234.95 22.86) (xy 242.57 22.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c0e934e6-eef6-448e-b21c-f9080d0f1e69")
 	)
 	(wire
 		(pts
@@ -2527,6 +3035,26 @@
 	)
 	(wire
 		(pts
+			(xy 54.61 69.85) (xy 59.69 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d7543749-3eb9-40fe-8ad6-ec679f98ec05")
+	)
+	(wire
+		(pts
+			(xy 247.65 29.21) (xy 254 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d7956642-d26d-4032-9c16-c706f9400e2e")
+	)
+	(wire
+		(pts
 			(xy 133.35 62.23) (xy 133.35 60.96)
 		)
 		(stroke
@@ -2544,6 +3072,26 @@
 			(type default)
 		)
 		(uuid "d996249c-940f-4c82-bbc6-4e97f06cd734")
+	)
+	(wire
+		(pts
+			(xy 54.61 92.71) (xy 59.69 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d9a475e7-9f1a-4585-a9ab-bf6d73d77910")
+	)
+	(wire
+		(pts
+			(xy 54.61 87.63) (xy 59.69 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e226cf01-9807-4420-99ee-11ca8c78c88c")
 	)
 	(wire
 		(pts
@@ -2567,6 +3115,16 @@
 	)
 	(wire
 		(pts
+			(xy 54.61 82.55) (xy 59.69 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ec8642ac-cba2-44bf-a933-6aebfef3f4a4")
+	)
+	(wire
+		(pts
 			(xy 115.57 74.93) (xy 160.02 74.93)
 		)
 		(stroke
@@ -2584,6 +3142,26 @@
 			(type default)
 		)
 		(uuid "ef95acf9-7855-4693-bbde-7389d303ee93")
+	)
+	(wire
+		(pts
+			(xy 54.61 105.41) (xy 59.69 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0f72d9e-7172-4758-ae6a-18274bfbeab8")
+	)
+	(wire
+		(pts
+			(xy 254 48.26) (xy 254 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f19a8c63-0c2f-417b-93a4-424dd4787df1")
 	)
 	(wire
 		(pts
@@ -2655,6 +3233,149 @@
 		)
 		(uuid "ca4bdb07-d48e-408d-af7c-d4df3584bdfc")
 	)
+	(hierarchical_label "SOA"
+		(shape output)
+		(at 54.61 72.39 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "05ac78bb-0331-44e1-bc1c-6f724e036b39")
+	)
+	(hierarchical_label "EN"
+		(shape input)
+		(at 54.61 101.6 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0f3df08f-be62-4df0-b074-6ab3f4b8047c")
+	)
+	(hierarchical_label "INHB"
+		(shape input)
+		(at 234.95 35.56 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "116faf09-dfa0-4b6b-b989-d1f46ecc1a23")
+	)
+	(hierarchical_label "INHC"
+		(shape input)
+		(at 234.95 48.26 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1b429b4c-6a16-478f-87c0-7b4fe601124e")
+	)
+	(hierarchical_label "~{FAULT}"
+		(shape output)
+		(at 264.16 53.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1d3e72bd-961d-404e-be55-ae342fc05937")
+	)
+	(hierarchical_label "CAL"
+		(shape input)
+		(at 54.61 99.06 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "30984fe2-b12f-41d3-8e8a-fa8b1053b372")
+	)
+	(hierarchical_label "INLB"
+		(shape input)
+		(at 234.95 41.91 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "31832cdc-0143-48b4-b048-1331de76b026")
+	)
+	(hierarchical_label "EN"
+		(shape input)
+		(at 234.95 60.96 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3a5249a5-3e6e-4934-a81e-00f53c4b131d")
+	)
+	(hierarchical_label "SOB"
+		(shape output)
+		(at 54.61 82.55 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "46bb56ee-93e6-452f-b63b-c5f56dea051f")
+	)
+	(hierarchical_label "INLC"
+		(shape input)
+		(at 54.61 90.17 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6b3ab9b7-7d0d-466c-a712-93d12e83bac5")
+	)
+	(hierarchical_label "INHA"
+		(shape input)
+		(at 54.61 67.31 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6b6abf5d-cc41-4453-8405-68f5ff6e6bf5")
+	)
+	(hierarchical_label "SOC"
+		(shape output)
+		(at 54.61 92.71 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7654b78c-bdd4-46fb-8108-f4bfca482281")
+	)
+	(hierarchical_label "FAULT"
+		(shape output)
+		(at 54.61 105.41 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "865ec7b4-a9a4-4e86-974a-bbe299a0c602")
+	)
 	(hierarchical_label "Motor_VIN"
 		(shape passive)
 		(at 27.94 24.13 180)
@@ -2665,6 +3386,94 @@
 			(justify right)
 		)
 		(uuid "879ecd0b-5a34-4711-843d-4445a20dd785")
+	)
+	(hierarchical_label "INLB"
+		(shape input)
+		(at 54.61 80.01 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "92616ee7-0834-41fd-ae19-fcab5eb92b53")
+	)
+	(hierarchical_label "INHB"
+		(shape input)
+		(at 54.61 77.47 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9617b48e-abfd-427a-8f32-3d5f18ca4ad7")
+	)
+	(hierarchical_label "INHC"
+		(shape input)
+		(at 54.61 87.63 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9d31c922-78df-4863-b181-d5438cbb39b1")
+	)
+	(hierarchical_label "CAL"
+		(shape input)
+		(at 234.95 67.31 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a471a6ae-c192-4e54-823a-676d43962d0b")
+	)
+	(hierarchical_label "INLA"
+		(shape input)
+		(at 234.95 29.21 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "aa4db27d-6563-4358-9d37-2c0eaba9156a")
+	)
+	(hierarchical_label "INHA"
+		(shape input)
+		(at 234.95 22.86 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ad18eda0-60b4-4047-85a3-1cd2b9d5952f")
+	)
+	(hierarchical_label "INLA"
+		(shape input)
+		(at 54.61 69.85 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c4d7e278-5147-4053-ba6a-8a87941a6f4a")
+	)
+	(hierarchical_label "INLC"
+		(shape input)
+		(at 234.95 54.61 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fade0182-4b5f-4674-9827-af1580429088")
 	)
 	(symbol
 		(lib_id "power:GNDA")
@@ -2733,7 +3542,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "faa463d2-8d0f-41f1-a0ad-d06c1e570f3b")
+			(uuid "b3c81e6f-ab3d-40e9-80af-81c4cf96bebe")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -2741,8 +3550,8 @@
 					(reference "#PWR0203")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0603")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0213")
 					(unit 1)
 				)
 			)
@@ -2814,7 +3623,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "c9590f69-ae86-4843-a204-6734a02f01ae")
+			(uuid "0878c168-4504-4cf4-84ab-f7cad9902b0c")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -2822,8 +3631,8 @@
 					(reference "#PWR0202")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0602")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0218")
 					(unit 1)
 				)
 			)
@@ -2895,10 +3704,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "587882a3-e8d1-470d-8d71-81c8a65e16dd")
+			(uuid "d4057cc0-a505-4edb-be56-88839baca4cc")
 		)
 		(pin "1"
-			(uuid "33ad9c96-e01f-494e-a982-0bed0e8b783b")
+			(uuid "f380c938-6eda-473e-aae3-60f870212fde")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -2906,8 +3715,8 @@
 					(reference "C203")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "C603")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "C208")
 					(unit 1)
 				)
 			)
@@ -2979,7 +3788,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "2068436a-9867-49eb-a5f5-e666ae574df7")
+			(uuid "53dc175b-4b54-41d4-9a88-bc83e8c57c95")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -2987,8 +3796,91 @@
 					(reference "#PWR0208")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0608")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0220")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 29.21 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "186afade-1968-41da-b9ce-28d761752dcb")
+		(property "Reference" "R204"
+			(at 245.11 24.892 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 26.67 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 29.21 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 29.21 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 29.21 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "57baf907-24ac-4274-bd80-67cb5b5292c8")
+		)
+		(pin "1"
+			(uuid "5577bcbf-d4c2-4eaa-9160-1bea06f6fde3")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R204")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R215")
 					(unit 1)
 				)
 			)
@@ -3061,7 +3953,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "cd865b29-af89-41ae-ace2-6bdb3e9ec3d7")
+			(uuid "841a96e7-1100-4428-9d93-280e64c4c461")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3069,8 +3961,172 @@
 					(reference "#PWR0201")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0601")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0212")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 48.26 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "3361240c-098e-42dd-b644-b5ce8151c52d")
+		(property "Reference" "R207"
+			(at 245.11 43.942 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 45.72 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "e9360141-1f7c-462a-9de7-38a1a245e37d")
+		)
+		(pin "1"
+			(uuid "326e468a-e30b-474f-b290-027ea1cf3fd6")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R207")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R218")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 254 68.58 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "416d62bc-1017-498b-822b-7e48ee3ac7f6")
+		(property "Reference" "#PWR0210"
+			(at 254 74.93 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 254 72.39 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 254 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 254 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 254 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2534e69a-60c9-422c-a243-30ec3c23f26d")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "#PWR0210")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0221")
 					(unit 1)
 				)
 			)
@@ -3142,7 +4198,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "2795deb4-547c-43ee-83fa-862c69ee1302")
+			(uuid "bedb2ff1-8b79-4873-ace7-343366e103d6")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3150,8 +4206,8 @@
 					(reference "#PWR0209")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0609")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0219")
 					(unit 1)
 				)
 			)
@@ -3224,7 +4280,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "07ccfe27-2e53-4609-b0db-9cebe00ca400")
+			(uuid "647ee913-c1ea-4242-97f6-78be22c50a3c")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3232,8 +4288,91 @@
 					(reference "#PWR0206")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0606")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0216")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 35.56 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "526f777e-5677-4d36-a5d8-09bb57617e2a")
+		(property "Reference" "R205"
+			(at 245.11 31.242 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 33.02 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "1839b076-c817-4186-a302-33084e0ce836")
+		)
+		(pin "1"
+			(uuid "27e10e09-d537-4ecb-b0ed-756ed5d8036d")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R205")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R216")
 					(unit 1)
 				)
 			)
@@ -3309,10 +4448,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "c75e000d-5e9e-442e-8326-c3971d2da92f")
+			(uuid "9c10ca10-e437-4348-bb5c-85ac3d92f47c")
 		)
 		(pin "2"
-			(uuid "f3ea2246-5bcc-4a1d-9758-40967fe28ca4")
+			(uuid "bd18754b-b103-4cee-a6cc-dbb83e635dd8")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3320,8 +4459,8 @@
 					(reference "NT201")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "NT601")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "NT204")
 					(unit 1)
 				)
 			)
@@ -3394,10 +4533,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "3667986f-ef96-4b2c-93f2-bf136bfb9e0e")
+			(uuid "c0c2390e-217d-4462-a78d-4fdb3a3ec905")
 		)
 		(pin "2"
-			(uuid "fd352330-d7bb-43a7-8275-ef8251a49807")
+			(uuid "4c16b846-1489-408d-8aec-999dc6cc3b2c")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3405,8 +4544,8 @@
 					(reference "R201")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "R601")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R213")
 					(unit 1)
 				)
 			)
@@ -3479,7 +4618,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "0f2169e6-14fd-4245-b58f-ce3af7292d30")
+			(uuid "9714eb8c-daa3-4950-bb35-b00a7179091b")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3487,8 +4626,173 @@
 					(reference "#PWR0207")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0607")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0214")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-PowerSymbol:3.3V")
+		(at 275.59 53.34 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6cefc1ac-9ff5-4678-b939-467e8c9ac0c4")
+		(property "Reference" "#PWR0211"
+			(at 275.59 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "3.3V"
+			(at 275.59 49.53 0)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 275.59 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 275.59 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"3.3V\""
+			(at 275.59 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "26704ed5-0a99-47f2-b603-ce6dc3524101")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "#PWR0211")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0222")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 54.61 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "716c9030-af63-470b-91df-4de609c46bac")
+		(property "Reference" "R208"
+			(at 245.11 50.292 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 52.07 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "1624fa30-d5a6-4425-b460-f69e8b459c9e")
+		)
+		(pin "1"
+			(uuid "0bb568e4-0435-45c2-ad7f-a866ea985a06")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R208")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R219")
 					(unit 1)
 				)
 			)
@@ -3562,10 +4866,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "e84688eb-c406-44fc-9808-4c2719e4709f")
+			(uuid "4886b202-ec9b-4e06-82b5-f9d29f763080")
 		)
 		(pin "1"
-			(uuid "2969f65d-3706-4513-a5f0-c137570642bf")
+			(uuid "0aede88d-694e-48bd-8b23-ba4d9a6cbc2d")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3573,8 +4877,8 @@
 					(reference "C202")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "C602")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "C207")
 					(unit 1)
 				)
 			)
@@ -3647,7 +4951,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "2020952d-848b-4e05-8538-fa774f2b2a3a")
+			(uuid "71e50282-9257-4c26-af1e-5f2d0a70cc0b")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3655,8 +4959,8 @@
 					(reference "#PWR0205")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0605")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0215")
 					(unit 1)
 				)
 			)
@@ -3730,10 +5034,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "b79cfa7a-162f-4f46-8224-76dd80d06f1f")
+			(uuid "a01f000f-08f7-46c6-836f-e862b0d2f2e6")
 		)
 		(pin "1"
-			(uuid "b184fb16-8458-4f18-bce5-85ac53571486")
+			(uuid "79df37b2-3e5a-46a5-bfdc-f769cf92b6f5")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3741,8 +5045,8 @@
 					(reference "C204")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "C604")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "C210")
 					(unit 1)
 				)
 			)
@@ -3816,10 +5120,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "f5cf4e38-8bad-423a-83fd-0c7c0f4ddc37")
+			(uuid "892bc358-d825-412d-ab6b-77b9a9f0271b")
 		)
 		(pin "1"
-			(uuid "f7d747c2-07b7-471e-acbb-0f50443e2da0")
+			(uuid "542334f5-b242-4955-b2e7-b4aa5e9a3fdd")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3827,8 +5131,91 @@
 					(reference "C201")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "C601")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "C206")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 41.91 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "993dda4b-363e-4b96-b90d-00eeb9f46d8a")
+		(property "Reference" "R206"
+			(at 245.11 37.592 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 39.37 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "be33effc-e638-43f7-a474-f67556330742")
+		)
+		(pin "1"
+			(uuid "589741e6-f4d9-406a-b162-25732289d2d9")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R206")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R217")
 					(unit 1)
 				)
 			)
@@ -3904,10 +5291,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "3b2ca2c5-bd9a-4f1f-9863-189286cdf474")
+			(uuid "13e799d8-ee0b-4fa3-a0ba-efc0d6e90457")
 		)
 		(pin "2"
-			(uuid "48115877-6781-4379-922e-82f29a4a280e")
+			(uuid "a7fd0d35-242f-4487-a51e-7c85e01b8921")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3915,8 +5302,8 @@
 					(reference "NT203")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "NT603")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "NT206")
 					(unit 1)
 				)
 			)
@@ -3988,7 +5375,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "8a5be9a0-a5f7-4276-b6b5-b341b3f6a7a1")
+			(uuid "fb75c6d9-3c11-4736-a39c-a49b92c491a1")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -3996,8 +5383,91 @@
 					(reference "#PWR0204")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "#PWR0604")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0217")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 269.24 53.34 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a6d2ebfe-c5bc-4493-b0b0-85ae2ff611ee")
+		(property "Reference" "R211"
+			(at 269.24 49.022 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 269.24 50.8 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 269.24 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 269.24 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 269.24 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "ed73e98d-77b6-4372-bcbd-d52df7c08855")
+		)
+		(pin "1"
+			(uuid "a0e7cc45-2a6d-4241-b323-11b82eaea7f4")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R211")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R222")
 					(unit 1)
 				)
 			)
@@ -4093,13 +5563,13 @@
 			)
 		)
 		(pin "1"
-			(uuid "3e945249-e887-4dbb-bd21-d14be4e9225d")
+			(uuid "372bc654-c83f-4ce9-b4d8-53f71bc2d8f3")
 		)
 		(pin "2"
-			(uuid "5dd3a744-edf0-4415-bee3-fc94eee3f71c")
+			(uuid "d51bcc5d-da7e-45c6-bff7-39e637c2727f")
 		)
 		(pin "3"
-			(uuid "c9af49f8-5d76-4822-a75f-bbcb76be9cb3")
+			(uuid "ba7a5739-24c3-4a26-a538-d6e2adf1926a")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -4107,8 +5577,8 @@
 					(reference "CN201")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "CN601")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "CN202")
 					(unit 1)
 				)
 			)
@@ -4184,10 +5654,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "66f891e7-c710-48e8-9b99-75e14e9583a6")
+			(uuid "508571e3-aa75-4aac-a23b-763bab4bfcb1")
 		)
 		(pin "2"
-			(uuid "59540344-3c4a-43dd-9954-4fc443246eab")
+			(uuid "8128a7b5-2ac8-4454-8fc6-649aff6c6c5c")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -4195,8 +5665,8 @@
 					(reference "NT202")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "NT602")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "NT205")
 					(unit 1)
 				)
 			)
@@ -4270,10 +5740,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "479ebfad-372d-413a-8e2d-eaa688d2498d")
+			(uuid "1d7061e8-19cc-424f-b262-78f2b7235d3d")
 		)
 		(pin "1"
-			(uuid "2632ea3a-a91e-48fc-ac70-334a89dff9cd")
+			(uuid "dfd88045-bd7c-4bf2-815b-c5ff66b95abe")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -4281,8 +5751,257 @@
 					(reference "C205")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "C605")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "C209")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 22.86 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "dd138960-ea6c-480e-b114-c5d046bc7e0e")
+		(property "Reference" "R203"
+			(at 245.11 18.542 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 20.32 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 22.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 22.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 22.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "77ddcd0d-3128-476b-b861-3c4b1bf3a2b3")
+		)
+		(pin "1"
+			(uuid "dfdc9f47-cb67-44b2-8a4e-4bcfe7d647fb")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R203")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R214")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 60.96 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "e2c4a7f7-93b3-4cc0-b9d0-86bae24acc83")
+		(property "Reference" "R209"
+			(at 245.11 56.642 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 58.42 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "42270c19-269b-49cd-90ed-8321ec7649c1")
+		)
+		(pin "1"
+			(uuid "e30c15d8-e32e-4a5c-b01e-c7a25705503f")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R209")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R220")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 245.11 67.31 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "e4351304-2cce-4ecf-a1b1-24d4772b64e0")
+		(property "Reference" "R210"
+			(at 245.11 62.992 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Value" "100k"
+			(at 245.11 64.77 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 245.11 67.31 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 67.31 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 245.11 67.31 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "f97ecd71-40f7-4b58-913a-46e6a8fef4e6")
+		)
+		(pin "1"
+			(uuid "2ce90a83-85cd-4a1c-ac46-b2b2c3bc74fd")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R210")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R221")
 					(unit 1)
 				)
 			)
@@ -4355,10 +6074,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "5e56f168-040e-428b-ab0f-3e3dcb2db3e7")
+			(uuid "b36d0df4-036f-49db-acbb-695ab42edeee")
 		)
 		(pin "2"
-			(uuid "376c1f74-ea82-4c64-a929-95299c99d110")
+			(uuid "6284c9b5-adbb-43c0-833a-1982b6a3121d")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -4366,8 +6085,8 @@
 					(reference "R202")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "R602")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R212")
 					(unit 1)
 				)
 			)
@@ -4472,127 +6191,127 @@
 			)
 		)
 		(pin "1"
-			(uuid "f796ffff-143f-41f5-830a-06511fce0ede")
+			(uuid "931aedc1-593c-4371-b0fc-f7671a77d346")
 		)
 		(pin "9"
-			(uuid "a2b0ae07-17a3-465e-8289-40a897d45eeb")
+			(uuid "fb938c6e-a892-4633-8fcc-2b787b47b1aa")
 		)
 		(pin "12"
-			(uuid "66dd1362-07fc-4cf0-8c9c-31052d0d02ed")
+			(uuid "2c657450-1e7e-4910-b26f-37ea449c326d")
 		)
 		(pin "15"
-			(uuid "77e06ab4-20aa-4544-b642-db196620f9db")
+			(uuid "3a783bee-d606-4dea-97b7-f002f35a2990")
 		)
 		(pin "2"
-			(uuid "9f4a8e4c-804a-489b-9e2e-40ca1ee6503d")
+			(uuid "7a2f5635-552a-470c-999d-461ff08151ca")
 		)
 		(pin "4"
-			(uuid "55993a78-2daf-4f8c-971c-de23b0b97a18")
+			(uuid "a3eeec32-8ba5-4697-98f0-31012fd9b4a8")
 		)
 		(pin "5"
-			(uuid "ef025dfb-6f06-4061-af77-aff48063c6fa")
+			(uuid "94417aab-1551-4c33-8962-2f2bc0fcde2b")
 		)
 		(pin "11"
-			(uuid "2c99fe76-f76a-445a-90c6-9a17e1fc955d")
+			(uuid "49a2f826-6f56-4768-889a-cb3c381f601b")
 		)
 		(pin "14"
-			(uuid "e3cff4b0-987f-4aa0-ae67-c90cffb363bc")
+			(uuid "384eeb03-ad88-49eb-ba14-5558f0698360")
 		)
 		(pin "6"
-			(uuid "c51db106-e3ff-4c11-b4d5-b9bae01f50ff")
+			(uuid "fd8671c5-ec58-4964-9fca-764a0fb696dc")
 		)
 		(pin "7"
-			(uuid "e0b5423c-0046-49a6-adaa-e5367f28c68d")
+			(uuid "c4717209-57ec-49e8-9875-7608196ff59d")
 		)
 		(pin "8"
-			(uuid "c30e8e38-737a-4639-9dde-a5097a88ffc3")
+			(uuid "6b879eff-e150-4d5d-bd63-1b1b0cf46b5a")
 		)
 		(pin "3"
-			(uuid "c52ac236-18a5-4c34-a29b-870453891a20")
+			(uuid "e51bdc90-2eb7-474d-bb84-94d9dd18c808")
 		)
 		(pin "10"
-			(uuid "26fe7187-8502-4b1e-8507-1e78af826a7e")
+			(uuid "9e9f855b-b753-42ce-8ab3-ca19c49db0bb")
 		)
 		(pin "13"
-			(uuid "8cf8c607-9b82-409e-9d41-dfe77894af8b")
+			(uuid "352ffd39-310d-405b-90bd-333376de6afd")
 		)
 		(pin "23"
-			(uuid "b19976aa-c605-4178-ab53-33cc1f88f4f8")
+			(uuid "692f61ca-ee56-4deb-b9a6-d0fe415596d0")
 		)
 		(pin "16"
-			(uuid "a7d1247e-1182-402a-8ab4-04047928059d")
+			(uuid "84722099-38e6-49f4-9a40-b904544d616f")
 		)
 		(pin "18"
-			(uuid "7d6066dc-8f01-4eb1-9583-4bfea19a2610")
+			(uuid "fc4c684d-bdbc-401c-b672-4641525c9fbe")
 		)
 		(pin "20"
-			(uuid "b54d1313-1484-4adc-a3f4-d9eeb21e376f")
+			(uuid "798fc3e5-420f-43a4-83bb-977d49a04b96")
 		)
 		(pin "38"
-			(uuid "bf10a8cf-769d-4d1a-a8ba-7c2f7dcf70e8")
+			(uuid "70302e5f-3f0a-4696-84b2-f93eea8a82e6")
 		)
 		(pin "40"
-			(uuid "27457f41-65f2-435c-9e3e-1e7e891a92f8")
+			(uuid "2d41ed6b-d39f-43d7-9e29-d99cf3b05b46")
 		)
 		(pin "17"
-			(uuid "ae644fc2-e621-4511-8b12-68e9d755ac76")
+			(uuid "a4014027-8b91-41a2-a048-c59f5945026f")
 		)
 		(pin "21"
-			(uuid "47e1d4c8-e26a-4f1f-9eb1-58c729ae423d")
+			(uuid "49a502d2-8444-4caf-9454-48083df53161")
 		)
 		(pin "34"
-			(uuid "ab356ac1-a3c8-4509-8a78-27147b037284")
+			(uuid "bc6fc6a0-b2ba-46bd-ae61-fda6de721ecd")
 		)
 		(pin "22"
-			(uuid "585e55e8-5fc4-4b7e-b170-49fae035b2b5")
+			(uuid "175dad7f-82b8-4a5d-b734-6cb66de663a6")
 		)
 		(pin "29"
-			(uuid "5d130e70-d59e-4896-b760-7e067330c6ab")
+			(uuid "fb8cfc92-d228-40a6-a19f-27f08d023ec5")
 		)
 		(pin "32"
-			(uuid "95d28bb7-57a5-49a0-a2e4-ca50054d1a5c")
+			(uuid "e17d2f70-39de-4c44-b46d-6728213d3526")
 		)
 		(pin "25"
-			(uuid "0fe1933b-cb95-47eb-ab35-65ddff4180a4")
+			(uuid "56607418-3155-4326-a46c-87de24a57e33")
 		)
 		(pin "31"
-			(uuid "87369620-de08-4ab9-9c5a-fd3ccae94f78")
+			(uuid "a68c3b4f-0b49-4bf8-92c0-106fbf45c954")
 		)
 		(pin "26"
-			(uuid "456c9a0e-c127-4203-b628-fb16a37800b0")
+			(uuid "c4cd3319-a31b-44ad-9160-6e554bb520cc")
 		)
 		(pin "28"
-			(uuid "5ca78d1e-7187-445e-940a-0e21ce6fd97c")
+			(uuid "b54ec90d-8163-40e4-a4c4-504470354ab4")
 		)
 		(pin "33"
-			(uuid "260452f4-f10c-4ae5-9cf2-0f514457bddf")
+			(uuid "5a230ba2-b448-4fd0-8cff-e7ddd03bf74c")
 		)
 		(pin "35"
-			(uuid "9239086b-627f-49b3-a046-23cee0ab1f9e")
+			(uuid "8cda546d-c2ce-45ca-a10a-8954698b2bf2")
 		)
 		(pin "36"
-			(uuid "55febe75-aa6b-4121-baf7-aad87d3361b4")
+			(uuid "32848548-c3d7-499f-8b87-c9baf40fcb27")
 		)
 		(pin "19"
-			(uuid "7d47cd59-0776-45e8-9889-95e70a3debe8")
+			(uuid "d5aece1f-579e-4c5f-b1eb-c5ffbd7da98f")
 		)
 		(pin "24"
-			(uuid "d9ba81e4-c21f-43df-8282-2d30c1e888cb")
+			(uuid "7cbfb973-deae-4712-93f7-39ddbd1d174a")
 		)
 		(pin "27"
-			(uuid "8a1373d5-0274-4664-affc-6c3f130dcb3f")
+			(uuid "e7fc999d-1920-4d76-b0ae-56024833f91d")
 		)
 		(pin "30"
-			(uuid "92a2661e-046e-46fb-8a72-4d57eb1b86a6")
+			(uuid "f4b58d46-23a7-4f65-a6c8-bbab9e311081")
 		)
 		(pin "37"
-			(uuid "fb6cb188-57a0-446d-ad40-7cb59e04dcaf")
+			(uuid "15c0632d-17e6-4499-b665-e8a2f56140e8")
 		)
 		(pin "39"
-			(uuid "60467cad-831e-442c-9f1f-06f743eba763")
+			(uuid "f8343713-3ef5-4230-a0d6-15c3c9cf18cc")
 		)
 		(pin "41"
-			(uuid "84eb916a-91dd-43ab-a32d-c11358b87a34")
+			(uuid "48de4768-6cc1-4f86-9141-d9a478c80bb5")
 		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
@@ -4600,8 +6319,8 @@
 					(reference "U201")
 					(unit 1)
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(reference "U601")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "U202")
 					(unit 1)
 				)
 			)
@@ -4647,7 +6366,7 @@
 		)
 		(pin "GH" passive
 			(at 160.02 113.03 180)
-			(uuid "72417ba6-5a46-4dee-a03e-1ab753581abb")
+			(uuid "0e65e965-6f05-47ac-b59c-e09301842b00")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4657,7 +6376,7 @@
 		)
 		(pin "GL" passive
 			(at 160.02 118.11 180)
-			(uuid "d0cf112b-1719-4eed-b8b1-701effffc832")
+			(uuid "85e75d2e-ae4a-477d-b690-0d8576a18cbc")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4667,7 +6386,7 @@
 		)
 		(pin "PoleOut" passive
 			(at 193.04 118.11 0)
-			(uuid "461f89d6-511a-461c-8223-f9117153f793")
+			(uuid "7c672d9a-ab62-4ba3-bdc4-b0c3fc3b28a2")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4677,7 +6396,7 @@
 		)
 		(pin "SH" passive
 			(at 160.02 115.57 180)
-			(uuid "37aae394-1d7f-4bf4-909b-9150560bca88")
+			(uuid "945950eb-c662-42a9-9077-4437952c4f02")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4687,7 +6406,7 @@
 		)
 		(pin "V+" passive
 			(at 193.04 113.03 0)
-			(uuid "5b935ebc-2650-412e-ad87-64272d2920ca")
+			(uuid "8d6efa24-93be-4aa8-a4f3-603d6e7bcead")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4697,7 +6416,7 @@
 		)
 		(pin "SP" passive
 			(at 160.02 120.65 180)
-			(uuid "2b485ce3-dde5-4d79-b21b-0c8f15c3ac68")
+			(uuid "3381172f-4dab-4cea-9a43-2e3c8dd995bc")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4707,7 +6426,7 @@
 		)
 		(pin "SN" passive
 			(at 160.02 123.19 180)
-			(uuid "c9c793d9-0725-40be-834d-97f60e2c4ad7")
+			(uuid "16dde76b-7990-4348-8b32-2eabba87bb6a")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4720,7 +6439,7 @@
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
 					(page "5")
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
 					(page "8")
 				)
 			)
@@ -4766,7 +6485,7 @@
 		)
 		(pin "GH" passive
 			(at 160.02 72.39 180)
-			(uuid "62298a80-7f66-4238-b2b7-a345546a8718")
+			(uuid "959cf863-2019-4d13-b1bb-ef4e9a0ab9f4")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4776,7 +6495,7 @@
 		)
 		(pin "GL" passive
 			(at 160.02 77.47 180)
-			(uuid "d92076d2-cc6f-4833-b738-7dff2b0e587a")
+			(uuid "67f62441-2c43-4917-ade5-37daa18c533e")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4786,7 +6505,7 @@
 		)
 		(pin "PoleOut" passive
 			(at 193.04 77.47 0)
-			(uuid "ebb47adf-d448-4179-9d8f-6c86722c6b36")
+			(uuid "34074270-bf29-4dcd-939e-9cf4aeb5d54f")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4796,7 +6515,7 @@
 		)
 		(pin "SH" passive
 			(at 160.02 74.93 180)
-			(uuid "80c87550-c9c0-49e6-9b7a-fbc5a383ed19")
+			(uuid "585d3313-cadb-4233-84e1-9581b21d78ac")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4806,7 +6525,7 @@
 		)
 		(pin "V+" passive
 			(at 193.04 72.39 0)
-			(uuid "8edd1e77-ce62-4710-bad9-1fba534d1a27")
+			(uuid "8e1bab41-f41a-478c-9e6b-540d92430e77")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4816,7 +6535,7 @@
 		)
 		(pin "SP" passive
 			(at 160.02 80.01 180)
-			(uuid "005dee82-35d7-4b4f-acf2-b4bbad5ada30")
+			(uuid "955a21a9-aa04-4a14-99d0-2b4a73307e92")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4826,7 +6545,7 @@
 		)
 		(pin "SN" passive
 			(at 160.02 82.55 180)
-			(uuid "48ff7f17-78dc-42ba-abf5-70c6cac94685")
+			(uuid "013346d5-2bbf-4ced-955d-b3b15b580bd9")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4839,8 +6558,8 @@
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
 					(page "3")
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(page "9")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(page "7")
 				)
 			)
 		)
@@ -4885,7 +6604,7 @@
 		)
 		(pin "GH" passive
 			(at 160.02 92.71 180)
-			(uuid "05fa4367-bf13-4a9c-80d7-e084361a0f91")
+			(uuid "dbe32824-0a98-410f-86cc-d6a4b0add928")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4895,7 +6614,7 @@
 		)
 		(pin "GL" passive
 			(at 160.02 97.79 180)
-			(uuid "e1218642-cb02-4e4d-8f37-a79e9defff87")
+			(uuid "043bb8f4-efae-4604-859f-d9ef0d747b51")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4905,7 +6624,7 @@
 		)
 		(pin "PoleOut" passive
 			(at 193.04 97.79 0)
-			(uuid "8c6d38ff-ec41-4f0e-8815-0cf6ae5a9f63")
+			(uuid "02217e43-03f6-449c-b337-5e08770765ff")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4915,7 +6634,7 @@
 		)
 		(pin "SH" passive
 			(at 160.02 95.25 180)
-			(uuid "2660d9c8-1c0e-4d47-8c28-c1c3449fcbc7")
+			(uuid "bb7176c6-6efe-405f-9e48-0db727cb849b")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4925,7 +6644,7 @@
 		)
 		(pin "V+" passive
 			(at 193.04 92.71 0)
-			(uuid "66ca026a-7c44-473e-94c1-95e0069a2c61")
+			(uuid "3fce5494-d8a3-4c46-a3d5-11b3cde787e2")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4935,7 +6654,7 @@
 		)
 		(pin "SP" passive
 			(at 160.02 100.33 180)
-			(uuid "6873dea3-1957-497d-b6ca-4b4f2488bf65")
+			(uuid "6d22d0f8-5449-48d1-a76b-a801437d2608")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4945,7 +6664,7 @@
 		)
 		(pin "SN" passive
 			(at 160.02 102.87 180)
-			(uuid "5ef3eca5-586b-48cb-9a1b-7a6e4ff446d4")
+			(uuid "7955db42-dccb-47a9-8312-b67b572f3b09")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4958,8 +6677,8 @@
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
 					(page "4")
 				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/e842f42e-62e8-4809-9799-e9078ef99b24"
-					(page "7")
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(page "9")
 				)
 			)
 		)

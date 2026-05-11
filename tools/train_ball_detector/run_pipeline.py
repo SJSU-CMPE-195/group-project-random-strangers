@@ -21,8 +21,6 @@ def main() -> None:
             str(SCRIPT_DIR / "download_dataset.py"),
             "--max-train",
             "4000",
-            "--max-val",
-            "278",
             "--download-workers",
             "24",
             "--min-ball-ratio",

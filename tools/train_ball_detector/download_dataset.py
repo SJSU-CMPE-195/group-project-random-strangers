@@ -14,8 +14,35 @@ from coco_utils import (
     ensure_coco_annotations_exist,
     load_coco_instances_json,
     sample_images_with_class_balance,
+    split_labeled_images_by_ball_presence,
     write_split_manifest,
 )
+
+
+def compute_max_images_for_ratios(
+    *,
+    background_count: int,
+    ball_count: int,
+    other_labeled_count: int,
+    background_ratio: float,
+    min_ball_ratio: float,
+) -> int:
+    other_ratio = 1.0 - background_ratio - min_ball_ratio
+    if other_ratio < 0:
+        raise ValueError("background_ratio + min_ball_ratio must be <= 1.0")
+
+    limits = []
+    if background_ratio > 0:
+        limits.append(int(background_count / background_ratio))
+    if min_ball_ratio > 0:
+        limits.append(int(ball_count / min_ball_ratio))
+    if other_ratio > 0:
+        limits.append(int(other_labeled_count / other_ratio))
+
+    if not limits:
+        return 0
+
+    return max(0, min(limits))
 
 
 def build_split_manifest_and_download(
@@ -37,6 +64,24 @@ def build_split_manifest_and_download(
     all_image_ids = set(images_by_id.keys())
     labeled_image_ids = set(labels_by_image.keys())
     background_candidate_ids = list(all_image_ids - labeled_image_ids - rejected_small_detection_ids)
+
+    ball_items, other_labeled_items = split_labeled_images_by_ball_presence(labels_by_image)
+    background_count = len(background_candidate_ids)
+    ball_count = len(ball_items)
+    other_labeled_count = len(other_labeled_items)
+
+    if max_images is None:
+        max_images = compute_max_images_for_ratios(
+            background_count=background_count,
+            ball_count=ball_count,
+            other_labeled_count=other_labeled_count,
+            background_ratio=background_ratio,
+            min_ball_ratio=min_ball_ratio,
+        )
+        print(
+            f"[VAL] computed max_images={max_images} from available "
+            f"background={background_count}, ball={ball_count}, other_labeled={other_labeled_count}"
+        )
 
     selected_items = sample_images_with_class_balance(
         labels_by_image,
@@ -111,7 +156,6 @@ def write_eval_list(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-train", type=int, default=10000)
-    parser.add_argument("--max-val", type=int, default=1000)
     parser.add_argument("--download-workers", type=int, default=24)
     parser.add_argument("--background-ratio", type=float, default=0.05)
     parser.add_argument("--min-ball-ratio", type=float, default=0.35)
@@ -139,7 +183,7 @@ def main() -> None:
     )
     val_manifest = build_split_manifest_and_download(
         "val2017",
-        max_images=args.max_val,
+        max_images=None,
         download_workers=args.download_workers,
         background_ratio=args.background_ratio,
         min_ball_ratio=args.min_ball_ratio,

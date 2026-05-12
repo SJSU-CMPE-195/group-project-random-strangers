@@ -3562,7 +3562,7 @@
 		(uuid "d68cb9df-3197-47ea-ac53-660405704913")
 	)
 	(junction
-		(at 52.07 140.97)
+		(at 55.88 137.16)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d88c68d6-8422-41ca-86c5-b76d8d3e3c6b")
@@ -3717,7 +3717,7 @@
 	)
 	(wire
 		(pts
-			(xy 66.04 124.46) (xy 74.93 124.46)
+			(xy 69.85 120.65) (xy 78.74 120.65)
 		)
 		(stroke
 			(width 0)
@@ -3857,6 +3857,16 @@
 	)
 	(wire
 		(pts
+			(xy 161.29 87.63) (xy 152.4 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "40dfffe7-4bf9-4924-a2fe-330eac82be2e")
+	)
+	(wire
+		(pts
 			(xy 31.75 66.04) (xy 44.45 66.04)
 		)
 		(stroke
@@ -3867,7 +3877,7 @@
 	)
 	(wire
 		(pts
-			(xy 66.04 127) (xy 74.93 127)
+			(xy 69.85 123.19) (xy 78.74 123.19)
 		)
 		(stroke
 			(width 0)
@@ -3897,7 +3907,7 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 140.97) (xy 52.07 140.97)
+			(xy 54.61 137.16) (xy 55.88 137.16)
 		)
 		(stroke
 			(width 0)
@@ -4047,7 +4057,7 @@
 	)
 	(wire
 		(pts
-			(xy 66.04 116.84) (xy 74.93 116.84)
+			(xy 69.85 113.03) (xy 78.74 113.03)
 		)
 		(stroke
 			(width 0)
@@ -4087,7 +4097,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 139.7) (xy 53.34 140.97)
+			(xy 57.15 135.89) (xy 57.15 137.16)
 		)
 		(stroke
 			(width 0)
@@ -4197,7 +4207,7 @@
 	)
 	(wire
 		(pts
-			(xy 66.04 121.92) (xy 74.93 121.92)
+			(xy 69.85 118.11) (xy 78.74 118.11)
 		)
 		(stroke
 			(width 0)
@@ -4254,16 +4264,6 @@
 			(type default)
 		)
 		(uuid "9e642dcf-1613-4123-b67d-5ac693582741")
-	)
-	(wire
-		(pts
-			(xy 161.29 87.63) (xy 152.4 87.63)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9fc4fc74-4c7b-4ef3-8d90-3216d0ee1d93")
 	)
 	(wire
 		(pts
@@ -4337,7 +4337,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 140.97) (xy 52.07 140.97)
+			(xy 57.15 137.16) (xy 55.88 137.16)
 		)
 		(stroke
 			(width 0)
@@ -4354,6 +4354,16 @@
 			(type default)
 		)
 		(uuid "af7012ab-b361-4e12-9031-5884e6f3339c")
+	)
+	(wire
+		(pts
+			(xy 107.95 100.33) (xy 116.84 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b3715c83-0ed7-42b0-a35a-32d900773b4a")
 	)
 	(wire
 		(pts
@@ -4427,16 +4437,6 @@
 	)
 	(wire
 		(pts
-			(xy 107.95 100.33) (xy 116.84 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c730cd7b-f500-4c30-ae08-37836c0acce7")
-	)
-	(wire
-		(pts
 			(xy 161.29 82.55) (xy 152.4 82.55)
 		)
 		(stroke
@@ -4487,7 +4487,7 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 139.7) (xy 50.8 140.97)
+			(xy 54.61 135.89) (xy 54.61 137.16)
 		)
 		(stroke
 			(width 0)
@@ -4567,7 +4567,7 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 140.97) (xy 52.07 142.24)
+			(xy 55.88 137.16) (xy 55.88 138.43)
 		)
 		(stroke
 			(width 0)
@@ -4637,7 +4637,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 107.95) (xy 53.34 109.22)
+			(xy 57.15 104.14) (xy 57.15 105.41)
 		)
 		(stroke
 			(width 0)
@@ -4745,6 +4745,16 @@
 		)
 		(uuid "24aea228-22b3-4a4d-a137-3ac6871547b9")
 	)
+	(label "CHCn1"
+		(at 161.29 87.63 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "36750dd0-2e67-4b47-8e35-8e0691284f1b")
+	)
 	(label "sns_cs2"
 		(at 161.29 100.33 180)
 		(effects
@@ -4764,16 +4774,6 @@
 			(justify right bottom)
 		)
 		(uuid "3dfe9727-01e7-4343-b1ef-18f34aa742e5")
-	)
-	(label "CHCn1"
-		(at 107.95 100.33 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "3e88bdee-fabe-4394-aa82-939a5ff499a6")
 	)
 	(label "snsA2"
 		(at 161.29 69.85 180)
@@ -4816,7 +4816,7 @@
 		(uuid "4da04f59-fe9d-49f5-8045-55d9839e7433")
 	)
 	(label "SWO"
-		(at 74.93 127 180)
+		(at 78.74 123.19 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4824,16 +4824,6 @@
 			(justify right bottom)
 		)
 		(uuid "4dfeeb8a-7026-40cc-bdb3-3513a2c94dc0")
-	)
-	(label "CHAn1"
-		(at 161.29 87.63 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "4ecfa9c4-54c3-406d-96c7-e77b8ea559e4")
 	)
 	(label "snsC1"
 		(at 205.74 90.17 0)
@@ -5046,7 +5036,7 @@
 		(uuid "a13b304b-0760-49ac-a9e2-5f54af3388c8")
 	)
 	(label "SWCLK"
-		(at 74.93 121.92 180)
+		(at 78.74 118.11 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5054,6 +5044,16 @@
 			(justify right bottom)
 		)
 		(uuid "a90627fe-f389-45f8-83b6-c72463d8e69c")
+	)
+	(label "CHAn1"
+		(at 107.95 100.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ab88b84b-ca09-4bde-bad7-5af8049d5d25")
 	)
 	(label "CHBn2"
 		(at 205.74 124.46 0)
@@ -5066,7 +5066,7 @@
 		(uuid "b25fe27e-7592-4f52-a1e5-9d287f37aec6")
 	)
 	(label "SWDIO"
-		(at 74.93 124.46 180)
+		(at 78.74 120.65 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5226,7 +5226,7 @@
 		(uuid "f7e3ee6f-3b81-44d5-8e76-f4a53c9642d7")
 	)
 	(label "~{rst}"
-		(at 74.93 116.84 180)
+		(at 78.74 113.03 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5971,7 +5971,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_ARM_JTAG_SWD_10")
-		(at 53.34 124.46 0)
+		(at 57.15 120.65 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5982,7 +5982,7 @@
 		(fields_autoplaced yes)
 		(uuid "379e865f-81a2-4d91-8069-7fb83c30a2ee")
 		(property "Reference" "J102"
-			(at 41.91 123.1899 0)
+			(at 45.72 119.3799 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5993,7 +5993,7 @@
 			)
 		)
 		(property "Value" "Conn_ARM_JTAG_SWD_10"
-			(at 41.91 125.7299 0)
+			(at 45.72 121.9199 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6004,7 +6004,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 53.34 124.46 0)
+			(at 57.15 120.65 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6015,7 +6015,7 @@
 			)
 		)
 		(property "Datasheet" "http://infocenter.arm.com/help/topic/com.arm.doc.ddi0314h/DDI0314H_coresight_components_trm.pdf"
-			(at 44.45 156.21 90)
+			(at 48.26 152.4 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6026,7 +6026,7 @@
 			)
 		)
 		(property "Description" "Cortex Debug Connector, standard ARM Cortex-M SWD and JTAG interface"
-			(at 53.34 124.46 0)
+			(at 57.15 120.65 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7869,7 +7869,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 52.07 142.24 0)
+		(at 55.88 138.43 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7879,7 +7879,7 @@
 		(dnp no)
 		(uuid "f2c068ab-df7b-4aec-96b9-c6901e73fbc1")
 		(property "Reference" "#PWR0119"
-			(at 52.07 148.59 0)
+			(at 55.88 144.78 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7890,7 +7890,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 56.134 144.018 0)
+			(at 59.944 140.208 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7900,7 +7900,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 52.07 142.24 0)
+			(at 55.88 138.43 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7911,7 +7911,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 52.07 142.24 0)
+			(at 55.88 138.43 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7922,7 +7922,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 52.07 142.24 0)
+			(at 55.88 138.43 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8024,7 +8024,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 53.34 107.95 0)
+		(at 57.15 104.14 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -8035,7 +8035,7 @@
 		(fields_autoplaced yes)
 		(uuid "fd57010b-0d36-4f29-8005-c3280f64b850")
 		(property "Reference" "#PWR0116"
-			(at 53.34 111.76 0)
+			(at 57.15 107.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8046,7 +8046,7 @@
 			)
 		)
 		(property "Value" "+3.3V"
-			(at 53.34 102.87 0)
+			(at 57.15 99.06 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8056,7 +8056,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 53.34 107.95 0)
+			(at 57.15 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8067,7 +8067,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 53.34 107.95 0)
+			(at 57.15 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8078,7 +8078,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 53.34 107.95 0)
+			(at 57.15 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

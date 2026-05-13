@@ -1983,9 +1983,9 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "IDRIVE: Mosfet Drive Current\n	Target: 200ns Rise, 100ns Fall\n	Gate-Drain Charge: 12nC\n		Rise: 12nC / 200ns = 60mA -> 75kΩ to AGND\n		Fall: 12nC / 100ns = 120mA -> 75kΩ to AGND\n\nMODE: PWM input mode\n	6-PWM -> Mode 0 -> tie to AGND\n\nGAIN: Current Sense Gain\n	40 V/V -> Tie to DVDD\n\nVDS: Overcurrent Protection\n	Max Current > 35A\n	RDSon@125°C = 3.5mΩ\n		Overcurrent Voltage = 35A * 3.5mΩ = 0.1225V\n		Choose 0.13V -> 18kΩ to AGND\n		Actual Overcurrent@125°C = 0.13V / 3.5mΩ ~ 37.14A"
+	(text "IDRIVE: Mosfet Drive Current\n	Target: 300ns Rise, 100ns Fall\n	Gate-Drain Charge: 7.9nC\n		Rise: 7.9nC / 300ns = 30mA -> 18kΩ to AGND\n		Fall: 7.9nC / 150ns = 60mA -> 18kΩ to AGND\n\nMODE: PWM input mode\n	6-PWM -> Mode 0 -> tie to AGND\n\nGAIN: Current Sense Gain\n	20 V/V -> 47k to GND\n	40 V/V -> Pull-Up\n	5 V/V  -> Pull-Dowm\n\nVDS: Overcurrent Protection\n	Max Current > 35A\n	RDSon@100°C = 0.00516Ω\n		Overcurrent Voltage = 35A * 5.16mΩ = 0.1806V\n		Choose 0.26V -> 75kΩ to AGND\n		Actual Overcurrent@125°C = 0.26V / 5.16mΩ ~ 50.39A"
 		(exclude_from_sim no)
-		(at 67.31 176.53 0)
+		(at 67.056 175.514 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2017,8 +2017,8 @@
 	)
 	(text_box "Configuration Selection"
 		(exclude_from_sim no)
-		(at 66.294 153.67 0)
-		(size 65.278 42.926)
+		(at 66.294 151.765 0)
+		(size 65.278 44.831)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
@@ -2442,16 +2442,6 @@
 			(type default)
 		)
 		(uuid "4d850445-e0c5-4653-8277-4964cd0e8960")
-	)
-	(wire
-		(pts
-			(xy 78.74 132.08) (xy 78.74 143.51)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4e4c5b53-dc7f-45f4-aa9c-2a48ccfcf1b3")
 	)
 	(wire
 		(pts
@@ -2915,6 +2905,16 @@
 	)
 	(wire
 		(pts
+			(xy 78.74 139.7) (xy 78.74 143.51)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5a4fd4f-c230-4230-9c18-a8924adcf30f")
+	)
+	(wire
+		(pts
 			(xy 271.78 53.34) (xy 275.59 53.34)
 		)
 		(stroke
@@ -3085,6 +3085,16 @@
 	)
 	(wire
 		(pts
+			(xy 78.74 132.08) (xy 78.74 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dd069705-8fca-43a0-918a-3acf8821cf66")
+	)
+	(wire
+		(pts
 			(xy 54.61 87.63) (xy 59.69 87.63)
 		)
 		(stroke
@@ -3222,16 +3232,6 @@
 			(justify left bottom)
 		)
 		(uuid "6b95ac88-9fcb-40e2-90ba-a8f8dbf56518")
-	)
-	(label "DVDD"
-		(at 78.74 143.51 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ca4bdb07-d48e-408d-af7c-d4df3584bdfc")
 	)
 	(hierarchical_label "SOA"
 		(shape output)
@@ -3376,6 +3376,17 @@
 		)
 		(uuid "879ecd0b-5a34-4711-843d-4445a20dd785")
 	)
+	(hierarchical_label "Gain"
+		(shape input)
+		(at 78.74 133.35 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8d39b2cc-96e6-456c-8882-b91858644f9c")
+	)
 	(hierarchical_label "INLB"
 		(shape input)
 		(at 54.61 80.01 180)
@@ -3474,6 +3485,88 @@
 			(justify right)
 		)
 		(uuid "fade0182-4b5f-4674-9827-af1580429088")
+	)
+	(symbol
+		(lib_id "power:GNDA")
+		(at 78.74 143.51 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "00342b29-9c4a-4904-8adf-63000423d0ac")
+		(property "Reference" "#PWR0223"
+			(at 78.74 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GNDA"
+			(at 78.74 148.59 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 78.74 143.51 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 78.74 143.51 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
+			(at 78.74 143.51 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "9a9998a7-8419-4c0b-b13f-e20d61294f1f")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "#PWR0223")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "#PWR0601")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(symbol
 		(lib_id "power:GNDA")
@@ -4488,7 +4581,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "75k"
+		(property "Value" "18k"
 			(at 86.36 138.176 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5468,6 +5561,91 @@
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
 					(reference "R222")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 78.74 137.16 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "b46cce84-7c18-4ef9-92e0-accee4e3c904")
+		(property "Reference" "R223"
+			(at 79.756 135.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47k"
+			(at 80.01 138.176 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 78.74 137.16 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 78.74 137.16 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 78.74 137.16 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "85e07949-091a-4981-b314-c650de342407")
+		)
+		(pin "2"
+			(uuid "8f5c24e4-32dc-43d1-acb9-b5fc04d09515")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171"
+					(reference "R223")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079"
+					(reference "R601")
 					(unit 1)
 				)
 			)

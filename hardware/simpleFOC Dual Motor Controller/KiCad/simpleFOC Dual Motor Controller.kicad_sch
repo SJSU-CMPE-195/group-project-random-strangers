@@ -3597,6 +3597,16 @@
 	)
 	(wire
 		(pts
+			(xy 116.84 87.63) (xy 107.95 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "05de5cbc-479e-4176-9671-0e309b4d7531")
+	)
+	(wire
+		(pts
 			(xy 135.89 149.86) (xy 134.62 149.86)
 		)
 		(stroke
@@ -3914,6 +3924,16 @@
 			(type default)
 		)
 		(uuid "41b3bdb6-6da5-4616-99fb-7f2362311279")
+	)
+	(wire
+		(pts
+			(xy 116.84 92.71) (xy 107.95 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "481adc8a-d39d-405f-b9f2-934017bc67b0")
 	)
 	(wire
 		(pts
@@ -4244,6 +4264,16 @@
 			(type default)
 		)
 		(uuid "8b235171-bd2d-4428-91ea-217d53178532")
+	)
+	(wire
+		(pts
+			(xy 255.27 105.41) (xy 264.16 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8d53177e-1325-4c6f-bc8f-99e99ff1d0a8")
 	)
 	(wire
 		(pts
@@ -4737,6 +4767,16 @@
 	)
 	(wire
 		(pts
+			(xy 255.27 58.42) (xy 264.16 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f5927786-4c90-47df-8800-cea3e0d1af47")
+	)
+	(wire
+		(pts
 			(xy 116.84 118.11) (xy 107.95 118.11)
 		)
 		(stroke
@@ -4855,6 +4895,16 @@
 		)
 		(uuid "1ae99582-3541-41ae-9df2-56a7b18c46f4")
 	)
+	(label "GAIN1"
+		(at 107.95 87.63 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2023097e-50f7-4e26-abac-a5d4ca08c192")
+	)
 	(label "sns_cs1"
 		(at 161.29 97.79 180)
 		(effects
@@ -4874,6 +4924,16 @@
 			(justify left bottom)
 		)
 		(uuid "24aea228-22b3-4a4d-a137-3ac6871547b9")
+	)
+	(label "GAIN2"
+		(at 107.95 92.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2b5be72d-570d-4a22-b749-7c7372955a17")
 	)
 	(label "FAULT1"
 		(at 107.95 128.27 0)
@@ -4934,6 +4994,16 @@
 			(justify right bottom)
 		)
 		(uuid "41422166-72ce-40c3-a10f-988b30811ae5")
+	)
+	(label "GAIN1"
+		(at 264.16 58.42 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "459ad682-bb55-4234-9ef1-6f00fb71226a")
 	)
 	(label "ctrl_scl"
 		(at 39.37 71.12 180)
@@ -5454,6 +5524,16 @@
 			(justify left bottom)
 		)
 		(uuid "ee10af78-03b1-4a68-a360-9f5f21f9caba")
+	)
+	(label "GAIN2"
+		(at 264.16 105.41 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f6a91b06-4e41-4f69-b6f6-4c2b702b0c1a")
 	)
 	(label "CHCn2"
 		(at 205.74 127 0)
@@ -8408,16 +8488,6 @@
 				(justify left)
 			)
 		)
-		(pin "FAULT" output
-			(at 214.63 60.96 180)
-			(uuid "1f2dd40e-59f3-4cc2-be40-632791f7fb47")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
 		(pin "INHA" input
 			(at 214.63 66.04 180)
 			(uuid "35258ac3-b2a6-4d76-a2d8-3d2c4383619f")
@@ -8508,6 +8578,26 @@
 				(justify left)
 			)
 		)
+		(pin "Gain" input
+			(at 255.27 58.42 0)
+			(uuid "69909920-9da6-4d89-ba6c-7b1c3cf49aa8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "~{FAULT}" output
+			(at 214.63 60.96 180)
+			(uuid "4c9420c0-ca5b-4c7d-9dd6-fb06a4ad1772")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(instances
 			(project "simpleFOC Dual Motor Controller"
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef"
@@ -8577,16 +8667,6 @@
 		(pin "EN" input
 			(at 214.63 105.41 180)
 			(uuid "7f45e4fe-7a09-438e-9095-72d0fce13601")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "FAULT" output
-			(at 214.63 107.95 180)
-			(uuid "0f00f682-42d6-4dbe-8fb7-206f69e0bcad")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8677,6 +8757,26 @@
 		(pin "SOC" output
 			(at 214.63 137.16 180)
 			(uuid "e6759c42-f9ff-4c43-a0cd-7de12ff25361")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Gain" input
+			(at 255.27 105.41 0)
+			(uuid "e483d88a-4e93-4a22-87a8-37ee0ddc0256")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "~{FAULT}" output
+			(at 214.63 107.95 180)
+			(uuid "2b15635a-d263-488b-89bd-af07fcc45c5f")
 			(effects
 				(font
 					(size 1.27 1.27)

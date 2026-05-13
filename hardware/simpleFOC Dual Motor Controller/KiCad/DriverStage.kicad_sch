@@ -3365,17 +3365,6 @@
 		)
 		(uuid "7654b78c-bdd4-46fb-8108-f4bfca482281")
 	)
-	(hierarchical_label "FAULT"
-		(shape output)
-		(at 54.61 105.41 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "865ec7b4-a9a4-4e86-974a-bbe299a0c602")
-	)
 	(hierarchical_label "Motor_VIN"
 		(shape passive)
 		(at 27.94 24.13 180)
@@ -3452,6 +3441,17 @@
 			(justify right)
 		)
 		(uuid "ad18eda0-60b4-4047-85a3-1cd2b9d5952f")
+	)
+	(hierarchical_label "~{FAULT}"
+		(shape output)
+		(at 54.61 105.41 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c42c6085-c566-41cd-94c2-d194e04a72e4")
 	)
 	(hierarchical_label "INLA"
 		(shape input)

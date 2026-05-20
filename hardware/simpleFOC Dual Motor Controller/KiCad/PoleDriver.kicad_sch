@@ -444,7 +444,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:AGM6014AP"
+		(symbol "easyeda2kicad:XRS100N06LD"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -460,7 +460,7 @@
 					)
 				)
 			)
-			(property "Value" "AGM6014AP"
+			(property "Value" "XRS100N06LD"
 				(at 0 -10.16 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -470,7 +470,7 @@
 					)
 				)
 			)
-			(property "Footprint" "easyeda2kicad:PDFN-8_L3.1-W3.0-P0.65-LS3.3-BL"
+			(property "Footprint" "easyeda2kicad:DFN-8_L3.0-W3.0-P0.65-BL-4"
 				(at 0 -12.7 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -481,7 +481,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C6719405.pdf"
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C42457038.pdf"
 				(at 0 -15.24 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -503,7 +503,7 @@
 					)
 				)
 			)
-			(property "Manufacturer" "AGMSEMI(芯控源)"
+			(property "Manufacturer" "XNRUSEMI(新锐)"
 				(at 0 -17.78 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -514,7 +514,7 @@
 					)
 				)
 			)
-			(property "MPN" "AGM6014AP"
+			(property "MPN" "XRS100N06LD"
 				(at 0 -20.32 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -525,7 +525,7 @@
 					)
 				)
 			)
-			(property "LCSC Part" "C6719405"
+			(property "LCSC Part" "C42457038"
 				(at 0 -22.86 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -536,21 +536,10 @@
 					)
 				)
 			)
-			(property "ki_keywords" "MOSFETs"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "AGM6014AP_0_1"
+			(symbol "XRS100N06LD_0_1"
 				(polyline
 					(pts
-						(xy -3.81 0) (xy -1.78 0)
+						(xy -6.35 0) (xy -4.32 0)
 					)
 					(stroke
 						(width 0)
@@ -562,7 +551,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.78 2.29) (xy -1.78 -2.29)
+						(xy -4.32 2.29) (xy -4.32 -2.29)
 					)
 					(stroke
 						(width 0)
@@ -574,7 +563,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 2.29) (xy -1.27 1.27)
+						(xy -3.81 2.29) (xy -3.81 1.27)
 					)
 					(stroke
 						(width 0)
@@ -586,7 +575,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 1.78) (xy 1.27 1.78) (xy 1.27 2.54) (xy 3.81 2.54) (xy 3.81 2.54) (xy 3.81 0.51)
+						(xy -3.81 1.78) (xy -1.27 1.78) (xy -1.27 2.54) (xy 1.27 2.54) (xy 1.27 2.54) (xy 1.27 0.51)
 					)
 					(stroke
 						(width 0)
@@ -598,7 +587,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 0) (xy 0.25 -0.51) (xy 0.25 0.51) (xy -1.27 0)
+						(xy -3.81 0) (xy -2.29 -0.51) (xy -2.29 0.51) (xy -3.81 0)
 					)
 					(stroke
 						(width 0)
@@ -610,7 +599,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 0) (xy 1.27 0) (xy 1.27 -2.54) (xy 3.81 -2.54) (xy 6.35 -2.54) (xy 3.81 -2.54) (xy 3.81 0)
+						(xy -3.81 0) (xy -1.27 0) (xy -1.27 -2.54) (xy 1.27 -2.54) (xy 3.81 -2.54) (xy 1.27 -2.54) (xy 1.27 0)
 					)
 					(stroke
 						(width 0)
@@ -622,7 +611,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 -0.51) (xy -1.27 0.51)
+						(xy -3.81 -0.51) (xy -3.81 0.51)
 					)
 					(stroke
 						(width 0)
@@ -634,7 +623,7 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 -2.29) (xy -1.27 -1.27)
+						(xy -3.81 -2.29) (xy -3.81 -1.27)
 					)
 					(stroke
 						(width 0)
@@ -646,7 +635,7 @@
 				)
 				(polyline
 					(pts
-						(xy 1.27 -1.78) (xy -1.27 -1.78)
+						(xy -1.27 -1.78) (xy -3.81 -1.78)
 					)
 					(stroke
 						(width 0)
@@ -658,7 +647,7 @@
 				)
 				(polyline
 					(pts
-						(xy 3.81 0.51) (xy 3.05 -0.76) (xy 4.57 -0.76) (xy 3.81 0.51)
+						(xy 1.27 0.51) (xy 0.51 -0.76) (xy 2.03 -0.76) (xy 1.27 0.51)
 					)
 					(stroke
 						(width 0)
@@ -670,7 +659,7 @@
 				)
 				(polyline
 					(pts
-						(xy 4.83 0.51) (xy 4.32 0.51) (xy 3.3 0.51) (xy 2.79 0.51)
+						(xy 2.29 0.51) (xy 1.78 0.51) (xy 0.76 0.51) (xy 0.25 0.51)
 					)
 					(stroke
 						(width 0)
@@ -681,7 +670,7 @@
 					)
 				)
 				(pin unspecified line
-					(at 1.27 -5.08 90)
+					(at -1.27 -5.08 90)
 					(length 2.54)
 					(name "S"
 						(effects
@@ -699,7 +688,7 @@
 					)
 				)
 				(pin unspecified line
-					(at 3.81 -5.08 90)
+					(at 1.27 -5.08 90)
 					(length 2.54)
 					(name "S"
 						(effects
@@ -717,7 +706,7 @@
 					)
 				)
 				(pin unspecified line
-					(at 6.35 -5.08 90)
+					(at 3.81 -5.08 90)
 					(length 2.54)
 					(name "S"
 						(effects
@@ -735,7 +724,7 @@
 					)
 				)
 				(pin unspecified line
-					(at -6.35 0 0)
+					(at -8.89 0 0)
 					(length 2.54)
 					(name "G"
 						(effects
@@ -753,7 +742,7 @@
 					)
 				)
 				(pin unspecified line
-					(at 1.27 5.08 270)
+					(at -1.27 5.08 270)
 					(length 2.54)
 					(name "D"
 						(effects
@@ -1410,6 +1399,150 @@
 		(uuid "d36cb618-868a-40ec-ab9b-7b5008ee8df8")
 	)
 	(symbol
+		(lib_id "easyeda2kicad:XRS100N06LD")
+		(at 101.6 33.02 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "02f0375e-b179-4206-964d-7ddf6c03e19c")
+		(property "Reference" "Q302"
+			(at 106.68 31.7499 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "XRS100N06LD"
+			(at 106.68 34.2899 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:DFN-8_L3.0-W3.0-P0.65-BL-4"
+			(at 101.6 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C42457038.pdf"
+			(at 101.6 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 101.6 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "XNRUSEMI(新锐)"
+			(at 101.6 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "XRS100N06LD"
+			(at 101.6 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C42457038"
+			(at 101.6 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "5"
+			(uuid "4c9e6ede-baa6-4bda-83d2-0f5e24ba60c9")
+		)
+		(pin "1"
+			(uuid "5ffac666-d0e1-4667-ab13-171e4366aef5")
+		)
+		(pin "4"
+			(uuid "49bf4c18-de67-468c-8046-0d6a78fb51a0")
+		)
+		(pin "3"
+			(uuid "515d497d-ff63-4441-9af5-9c5098c971f5")
+		)
+		(pin "2"
+			(uuid "c2630014-ba85-4c73-927d-ab7cd5552f48")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q502")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q302")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q402")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q801")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q701")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q901")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 62.23 33.02 0)
 		(unit 1)
@@ -1713,294 +1846,6 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:AGM6014AP")
-		(at 99.06 33.02 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "66c45808-5244-4ed4-8549-952895303ac0")
-		(property "Reference" "Q301"
-			(at 106.68 31.7499 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "AGM6014AP"
-			(at 106.68 34.2899 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:PDFN-8_L3.1-W3.0-P0.65-LS3.3-BL"
-			(at 99.06 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C6719405.pdf"
-			(at 99.06 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 99.06 33.02 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "AGMSEMI(芯控源)"
-			(at 99.06 50.8 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "AGM6014AP"
-			(at 99.06 53.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC Part" "C6719405"
-			(at 99.06 55.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "13448268-fa3d-4d23-9afb-b06b50714f26")
-		)
-		(pin "4"
-			(uuid "b602930c-2fb6-4c21-ae74-9b635fcf027d")
-		)
-		(pin "5"
-			(uuid "7933e71f-9cb1-466c-a226-09a49b973ab9")
-		)
-		(pin "1"
-			(uuid "64ce57a6-c816-4bf5-ad2e-a095e179cb01")
-		)
-		(pin "3"
-			(uuid "5e75fa71-1426-4d7a-a004-ba8e8f3a39f3")
-		)
-		(instances
-			(project "simpleFOC Dual Motor Controller"
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q501")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q301")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q401")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q103")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q101")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q102")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "easyeda2kicad:AGM6014AP")
-		(at 99.06 55.88 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "81332c5b-e3dd-4889-9753-9cb7f131b161")
-		(property "Reference" "Q303"
-			(at 106.68 54.6099 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "AGM6014AP"
-			(at 106.68 57.1499 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:PDFN-8_L3.1-W3.0-P0.65-LS3.3-BL"
-			(at 99.06 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C6719405.pdf"
-			(at 99.06 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 99.06 55.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "AGMSEMI(芯控源)"
-			(at 99.06 73.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "AGM6014AP"
-			(at 99.06 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC Part" "C6719405"
-			(at 99.06 78.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "0c48c12d-fc4d-4e9b-9b07-9d6f4b5ae296")
-		)
-		(pin "4"
-			(uuid "eea3cf16-667a-470e-aa26-92703a4542b8")
-		)
-		(pin "5"
-			(uuid "90805871-1ee2-4677-89a3-aefb673fa676")
-		)
-		(pin "1"
-			(uuid "5cc1b1fa-4178-4c69-94b6-00977ef69f7a")
-		)
-		(pin "3"
-			(uuid "c1324d60-cbee-4b3c-be6e-a1b1a5562e52")
-		)
-		(instances
-			(project "simpleFOC Dual Motor Controller"
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q503")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q303")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q403")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
-					(reference "Q106")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
-					(reference "Q104")
-					(unit 1)
-				)
-				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
-					(reference "Q105")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R_Small")
 		(at 83.82 59.69 0)
 		(mirror y)
@@ -2222,6 +2067,150 @@
 				)
 				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
 					(reference "Rsns102")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "easyeda2kicad:XRS100N06LD")
+		(at 101.6 55.88 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f18a8177-b27d-4e3c-97ee-791fbecbdc60")
+		(property "Reference" "Q301"
+			(at 106.68 54.6099 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "XRS100N06LD"
+			(at 106.68 57.1499 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:DFN-8_L3.0-W3.0-P0.65-BL-4"
+			(at 101.6 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C42457038.pdf"
+			(at 101.6 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 101.6 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "XNRUSEMI(新锐)"
+			(at 101.6 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "XRS100N06LD"
+			(at 101.6 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C42457038"
+			(at 101.6 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "5"
+			(uuid "6cc6bdb1-e100-4722-b02c-39c5a8c65002")
+		)
+		(pin "1"
+			(uuid "0912d220-2d67-4dea-a1bf-2e44d45c99c7")
+		)
+		(pin "4"
+			(uuid "88180248-c091-451f-aeeb-3e368bc89f8e")
+		)
+		(pin "3"
+			(uuid "7bce07b7-bf4f-4608-9813-d8050f698b6e")
+		)
+		(pin "2"
+			(uuid "2ebbe5df-094f-4113-8bc5-86a800464f46")
+		)
+		(instances
+			(project "simpleFOC Dual Motor Controller"
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q501")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q301")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/de390f81-41fc-4236-a904-44260774a171/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q401")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/20b87812-a82e-42f6-920a-0aca573365c0"
+					(reference "Q802")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/cd26c950-3a70-43f9-bc93-52ca2ff7311f"
+					(reference "Q702")
+					(unit 1)
+				)
+				(path "/0dffc378-5905-459a-b0cb-e8e514a8bbef/f2c2b770-272c-4740-ba73-c3bb2a232079/ee00243c-0671-4d24-ad12-35a8d122e435"
+					(reference "Q902")
 					(unit 1)
 				)
 			)

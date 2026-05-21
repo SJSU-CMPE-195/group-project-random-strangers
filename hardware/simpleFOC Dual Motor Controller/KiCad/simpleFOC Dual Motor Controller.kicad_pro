@@ -645,7 +645,7 @@
         "uuid": "0dffc378-5905-459a-b0cb-e8e514a8bbef"
       }
     ],
-    "used_designators": "D102,D104,D106-108,U105,J105,R114,Q101-102,CN101,H101-108",
+    "used_designators": "D102,D104,D106-108,U105,J105,R114,Q101-102,CN101,H101-108,C117-122,#PWR136-142",
     "variants": []
   },
   "sheets": [

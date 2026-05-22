@@ -161,13 +161,32 @@ docker-data/
 # Project Specific
 # ===========================
 # Add project-specific ignores below
-<<<<<<< HEAD
 
 # executables and outputs
 **.out
 **.exe
 **.o
 
-=======
 src/ML/aerobics_skeleton_dataset.csv
->>>>>>> 7fbe14c9 (accidentally pushed a folder incorrectly, cleaning)
+
+
+# SolidWorks
+
+# SolidWorks temporary files
+~$*.sldprt
+~$*.sldasm
+~$*.slddrw
+~$*.sld
+
+# For systems with case-sensitive (SolidWorks uses both)
+~$*.SLDPRT
+~$*.SLDASM
+~$*.SLDDRW
+~$*.SLD
+
+# SolidWorks backups and auto-recovery
+*.bak
+*.swbak
+
+# Cache of simulation results
+/simulation_results/

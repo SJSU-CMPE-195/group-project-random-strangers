@@ -391,6 +391,27 @@ __marimo__/
 **.exe
 **.o
 
+# SolidWorks
+
+# SolidWorks temporary files
+~$*.sldprt
+~$*.sldasm
+~$*.slddrw
+~$*.sld
+
+# For systems with case-sensitive (SolidWorks uses both)
+~$*.SLDPRT
+~$*.SLDASM
+~$*.SLDDRW
+~$*.SLD
+
+# SolidWorks backups and auto-recovery
+*.bak
+*.swbak
+
+# Cache of simulation results
+/simulation_results/
+
 # --- Datasets ---
 # Exclude actual images and labels to keep repo size small
 datasets/

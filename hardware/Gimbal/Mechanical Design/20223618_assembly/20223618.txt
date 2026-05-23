@@ -1,0 +1,10 @@
+﻿"Symbol";"Value";"Unit";
+"TraceParts.PartNumber";"90-25072024-071038";"";
+"REFERENCE";"20223618";"";
+"TraceParts.PartTitle";"Pan Head Seal Screw M2 8.0 303 Stainless Steel";"";
+"TraceParts.InstanceId";"90-25072024-0710388DZXRBVAVPCTRQA308G0V98LW";"";
+"SUPPLIER";"Essentra Components";"";
+"DESIGN";"Pan Head Seal Screw M2 8.0 303 Stainless Steel";"";
+"TRACEPARTS";"TRACEPARTS";"";
+"TraceParts.PartLanguage";"en";"";
+"TraceParts.PartVersion";"1.0.1";"";

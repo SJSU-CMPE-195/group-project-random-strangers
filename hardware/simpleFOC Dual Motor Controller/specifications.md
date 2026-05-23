@@ -8,22 +8,21 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
 ## Power Specifications
 
 ### Input Power
-- **Voltage Range**: 0V - 48V (nominal 48V maximum)
-- **Continuous Power**: As determined by thermal dissipation and current limits
+- **Voltage Range**: 0V - 36V (nominal 36V maximum)
+- **Continuous Power**: As determined by thermal dissipation and current limits (IDK)
 - **Voltage Input Protection**: 
-  - Overvoltage protection (TVS diodes or Zener clamps)
-  - Reverse polarity protection (ideal diode or integrated FET)
-  - Surge suppression for inductive loads
+  - [x] Overvoltage protection (TVS diodes or Zener clamps)
+  - [ ] Reverse polarity protection (ideal diode or integrated FET)
+  - [ ] Surge suppression for inductive loads
 
-### Current Specifications (Per Motor)
+### Current Specifications
 - **Continuous Current per Motor**: 35A (per motor pole)
-- **Peak Current (with thermal headroom)**: 50A (per motor pole)
-- **Total System Current Capacity**: 70A (35A × 2 motors at maximum)
-- **Current Sense Method**: integrated current sensing per pole
+- **Peak Continuous Current**: 64A (per motor pole)
+- **Current Sense Method**: integrated low side current sensing per pole
 - **Current Limiting**: Software-controlled with adjustable thresholds
 
 ### Power Dissipation
-- **MOSFET Losses**: Minimized through low RDS(on) selection
+- **MOSFET Losses**: 35A * 4mΩ * 2 = 0.28W per pole
 - **Thermal Management**: Heat sinks required for continuous high-current operation
 - **Thermal Shutdown**: Integrated temperature monitoring with cutoff at 80-85°C
 
@@ -34,7 +33,7 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
 ### Supported Motor Types
 - **Primary**: 3-phase BLDC (Brushless DC) motors
 - **Motor Poles**: 2 to 12 pole pairs typical range
-- **Motor Power Range**: 100W to 3kW (voltage and current dependent)
+- **Motor Power Range**: 0W to 3kW (voltage and current dependent)
 
 ### Encoder/Sensor Support
 - **Hall Effect Sensors**:
@@ -84,27 +83,19 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
 - **Per-Motor Configuration**: Independent hall input pins for dual-motor operation
 
 ### Microcontroller/Controller Board
-- **Integrated Microcontroller**: Choice of one:
-  - **STM32F1 Series** (e.g., STM32F103, STM32F105): Cost-effective FOC control with sufficient processing power for dual motor management
-  - **ESP32**: Dual-core processor with WiFi/Bluetooth capability; one core dedicated to real-time FOC control, second core for communication and housekeeping
-
-- **Required Peripherals**:
-  - 6 PWM outputs (3 per motor) with deadtime insertion
-  - 2 ADC channels for current sensing (or integrated dual-ADC)
-  - 6 digital inputs for Hall sensors (or 3 multiplexed inputs)
-  - SPI Slave interface for external communication
-  - CAN bus (optional) for enhanced diagnostics
+- **Integrated Microcontroller**: 
+  - **STM32G4 Series**: Cost-effective FOC control with sufficient processing power for dual motor management
 
 ### Power Distribution
 - **Input Filtering**:
-  - Bulk capacitance: 2200µF @ 63V minimum
-  - High-frequency ceramic capacitors: 100nF per power rail
+  - Bulk capacitance: 220µF @ 100V
+  - High-frequency ceramic capacitors: 10uF x 12
   - LC filtering for noise reduction
   
 - **Voltage Rails**:
-  - Main power bus: +48V (directly from input)
-  - Logic supply: +3.3V (with independent 1A+ regulator)
-  - Gate driver supply: +5V or +12V (isolated for high-side drivers)
+  - Main power bus: +36V (directly from input)
+  - Logic supply: +5V
+  - Gate driver supply: 10V Charge Pump
 
 ---
 
@@ -131,14 +122,10 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
 
 ## Communication Interface
 
-### SPI Slave Interface
-- **Protocol**: SPI slave, standard Mode 0 or Mode 3
-- **Clock Speed**: Up to 10 MHz (configurable)
-- **Data Width**: 8-bit or 16-bit transfers
-- **Frame Format**:
-  - Command byte(s) from master
-  - Data payload (command-dependent)
-  - Status/response data returned to master
+### I2C Slave Interface
+- **Protocol**: I2C slave
+- **Clock Speed**: Up to 800 kHz (configurable)
+- **Data Width**: 8-bit transfers
 - **Features**:
   - Real-time motor control commands
   - Telemetry readback (speed, current, temperature)
@@ -146,13 +133,13 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
   - Fault/diagnostic reporting and clearing
   - Low latency (<1ms round-trip response)
 
-### Backup Communication (Optional)
-- **UART Debug Port**: 115200 baud for development/debugging only
-- **Protocol**: ASCII or binary command format for system diagnostics
+### Backup Communication
+- **USB Debug Port**: 115200 baud for development/debugging only
+- **Protocol**: UART for system diagnostics
 
 ### Configuration
-- **Parameter Storage**: EEPROM or Flash memory for persistent settings
-- **Firmware Updates**: Via SPI slave interface with checksumming
+- **Parameter Storage**: Flash memory for persistent settings
+- **Firmware Updates**: Via USB interface with checksumming
 - **Startup Calibration**: Automated hall sensor calibration on power-up or via SPI command
 
 ---
@@ -163,7 +150,7 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
 - **Current Control Loop Frequency**: 10-20 kHz
 - **Velocity Control Loop Frequency**: 1-5 kHz (configurable)
 - **Current Ripple**: <5% at rated current
-- **Efficiency**: >90% at rated current (at 48V input)
+- **Efficiency**: >90% at rated current (at 36V input)
 
 ### Sensor Performance
 - **Hall Sensor Polling Rate**: 20 kHz minimum
@@ -211,7 +198,6 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
 
 ### Firmware Platform
 - **Framework**: simpleFOC library v2.3+ with dual-motor support
-- **Real-Time Kernel**: FreeRTOS or bare-metal interrupt-driven control loop
 - **Development Language**: C/C++
 
 ### Core Control Loop
@@ -253,10 +239,3 @@ High-performance dual BLDC motor driver with FOC (Field-Oriented Control) algori
 - High-performance drone motors
 - Gimbal stabilization systems
 - Industrial automation drives
-
----
-
-## Revision History
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-05-08 | Initial specification - dual motor FOC controller, 0-48V, 35A per motor pole |

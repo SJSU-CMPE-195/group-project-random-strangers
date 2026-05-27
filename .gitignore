@@ -511,3 +511,19 @@ var/
 Thumbs.db
 
 **.vscode/
+
+# platform.IO
+# PlatformIO build directory and cached dependencies
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Editor and IDE configurations
+.vscode/
+.idea/
+*.workspace
+
+# Compiled binaries and firmware files
+*.elf
+*.bin
+*.hex

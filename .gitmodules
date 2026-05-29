@@ -1,0 +1,6 @@
+[submodule "software/Firmware_Targets/mks_esp32_dualfoc_v2/commander_interface/components/SimpleFOC/--force"]
+	path = software/Firmware_Targets/mks_esp32_dualfoc_v2/commander_interface/components/SimpleFOC/--force
+	url = https://github.com/simplefoc/Arduino-FOC.git
+[submodule "software/Firmware_Targets/mks_esp32_dualfoc_v2/commander_interface/components/simpleFOCdrivers/Arduino-FOC-drivers"]
+	path = software/Firmware_Targets/mks_esp32_dualfoc_v2/commander_interface/components/simpleFOCdrivers/Arduino-FOC-drivers
+	url = https://github.com/simplefoc/Arduino-FOC-drivers.git

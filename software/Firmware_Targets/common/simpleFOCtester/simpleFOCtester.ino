@@ -10,10 +10,14 @@
 //User Configuration
 const float input_voltage = 12.0f;
 
-const unsigned motor0_poles = 7;
-const float motor0_resistance = 0.5f;
-const int motor0_kv = 90;
-const float motor0_phase_inductance = 0.0005;
+#define USER_ENABLE_MOTOR0 1
+
+#define USER_ENABLE_MOTOR1 0
+
+const unsigned motor0_poles = 12;
+const float motor0_resistance = 9.2f;
+const int motor0_kv = 30;
+const float motor0_phase_inductance = 0.001;
 
 const unsigned motor1_poles = 7;
 const float motor1_resistance = 0.5f;
@@ -21,12 +25,12 @@ const int motor1_kv = 90;
 const float motor1_phase_inductance = 0.0005;
 
 const float max_motor1_voltage = 12.0f;
-const float max_motor1_current = 2.5f;
-const float max_motor2_voltage = 12.0f;
-const float max_motor2_current = 2.5f;
+const float max_motor1_current = 0.3f;
 
-#define DISABLE_ENCODERS 0;
-#define simpleFOCencodertype MXLEMMINGObserverSensor
+const float max_motor2_voltage = 12.0f;
+const float max_motor2_current = 0.3f;
+
+#define DISABLE_ENCODERS 0
 
 #ifndef SIMPLEFOC_ENCODER0_INIT
     #define SIMPLEFOC_ENCODER0_INIT {MXLEMMINGObserverSensor(motor0)}
@@ -70,13 +74,13 @@ Commander command = Commander(Serial);
     }
 
     #ifdef BOARD_MOTOR_EN1
-        #if BOARD_PWM_TYPE == 6
+        #if BOARD_PWM_TYPE == 3
             BLDCDriver3PWM driver1 = BLDCDriver3PWM(BOARD_MOTOR_A1, BOARD_MOTOR_B1, BOARD_MOTOR_C1, BOARD_MOTOR_EN1);
         #else
             #error "6PWM not supported"
         #endif
     #else
-        #if BOARD_PWM_TYPE == 6
+        #if BOARD_PWM_TYPE == 3
             BLDCDriver3PWM driver1 = BLDCDriver3PWM(BOARD_MOTOR_A1, BOARD_MOTOR_B1, BOARD_MOTOR_C1);
         #else
             #error "6PWM not supported"
@@ -89,14 +93,16 @@ Commander command = Commander(Serial);
 #endif
 
 #if BOARD_CURRENT_SENSE_TYPE == 0
-    InlineCurrentSense current_sense0 = InlineCurrentSense(
-        BOARD_CURRENT_SENSE_RESISTANCE,
-        BOARD_CURRENT_SENSE_GAIN,
-        BOARD_CURRENT_SENSE_A0,
-        BOARD_CURRENT_SENSE_B0
-        );
+    #if USER_ENABLE_MOTOR0
+        InlineCurrentSense current_sense0 = InlineCurrentSense(
+            BOARD_CURRENT_SENSE_RESISTANCE,
+            BOARD_CURRENT_SENSE_GAIN,
+            BOARD_CURRENT_SENSE_A0,
+            BOARD_CURRENT_SENSE_B0
+            );
+    #endif
 
-    #if BOARD_MOTOR_CHANNELS == 2
+    #if BOARD_MOTOR_CHANNELS == 2 && USER_ENABLE_MOTOR1
         InlineCurrentSense current_sense1 = InlineCurrentSense(
             BOARD_CURRENT_SENSE_RESISTANCE,
             BOARD_CURRENT_SENSE_GAIN,
@@ -105,13 +111,15 @@ Commander command = Commander(Serial);
             );
     #endif
 #elif BOARD_CURRENT_SENSE_TYPE == 1
-    LowsideCurrentSense current_sense0 = LowsideCurrentSense(
-        BOARD_CURRENT_SENSE_RESISTANCE,
-        BOARD_CURRENT_SENSE_GAIN,
-        BOARD_CURRENT_SENSE_A0,
-        BOARD_CURRENT_SENSE_B0
-        );
-    #if BOARD_MOTOR_CHANNELS == 2
+    #if USER_ENABLE_MOTOR0
+        LowsideCurrentSense current_sense0 = LowsideCurrentSense(
+            BOARD_CURRENT_SENSE_RESISTANCE,
+            BOARD_CURRENT_SENSE_GAIN,
+            BOARD_CURRENT_SENSE_A0,
+            BOARD_CURRENT_SENSE_B0
+            );
+    #endif
+    #if BOARD_MOTOR_CHANNELS == 2 && USER_ENABLE_MOTOR1
         LowsideCurrentSense current_sense1 = LowsideCurrentSense(
             BOARD_CURRENT_SENSE_RESISTANCE,
             BOARD_CURRENT_SENSE_GAIN,
@@ -122,9 +130,11 @@ Commander command = Commander(Serial);
 #endif
 
 #if !DISABLE_ENCODERS
-    simpleFOCencodertype encoder0 SIMPLEFOC_ENCODER0_INIT;
-    #if BOARD_MOTOR_CHANNELS == 2
-        simpleFOCencodertype encoder1 SIMPLEFOC_ENCODER1_INIT;
+    #if USER_ENABLE_MOTOR0
+        auto encoder0 SIMPLEFOC_ENCODER0_INIT;
+    #endif
+    #if BOARD_MOTOR_CHANNELS == 2 && USER_ENABLE_MOTOR1
+        auto encoder1 SIMPLEFOC_ENCODER1_INIT;
     #endif
 #endif
 
@@ -142,7 +152,7 @@ static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
         motor.linkSensor(&encoder0);
     #endif
 
-    #if BOARD_CURRENT_SENSE_TYPE == 0 || BOARD_CURRENT_SENSE_TYPE == 1
+    #if (BOARD_CURRENT_SENSE_TYPE == 0 || BOARD_CURRENT_SENSE_TYPE == 1) && USER_ENABLE_MOTOR0
         current_sense0.linkDriver(&driver);
         current_sense0.init();
         motor.linkCurrentSense(&current_sense0);
@@ -167,7 +177,7 @@ static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
             motor.linkSensor(&encoder1);
         #endif
 
-        #if BOARD_CURRENT_SENSE_TYPE == 0 || BOARD_CURRENT_SENSE_TYPE == 1
+        #if (BOARD_CURRENT_SENSE_TYPE == 0 || BOARD_CURRENT_SENSE_TYPE == 1) && USER_ENABLE_MOTOR1
             current_sense1.linkDriver(&driver);
             current_sense1.init();
             motor.linkCurrentSense(&current_sense1);
@@ -181,28 +191,27 @@ static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
 void setup() {
     Serial.begin(115200);
 
-    #if BOARD_MOTOR_CHANNELS == 1 || BOARD_MOTOR_CHANNELS == 2
+    #if (BOARD_MOTOR_CHANNELS == 1 || BOARD_MOTOR_CHANNELS == 2) && USER_ENABLE_MOTOR0
         setupMotor0(motor0, driver0);
         command.add('M', doMotor0, "motor0");
     #endif
 
-    #if BOARD_MOTOR_CHANNELS == 2
+    #if BOARD_MOTOR_CHANNELS == 2 && USER_ENABLE_MOTOR1
         setupMotor1(motor1, driver1);
         command.add('N', doMotor1, "motor1");
     #endif
 }
 
 void loop() {
-    #if BOARD_MOTOR_CHANNELS == 1 || BOARD_MOTOR_CHANNELS == 2
+    #if (BOARD_MOTOR_CHANNELS == 1 || BOARD_MOTOR_CHANNELS == 2) && USER_ENABLE_MOTOR0
         motor0.loopFOC();
         motor0.move();
     #endif
 
-    #if BOARD_MOTOR_CHANNELS == 2
+    #if BOARD_MOTOR_CHANNELS == 2 && USER_ENABLE_MOTOR1
         motor1.loopFOC();
         motor1.move();
     #endif
 
     command.run();
 }
-

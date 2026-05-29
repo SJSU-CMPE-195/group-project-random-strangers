@@ -2,8 +2,6 @@
 #ifndef BOARD_CONFIG_H
 #define BOARD_CONFIG_H
 
-#define CONFIG_FREERTOS_HZ 1000
-
 //configuration
     //motor
     #define BOARD_MOTOR_CHANNELS 2
@@ -18,7 +16,7 @@
     //current sense
     #define BOARD_CURRENT_SENSE_TYPE 0 //INLINE
     #define BOARD_CURRENT_SENSE_RESISTANCE 0.01f
-    #define BOARD_CURRENT_SENSE_GAIN 20.0f
+    #define BOARD_CURRENT_SENSE_GAIN 50.0f
 
 
 //pins
@@ -26,12 +24,12 @@
     #define BOARD_MOTOR_A0 32
     #define BOARD_MOTOR_B0 33
     #define BOARD_MOTOR_C0 25
-    #define BOARD_MOTOR_EN0 22
+    #define BOARD_MOTOR_EN0 12
 
     #define BOARD_MOTOR_A1 26
     #define BOARD_MOTOR_B1 27
     #define BOARD_MOTOR_C1 14
-    #define BOARD_MOTOR_EN1 21
+    #define BOARD_MOTOR_EN1 12
 
     //hall interfaces
     #define BOARD_HALL_U0 18 //SCL

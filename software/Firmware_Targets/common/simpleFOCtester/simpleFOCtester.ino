@@ -8,29 +8,29 @@
 #include "../../mks_esp32_dualfoc_v2/board_config.h"
 
 //User Configuration
-const float input_voltage = 12.0f;
+const float input_voltage = 15.0f;
 
-#define USER_ENABLE_MOTOR0 1
+#define USER_ENABLE_MOTOR0 0
 
-#define USER_ENABLE_MOTOR1 0
+#define USER_ENABLE_MOTOR1 1
 
 const unsigned motor0_poles = 12;
 const float motor0_resistance = 9.2f;
 const int motor0_kv = 30;
 const float motor0_phase_inductance = 0.001;
 
-const unsigned motor1_poles = 7;
-const float motor1_resistance = 0.5f;
-const int motor1_kv = 90;
-const float motor1_phase_inductance = 0.0005;
+const unsigned motor1_poles = 12;
+const float motor1_resistance = 9.2f;
+const int motor1_kv = 30;
+const float motor1_phase_inductance = 0.0001;
+
+const float max_motor0_voltage = 12.0f;
+const float max_motor0_current = 2.0f;
 
 const float max_motor1_voltage = 12.0f;
-const float max_motor1_current = 0.3f;
+const float max_motor1_current = 2.0f;
 
-const float max_motor2_voltage = 12.0f;
-const float max_motor2_current = 0.3f;
-
-#define DISABLE_ENCODERS 0
+#define DISABLE_ENCODERS 1
 
 #ifndef SIMPLEFOC_ENCODER0_INIT
     #define SIMPLEFOC_ENCODER0_INIT {MXLEMMINGObserverSensor(motor0)}
@@ -42,8 +42,8 @@ const float max_motor2_current = 0.3f;
 
 
 //Board Configuration
-const maximum_current1 = BOARD_PER_CHANNEL_CURRENT_LIMIT > max_motor1_current ? max_motor1_current : BOARD_PER_CHANNEL_CURRENT_LIMIT;
-const maximum_current2 = BOARD_PER_CHANNEL_CURRENT_LIMIT > max_motor2_current ? max_motor2_current : BOARD_PER_CHANNEL_CURRENT_LIMIT;
+const float maximum_current0 = BOARD_PER_CHANNEL_CURRENT_LIMIT > max_motor0_current ? max_motor0_current : BOARD_PER_CHANNEL_CURRENT_LIMIT;
+const float maximum_current1 = BOARD_PER_CHANNEL_CURRENT_LIMIT > max_motor1_current ? max_motor1_current : BOARD_PER_CHANNEL_CURRENT_LIMIT;
 
 Commander command = Commander(Serial);
 
@@ -59,7 +59,7 @@ Commander command = Commander(Serial);
             #error "6PWM not supported"
         #endif
     #else
-        #if BOARD_PWM_TYPE == 6
+        #if BOARD_PWM_TYPE == 3
             BLDCDriver3PWM driver0 = BLDCDriver3PWM(BOARD_MOTOR_A0, BOARD_MOTOR_B0, BOARD_MOTOR_C0);
         #else
             #error "6PWM not supported"
@@ -143,8 +143,8 @@ static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
     driver.init();
 
     motor.linkDriver(&driver);
-    motor.voltage_limit = max_motor1_voltage;
-    motor.current_limit = maximum_current1;
+    motor.voltage_limit = max_motor0_voltage;
+    motor.current_limit = maximum_current0;
     motor.controller = MotionControlType::velocity_openloop;
 
     #if !DISABLE_ENCODERS
@@ -168,8 +168,8 @@ static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
         driver.init();
 
         motor.linkDriver(&driver);
-        motor.voltage_limit = max_motor2_voltage;
-        motor.current_limit = maximum_current2;
+        motor.voltage_limit = max_motor1_voltage;
+        motor.current_limit = maximum_current1;
         motor.controller = MotionControlType::velocity_openloop;
 
         #if !DISABLE_ENCODERS
@@ -193,11 +193,15 @@ void setup() {
 
     #if (BOARD_MOTOR_CHANNELS == 1 || BOARD_MOTOR_CHANNELS == 2) && USER_ENABLE_MOTOR0
         setupMotor0(motor0, driver0);
+        motor0.characteriseMotor(2.0f);
+        motor0.disable();
         command.add('M', doMotor0, "motor0");
     #endif
 
     #if BOARD_MOTOR_CHANNELS == 2 && USER_ENABLE_MOTOR1
         setupMotor1(motor1, driver1);
+        motor1.characteriseMotor(2.0f);
+        motor1.disable();
         command.add('N', doMotor1, "motor1");
     #endif
 }

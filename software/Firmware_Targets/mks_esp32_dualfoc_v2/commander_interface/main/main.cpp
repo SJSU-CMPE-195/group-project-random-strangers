@@ -40,8 +40,8 @@ static constexpr float MOTOR1_PHASE_INDUCTANCE = 0.001f;
 static constexpr float MOTOR1_KV = 30.0f;
 
 // Dedicated timer periods
-static constexpr uint64_t FOC_PERIOD_US = 33;          // 10 kHz
-static constexpr uint64_t MOVEMENT_PERIOD_US = 200;    // 5 kHz
+static constexpr uint64_t FOC_PERIOD_US = 50;          // 20 kHz
+static constexpr uint64_t MOVEMENT_PERIOD_US = 75;    // 20 kHz
 static constexpr uint64_t COMMANDER_PERIOD_US = 10000; // 100 Hz
 
 Commander commander = Commander(Serial);

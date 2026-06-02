@@ -8,29 +8,30 @@
 #include "../../mks_esp32_dualfoc_v2/board_config.h"
 
 //User Configuration
-const float input_voltage = 15.0f;
+const float input_voltage = 6.0f;
 
-#define USER_ENABLE_MOTOR0 0
+#define USER_ENABLE_MOTOR0 1
+#define USER_ENABLE_MOTOR1 0
 
-#define USER_ENABLE_MOTOR1 1
+#define DISABLE_ENCODERS 1
 
 const unsigned motor0_poles = 12;
-const float motor0_resistance = 9.2f;
+const float motor0_resistance = 8.3f;
 const int motor0_kv = 30;
-const float motor0_phase_inductance = 0.001;
+const float motor0_phase_inductance = 0.00218f;
+
+const unsigned drive_frequency = 10000; //don't go too high or the driver will burn :)
 
 const unsigned motor1_poles = 12;
-const float motor1_resistance = 9.2f;
+const float motor1_resistance = 8.3f;
 const int motor1_kv = 30;
-const float motor1_phase_inductance = 0.0001;
+const float motor1_phase_inductance = 0.00218f;
 
 const float max_motor0_voltage = 12.0f;
 const float max_motor0_current = 2.0f;
 
 const float max_motor1_voltage = 12.0f;
 const float max_motor1_current = 2.0f;
-
-#define DISABLE_ENCODERS 1
 
 #ifndef SIMPLEFOC_ENCODER0_INIT
     #define SIMPLEFOC_ENCODER0_INIT {MXLEMMINGObserverSensor(motor0)}
@@ -140,9 +141,11 @@ Commander command = Commander(Serial);
 
 static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
     driver.voltage_power_supply = input_voltage;
+    driver.pwm_frequency = drive_frequency;
     driver.init();
 
     motor.linkDriver(&driver);
+    motor.voltage_sensor_align = min(2.0f, max_motor0_voltage); 
     motor.voltage_limit = max_motor0_voltage;
     motor.current_limit = maximum_current0;
     motor.controller = MotionControlType::velocity_openloop;
@@ -165,9 +168,11 @@ static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
 #if BOARD_MOTOR_CHANNELS == 2
     static void setupMotor1(BLDCMotor& motor, BLDCDriver3PWM& driver) {
         driver.voltage_power_supply = input_voltage;
+        driver.pwm_frequency = drive_frequency;
         driver.init();
 
         motor.linkDriver(&driver);
+        motor.voltage_sensor_align = min(2.0f, max_motor0_voltage); 
         motor.voltage_limit = max_motor1_voltage;
         motor.current_limit = maximum_current1;
         motor.controller = MotionControlType::velocity_openloop;
@@ -191,18 +196,20 @@ static void setupMotor0(BLDCMotor& motor, BLDCDriver3PWM& driver) {
 void setup() {
     Serial.begin(115200);
 
+    SimpleFOCDebug::enable(&Serial);
+
     #if (BOARD_MOTOR_CHANNELS == 1 || BOARD_MOTOR_CHANNELS == 2) && USER_ENABLE_MOTOR0
         setupMotor0(motor0, driver0);
-        motor0.characteriseMotor(2.0f);
+        //motor0.characteriseMotor(min(4.0f, max_motor0_voltage));
         motor0.disable();
-        command.add('M', doMotor0, "motor0");
+        command.add('A', doMotor0, "motor0");
     #endif
 
     #if BOARD_MOTOR_CHANNELS == 2 && USER_ENABLE_MOTOR1
         setupMotor1(motor1, driver1);
-        motor1.characteriseMotor(2.0f);
+        //motor1.characteriseMotor(min(4.0f, max_motor0_voltage));
         motor1.disable();
-        command.add('N', doMotor1, "motor1");
+        command.add('B', doMotor1, "motor1");
     #endif
 }
 

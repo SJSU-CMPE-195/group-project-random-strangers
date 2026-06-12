@@ -1,0 +1,98 @@
+(footprint "NetTie0.127mm"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "net tie")
+	(tags "net tie")
+	(property "Reference" "REF**"
+		(at 0 -0.5 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "ac4edefe-a92a-40c4-9fdc-1b19ba1ba5c3")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "NetTie0.127mm"
+		(at 0 1 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "9c5816d6-2023-4205-9a9f-df1bc3d68257")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "403b53c4-3316-4fea-9003-262dfe9ed6ac")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b0074485-1208-4794-877b-2065cb0d1b73")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr exclude_from_pos_files exclude_from_bom allow_missing_courtyard)
+	(net_tie_pad_groups "1,2")
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_rect
+		(start -0.0635 -0.25)
+		(end 0.0635 0.25)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.Cu")
+		(uuid "34e6d706-ba63-4f07-8cd6-575cf15ba311")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "f21243a2-e90f-49f3-a5fa-1efa4def83ea")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd circle
+		(at 0 0.25 90)
+		(size 0.127 0.127)
+		(layers "F.Cu")
+		(uuid "1266edc4-656d-4ec5-afa7-6b051ef931fe")
+	)
+	(pad "2" smd circle
+		(at 0 -0.25 90)
+		(size 0.127 0.127)
+		(layers "F.Cu")
+		(uuid "8df21ba4-ba2d-4f74-af21-5f0b4e87b774")
+	)
+	(embedded_fonts no)
+)

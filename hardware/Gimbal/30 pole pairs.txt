@@ -1,1 +1,2 @@
 30 pole pairs in main gimbal motor
+Analog Hall sensors 1.3V-2.1V on 3.3V

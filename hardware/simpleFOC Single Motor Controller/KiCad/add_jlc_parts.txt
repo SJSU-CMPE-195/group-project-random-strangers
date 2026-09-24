@@ -1,1 +1,0 @@
-python.exe -m easyeda2kicad --full --lcsc_id _______ --output "%cd%\libraries\easyeda2kicad" --project-relative

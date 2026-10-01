@@ -1,23 +1,12 @@
-import pyzed.sl as sl
+import numpy as np
 
-zed = sl.camera()
+GRAVITY = -9.81
 
-init = sl.initParameters() 
-init.coordinate_units = sl.UNIT.METER
-init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
-init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
-
-status = zed.open(init)
-
-runtime = sl.RuntimeParameters
-
-BongCloud = sl.Mat()
-
-while True:
-    if zed.grab(runtime) == sl.error_code.success:
-        pass
-
-    zed.retrieveMeasure( 
-        BongCloud, sl.measureXYZ) 
+def calculateFunction(oldPoint, newPoint): 
+    #grab time, x1, x2, x3 (and y z)
+    #find the angle with the tangent line?
 
     
+
+def predictorFunction(CP1, CP2, CP3): 
+# velocity 

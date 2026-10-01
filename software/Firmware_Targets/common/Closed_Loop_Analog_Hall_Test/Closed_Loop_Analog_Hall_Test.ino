@@ -76,7 +76,7 @@ float angleDifference(float current, float previous)
 
 float readAnalogMillivoltsAveraged(int pin)
 {
-  const int samples = 8;
+  const int samples = 4;
   uint32_t total = 0;
 
   for (int i = 0; i < samples; i++) {

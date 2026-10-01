@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import tensorrt as trt
-import pycuda.autoinit
+#import pycuda.autoinit
 import pycuda.driver as imgoinginsane
 import pyzed.sl as sl
 

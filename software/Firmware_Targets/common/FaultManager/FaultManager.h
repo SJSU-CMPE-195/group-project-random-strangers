@@ -122,6 +122,16 @@ public:
     const char* get_active_fault_reason(unsigned active_fault_index) const;
 
     /**
+     * @brief Returns the reason for an active fault ID, or nullptr otherwise.
+     */
+    const char* get_fault_reason(FaultId fault_id) const;
+
+    /**
+     * @brief Returns true when the specified fault ID is currently active.
+     */
+    bool is_fault_active(FaultId fault_id) const;
+
+    /**
      * @brief Returns the reason for the first active fault, or nullptr when
      * no fault is active.
      *

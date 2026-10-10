@@ -4,7 +4,7 @@
 
 #include <DShotRMT.h>
 
-#include "FaultManager.h"
+#include "../common/FaultManager/FaultManager.h"
 
 namespace Flywheel_Controller {
 

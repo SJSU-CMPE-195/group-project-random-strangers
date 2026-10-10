@@ -66,6 +66,19 @@ const char* FaultManager<Faults...>::get_active_fault_reason(const unsigned acti
 }
 
 template<typename... Faults>
+const char* FaultManager<Faults...>::get_fault_reason(const FaultId fault_id) const {
+    const unsigned fault_index = find_fault_index(fault_id);
+    if (fault_index >= fault_condition_count || !fault_triggered[fault_index]) return nullptr;
+
+    return fault_reasons[fault_index];
+}
+
+template<typename... Faults>
+bool FaultManager<Faults...>::is_fault_active(const FaultId fault_id) const {
+    return get_fault_reason(fault_id) != nullptr;
+}
+
+template<typename... Faults>
 const char* FaultManager<Faults...>::get_master_fault_reason() const {
     return get_active_fault_reason(0);
 }

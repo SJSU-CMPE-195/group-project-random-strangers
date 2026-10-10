@@ -9,11 +9,6 @@
 
 namespace Flywheel_Controller {
 
-static constexpr uint8_t LEFT_ESC_ERROR_BIT = 0b00000001;
-static constexpr uint8_t RIGHT_ESC_ERROR_BIT = 0b00000010;
-static constexpr uint8_t LEFT_TELEMETRY_ERROR_BIT = 0b00000100;
-static constexpr uint8_t RIGHT_TELEMETRY_ERROR_BIT = 0b00001000;
-
 static void reset_rpm_pid(RPM_PID &pid) {
     pid.integral = 0.0f;
     pid.previous_error = 0.0f;
@@ -73,12 +68,12 @@ bool ESC_Controller::begin() {
     if (left_esc.pin != GPIO_NUM_NC) {
         const dshot_result_t result = left_esc.comm.begin();
         if (!result.success) {
-            I2C_Registers.ESC_error |= LEFT_ESC_ERROR_BIT;
+            dispatch_fault(FAULT_LEFT_ESC_INIT);
             success = false;
             if (DEBUG) Serial.println("Error: Left ESC init failed");
         }
     } else {
-        I2C_Registers.ESC_error |= LEFT_ESC_ERROR_BIT;
+        dispatch_fault(FAULT_LEFT_ESC_INIT);
         success = false;
         if (DEBUG) Serial.println("Error: Left ESC control pin is not configured");
     }
@@ -86,18 +81,17 @@ bool ESC_Controller::begin() {
     if (right_esc.pin != GPIO_NUM_NC) {
         const dshot_result_t result = right_esc.comm.begin();
         if (!result.success) {
-            I2C_Registers.ESC_error |= RIGHT_ESC_ERROR_BIT;
+            dispatch_fault(FAULT_RIGHT_ESC_INIT);
             success = false;
             if (DEBUG) Serial.println("Error: Right ESC init failed");
         }
     } else {
-        I2C_Registers.ESC_error |= RIGHT_ESC_ERROR_BIT;
+        dispatch_fault(FAULT_RIGHT_ESC_INIT);
         success = false;
         if (DEBUG) Serial.println("Error: Right ESC control pin is not configured");
     }
 
     if (!success) {
-        I2C_Registers.master_error = true;
         return false;
     }
 
@@ -174,10 +168,9 @@ void ESC_Controller::handle_arm_events(const uint32_t now) {
     event_manager.disarm_escs = false;
 }
 
-void ESC_Controller::mark_dshot_error(const uint8_t error_bit, const char *message) {
-    const bool first_error = !(I2C_Registers.ESC_error & error_bit);
-    I2C_Registers.ESC_error |= error_bit;
-    I2C_Registers.master_error = true;
+void ESC_Controller::mark_dshot_error(const uint8_t fault_id, const char *message) {
+    const bool first_error = !fault_manager.is_fault_active(fault_id);
+    dispatch_fault(fault_id);
 
     if (DEBUG && first_error) Serial.println(message);
 }
@@ -205,16 +198,17 @@ void ESC_Controller::update_throttle(const uint32_t now) {
         I2C_Registers.RPM_actual = (left_esc.rpm + right_esc.rpm) * 0.5f;
 
         if (left_esc.armed && (!left_esc.telemetry_received || now - left_esc.last_telemetry_ms > RPM_TELEMETRY_TIMEOUT_MS)) {
-            mark_dshot_error(LEFT_TELEMETRY_ERROR_BIT, "Error: Left ESC RPM telemetry timed out");
+            mark_dshot_error(FAULT_LEFT_ESC_TELEMETRY, "Error: Left ESC RPM telemetry timed out");
         }
 
         if (right_esc.armed && (!right_esc.telemetry_received || now - right_esc.last_telemetry_ms > RPM_TELEMETRY_TIMEOUT_MS)) {
-            mark_dshot_error(RIGHT_TELEMETRY_ERROR_BIT, "Error: Right ESC RPM telemetry timed out");
+            mark_dshot_error(FAULT_RIGHT_ESC_TELEMETRY, "Error: Right ESC RPM telemetry timed out");
         }
 
         if (left_esc.armed && right_esc.armed && !I2C_Registers.master_error) {
             float target_rpm = I2C_Registers.RPM_target;
             if (!isfinite(target_rpm) || target_rpm < 0.0f) {
+                dispatch_fault(FAULT_INVALID_RPM_TARGET);
                 target_rpm = 0.0f;
                 I2C_Registers.RPM_target = 0.0f;
             }
@@ -241,7 +235,7 @@ void ESC_Controller::update_throttle(const uint32_t now) {
     const dshot_result_t left_result = send_esc_throttle(left_esc, left_esc.throttle_percent);
 
     if (!left_result.success) {
-        mark_dshot_error(LEFT_ESC_ERROR_BIT, "Error: Left ESC DShot refresh failed; entering safe state");
+        mark_dshot_error(FAULT_LEFT_ESC_SIGNAL, "Error: Left ESC DShot refresh failed; entering safe state");
         left_esc.armed = false;
     }
 
@@ -249,7 +243,7 @@ void ESC_Controller::update_throttle(const uint32_t now) {
     const dshot_result_t right_result = send_esc_throttle(right_esc, right_esc.throttle_percent);
 
     if (!right_result.success) {
-        mark_dshot_error(RIGHT_ESC_ERROR_BIT, "Error: Right ESC DShot refresh failed; entering safe state");
+        mark_dshot_error(FAULT_RIGHT_ESC_SIGNAL, "Error: Right ESC DShot refresh failed; entering safe state");
         right_esc.armed = false;
     }
 

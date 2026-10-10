@@ -22,16 +22,15 @@ struct Controller_Registers {
     bool flywheels_armed = false;
     float RPM_target = 0.0f;
     float RPM_actual = 0.0f;
-    uint8_t ESC_error = 0;
-
     bool solenoid_armed = false;
-    uint8_t solenoid_error = 0;
 };
 
-extern Event_Manager event_manager;
+extern volatile Event_Manager event_manager;
 extern volatile Controller_Registers I2C_Registers;
 
 bool initialize_i2c();
+
+void dispatch_fault(uint8_t fault_id);
 
 void receiveEvent(int howMany);
 void requestEvent();

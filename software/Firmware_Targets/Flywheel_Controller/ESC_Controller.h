@@ -49,7 +49,7 @@ private:
     //I2C Event triggers
     void handle_arm_events(uint32_t now);
     void update_throttle(uint32_t now);
-    void mark_dshot_error(uint8_t error_bit, const char *message);
+    void mark_dshot_error(uint8_t fault_id, const char *message);
 };
 
 extern ESC_Controller esc_controller;

@@ -10,11 +10,9 @@ namespace Flywheel_Controller {
 Solenoid_Controller solenoid_controller;
 
 bool Solenoid_Controller::begin() {
-    I2C_Registers.solenoid_error = 1;
-
     if (SOLENOID_PIN == GPIO_NUM_NC) {
         if (DEBUG) Serial.println("Error: Solenoid pin is not configured");
-        I2C_Registers.master_error = true;
+        dispatch_fault(FAULT_SOLENOID_INIT);
         return false;
     }
 
@@ -22,7 +20,6 @@ bool Solenoid_Controller::begin() {
     pinMode(SOLENOID_PIN, OUTPUT);
     write_output(false);
 
-    I2C_Registers.solenoid_error = 0;
     if (DEBUG) Serial.println("Solenoid initialized successfully");
     return true;
 }

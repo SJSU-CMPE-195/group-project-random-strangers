@@ -102,6 +102,26 @@ public:
     FaultId get_master_fault_code() const;
 
     /**
+     * @brief Returns the number of currently active faults.
+     */
+    unsigned get_active_fault_count() const;
+
+    /**
+     * @brief Returns the ID of the active fault at a zero-based position.
+     *
+     * Faults are returned in the same order as their FaultCondition template
+     * arguments. Returns zero when the position is outside the active list.
+     */
+    FaultId get_active_fault_code(unsigned active_fault_index) const;
+
+    /**
+     * @brief Returns the reason for an active fault at a zero-based position.
+     *
+     * Returns nullptr when the position is outside the active list.
+     */
+    const char* get_active_fault_reason(unsigned active_fault_index) const;
+
+    /**
      * @brief Returns the reason for the first active fault, or nullptr when
      * no fault is active.
      *
@@ -111,7 +131,7 @@ public:
     const char* get_master_fault_reason() const;
 
     /**
-     * @brief Sets the callback invoked when an inactive fault becomes active.
+     * @brief Sets the callback invoked when a new fault becomes active.
      *
      * Passing nullptr disables the callback.
      */

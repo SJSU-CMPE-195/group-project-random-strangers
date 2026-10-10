@@ -1,20 +1,48 @@
-//class that groups fault conditions and dispatches master and per fault actions
+//compile-time fault definitions with runtime fault state and callbacks
 #pragma once
 
 /**
+ * @file FaultManager.h
+ * @brief Defines a type-safe, compile-time fault manager.
+ *
+ * Fault definitions are supplied as template arguments. Their IDs and reason
+ * strings are validated at compile time. The manager stores only runtime state
+ * and callback pointers; fault reason strings are never copied at runtime.
+ *
  * EXAMPLE USAGE
- * 
- * FaultManager<
- *      FaultCondition<"Overcurrent", 80>
- *      FaultCondition<"Overvoltage", 90>
- * > fault_manager;
+ *
+ * using ControllerFaultManager = FaultManager<
+ *     FaultCondition<"Overcurrent", 80>,
+ *     FaultCondition<"Overvoltage", 90>
+ * >;
+ *
+ * ControllerFaultManager fault_manager;
+ *
+ * fault_manager.attach_master_fault_set_callback(on_any_fault_set);
+ * fault_manager.attach_fault_clear_callback(80, on_overcurrent_cleared);
+ * fault_manager.dispatch_fault(80);
+ *
+ * if (fault_manager.get_master_fault_state()) {
+ *     const char* reason = fault_manager.get_master_fault_reason();
+ * }
+ *
+ * fault_manager.clear_fault_state(80);
+ *
+ * Fault IDs must be non-zero and unique. A fault ID of zero is reserved as
+ * the return value of get_master_fault_code() when no fault is active.
  */
 
+/**
+ * @brief A fixed-size string that can be used as a non-type template argument.
+ *
+ * The character data is stored in the type at compile time. FaultManager only
+ * keeps a pointer to that data, so it does not copy reason strings at runtime.
+ */
 template<unsigned N>
 struct FixedString {
     char data[N];
 
-    // Constexpr constructor allows deduction from a literal
+    //constexpr constructor allows deduction from a string literal
     constexpr FixedString(const char (&str)[N]) {
         for (unsigned index = 0; index < N; ++index) {
             data[index] = str[index];
@@ -22,11 +50,18 @@ struct FixedString {
     }
 };
 
-template <const FixedString fault_reason_value, const unsigned short fault_id_value>
-struct FaultCondition{
+/**
+ * @brief Describes one fault at compile time.
+ *
+ * @tparam fault_reason_value Null-terminated human-readable fault reason.
+ * @tparam fault_id_value Non-zero fault ID. IDs must be unique in a manager.
+ */
+template <const FixedString fault_reason_value, const unsigned char fault_id_value>
+struct FaultCondition {
     FaultCondition() = delete;
+
     static constexpr FixedString fault_reason = fault_reason_value;
-    static constexpr const unsigned short fault_id = fault_id_value;
+    static constexpr unsigned char fault_id = fault_id_value;
 };
 
 template <const FixedString fault_reason_value>
@@ -36,157 +71,168 @@ struct FixedStringChecks {
     static constexpr bool null_terminated = fault_reason_value.data[size - 1] == '\0';
 };
 
-template<typename... FaultCondition>
+/**
+ * @brief Stores fault state and dispatches fault callbacks.
+ *
+ * The fault list is fixed when the type is compiled. No heap allocation,
+ * string copying, or fault registration is performed at runtime.
+ */
+template<typename... Faults>
 class FaultManager {
 public:
-    /**
-     * @brief Constructs the manager and registers the singleton instance.
-     */
-    FaultManager();
-    /**
-     * @brief Gets the current fault state of the manager
-     * 
-     * @return 1 if any fault is set
-     */
-    bool get_master_fault_state();
+    using FaultId = unsigned char;
+    using Callback = void (*)(void);
 
     /**
-     * @brief Gets the first active fault code
-     * 
-     * @return the id of the first active fault
+     * @brief Creates a manager with all faults initially cleared.
      */
-    unsigned short get_master_fault_code();
+    FaultManager() = default;
+
+    FaultManager(const FaultManager&) = delete;
+    FaultManager& operator=(const FaultManager&) = delete;
 
     /**
-     * @brief gets the current fault reason of the manager
-     * 
-     * @return the fault reason of the first active fault
+     * @brief Returns true when at least one fault is active.
      */
-    const char* get_master_fault_reason();
+    bool get_master_fault_state() const;
 
     /**
-     * @brief Attaches a callback invoked when any fault is set.
+     * @brief Returns the first active fault ID, or zero when none is active.
+     */
+    FaultId get_master_fault_code() const;
+
+    /**
+     * @brief Returns the reason for the first active fault, or nullptr when
+     * no fault is active.
      *
-     * @param callback Callback to invoke when a fault is set.
+     * The returned pointer refers to compile-time storage and remains valid
+     * for the lifetime of the program. The caller must not modify it or free it.
      */
-    void attach_master_fault_set_callback(void (*callback)(void));
+    const char* get_master_fault_reason() const;
 
     /**
-     * @brief Clears all master fault callbacks.
+     * @brief Sets the callback invoked when an inactive fault becomes active.
+     *
+     * Passing nullptr disables the callback.
+     */
+    void attach_master_fault_set_callback(Callback callback);
+
+    /**
+     * @brief Disables both master set and master clear callbacks.
      */
     void clear_master_fault_callbacks();
 
     /**
-     * @brief Attaches a callback invoked when any fault is cleared.
+     * @brief Sets the callback invoked when an active fault is cleared.
      *
-     * @param callback Callback to invoke when a fault is cleared.
+     * Passing nullptr disables the callback.
      */
-    void attach_master_fault_clear_callback(void (*callback)(void));
+    void attach_master_fault_clear_callback(Callback callback);
 
     /**
-     * @brief Sets a specific fault condition and triggers callbacks.
+     * @brief Activates a fault and invokes its callbacks once.
      *
-     * @param fault_code Fault ID to set.
+     * Invalid IDs are ignored. Dispatching an already-active fault does not
+     * invoke callbacks again.
      */
-    void dispatch_fault(const unsigned short fault_code);
+    void dispatch_fault(FaultId fault_id);
 
     /**
-     * @brief Attaches a callback for a specific fault set event.
+     * @brief Sets the callback invoked when a specific fault becomes active.
      *
-     * @param fault_id Fault ID to attach.
-     * @param callback Callback to invoke when the fault is set.
+     * Invalid IDs are ignored. Passing nullptr disables the callback.
      */
-    void attach_fault_set_callback(const unsigned short fault_id, void (*callback)(void));
+    void attach_fault_set_callback(FaultId fault_id, Callback callback);
 
     /**
-     * @brief Clears the set callback for a specific fault.
-     *
-     * @param fault_id Fault ID to clear.
+     * @brief Disables the set callback for a specific fault.
      */
-    void clear_fault_set_callback(const unsigned short fault_id);
+    void clear_fault_set_callback(FaultId fault_id);
 
     /**
-     * @brief Clears a specific fault condition and triggers callbacks.
+     * @brief Clears a fault and invokes its callbacks once.
      *
-     * @param fault_code Fault ID to clear.
+     * Invalid IDs are ignored. Clearing an already-cleared fault does not
+     * invoke callbacks again.
      */
-    void clear_fault_state(const unsigned short fault_code);
+    void clear_fault_state(FaultId fault_id);
 
     /**
-     * @brief Attaches a callback for a specific fault clear event.
+     * @brief Sets the callback invoked when a specific fault is cleared.
      *
-     * @param fault_id Fault ID to attach.
-     * @param callback Callback to invoke when the fault is cleared.
+     * Invalid IDs are ignored. Passing nullptr disables the callback.
      */
-    void attach_fault_clear_callback(const unsigned short fault_id, void (*callback)(void));
+    void attach_fault_clear_callback(FaultId fault_id, Callback callback);
 
     /**
-     * @brief Clears the clear callback for a specific fault.
-     *
-     * @param fault_id Fault ID to clear.
+     * @brief Disables the clear callback for a specific fault.
      */
-    void clear_fault_clear_callback(const unsigned short fault_id);
+    void clear_fault_clear_callback(FaultId fault_id);
 
     /**
-     * @brief Gets the current set callback for a specific fault.
-     *
-     * @param fault_id Fault ID to query.
-     * @return Callback pointer, or nullptr if not set.
+     * @brief Returns the set callback for a specific fault, or nullptr.
      */
-    void (*get_fault_set_callback_fn(const unsigned short fault_id))(void);
+    Callback get_fault_set_callback_fn(FaultId fault_id) const;
 
     /**
-     * @brief Gets the current clear callback for a specific fault.
-     *
-     * @param fault_id Fault ID to query.
-     * @return Callback pointer, or nullptr if not set.
+     * @brief Returns the clear callback for a specific fault, or nullptr.
      */
-    void (*get_fault_clear_callback_fn(const unsigned short fault_id))(void);
+    Callback get_fault_clear_callback_fn(FaultId fault_id) const;
+
 private:
-    constexpr static unsigned fault_condition_count = sizeof...(FaultCondition);
-    inline static FaultManager* singleton_instance = nullptr;
+    static constexpr unsigned fault_condition_count = sizeof...(Faults);
 
-    template <unsigned short fault_id>
-    static void dispatch_fault_dummy_function();
-    template <unsigned short fault_id>
-    static void clear_fault_dummy_function();
+    //A one-element fallback keeps the private arrays well-formed long enough
+    //for the clearer static_assert below to report an empty fault list.
+    static constexpr unsigned storage_count =
+        fault_condition_count == 0 ? 1 : fault_condition_count;
 
-    struct internal_fault_storage {
-        const char* fault_reason;
-        const unsigned short fault_id;
-        bool fault_triggered;
-        void (*set_callback)(void);
-        void (*clear_callback)(void);
+    inline static constexpr FaultId fault_ids[storage_count] = {
+        Faults::fault_id...
     };
 
-    void dispatch_fault_internal(internal_fault_storage*);
-    void clear_fault_internal(internal_fault_storage*);
-
-    internal_fault_storage* find_fault_storage(const unsigned short fault_id);
-    const internal_fault_storage* find_fault_storage(const unsigned short fault_id) const;
-
-    static void (*master_set_callback)(void) = nullptr;
-    static void (*master_clear_callback)(void) = nullptr;
-    static internal_fault_storage faults[fault_condition_count] = {
-        {FaultCondition::fault_reason.data, FaultCondition::fault_id, false, nullptr, nullptr}...
+    inline static constexpr const char* fault_reasons[storage_count] = {
+        Faults::fault_reason.data...
     };
 
-    //ensure that fault ids are unique at compiletime
-    constexpr static bool fault_ids_unique = []() constexpr {
-        const unsigned short ids[] = {FaultCondition::fault_id...};
-        for (unsigned i = 0; i < fault_condition_count; ++i) {
-            for (unsigned j = i + 1; j < fault_condition_count; ++j) {
-                if (ids[i] == ids[j]) {
+    unsigned find_fault_index(FaultId fault_id) const;
+    bool has_active_fault() const;
+    void dispatch_fault_at(unsigned fault_index);
+    void clear_fault_at(unsigned fault_index);
+
+    bool fault_triggered[storage_count]{};
+    Callback fault_set_callbacks[storage_count]{};
+    Callback fault_clear_callbacks[storage_count]{};
+    Callback master_set_callback = nullptr;
+    Callback master_clear_callback = nullptr;
+
+    //ensure that fault ids are non-zero and unique at compile time
+    constexpr static bool fault_ids_valid = []() constexpr {
+        for (unsigned index = 0; index < fault_condition_count; ++index) {
+            if (fault_ids[index] == 0) {
+                return false;
+            }
+
+            for (unsigned other_index = index + 1;
+                 other_index < fault_condition_count;
+                 ++other_index) {
+                if (fault_ids[index] == fault_ids[other_index]) {
                     return false;
                 }
             }
         }
+
         return true;
     }();
-    static_assert(fault_condition_count > 0, "At least one FaultCondition is required.");
-    static_assert((FixedStringChecks<FaultCondition::fault_reason>::non_empty && ...),
+
+    static_assert(fault_condition_count > 0,
+                  "At least one FaultCondition is required.");
+    static_assert(fault_ids_valid,
+                  "FaultCondition IDs must be non-zero and unique.");
+    static_assert((FixedStringChecks<Faults::fault_reason>::non_empty && ...),
                   "FaultCondition reason strings must be non-empty.");
-    static_assert((FixedStringChecks<FaultCondition::fault_reason>::null_terminated && ...),
+    static_assert((FixedStringChecks<Faults::fault_reason>::null_terminated && ...),
                   "FaultCondition reason strings must be null-terminated.");
-    static_assert(fault_ids_unique, "FaultCondition IDs must be unique.");
 };
+
+#include "FaultManager.tpp"

@@ -1,8 +1,10 @@
 #pragma once
+
 #include <stdint.h>
+
 #include <DShotRMT.h>
 
-namespace Flywheel_Controller{
+namespace Flywheel_Controller {
 
 static constexpr bool DEBUG = false;
 
@@ -13,7 +15,7 @@ static constexpr uint32_t I2C_FREQUENCY = 400000;
 static constexpr gpio_num_t SDA_PIN = GPIO_NUM_NC;
 static constexpr gpio_num_t SCL_PIN = GPIO_NUM_NC;
 
-enum class I2C_ADDRESS_MAP {
+enum I2C_ADDRESS_MAP : uint8_t {
     READY = 0x0, //R: tell if the flywheel controller is booted
     MASTER_ERROR = 0x1, //R
 
@@ -25,7 +27,7 @@ enum class I2C_ADDRESS_MAP {
     SOLENOID_ARMED = 0x12, //R/W
     SOLENOID_FIRE = 0x13, //W
     SOLENOID_ERROR = 0x14, //R
-} I2C_Address_Map;
+};
 
 // --------- DSHOT Settings ---------
 static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_NC, GPIO_NUM_NC};

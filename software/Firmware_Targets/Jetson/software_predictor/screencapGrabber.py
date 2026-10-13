@@ -8,6 +8,7 @@ Model classes:
 from __future__ import annotations
 
 import argparse
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -177,6 +178,7 @@ class ZedHandler:
         static_camera: bool = False,
         max_missing_frames: int = 5,
         max_reassociation_distance_m: float = 2.0,
+        measure_processing_time: bool = False,
     ) -> None:
         model_path = Path(onnx_path)
         if not model_path.is_file():
@@ -195,6 +197,8 @@ class ZedHandler:
         self._confidence_percent = confidence_percent
         self._max_missing_frames = max_missing_frames
         self._max_reassociation_distance_m = max_reassociation_distance_m
+        self._measure_processing_time = measure_processing_time
+        self._last_processing_time_ns: int | None = None
         self._identities: dict[int, _TrackedIdentity] = {}
         self._next_stable_id = 0
         self._frame_number = 0
@@ -253,10 +257,18 @@ class ZedHandler:
             raise RuntimeError("ZED camera is closed")
         if not self._frame_ready:
             raise RuntimeError("Call grab() successfully before get_objects()")
-        check_success(
-            self._zed.retrieve_custom_objects(self._objects, self._custom_runtime),
-            "Retrieving ZED objects",
-        )
+        if self._measure_processing_time:
+            start_time_ns = time.perf_counter_ns()
+            status = self._zed.retrieve_custom_objects(
+                self._objects, self._custom_runtime
+            )
+            self._last_processing_time_ns = time.perf_counter_ns() - start_time_ns
+        else:
+            status = self._zed.retrieve_custom_objects(
+                self._objects, self._custom_runtime
+            )
+            self._last_processing_time_ns = None
+        check_success(status, "Retrieving ZED objects")
         self._frame_number += 1
 
         results: list[ZedObject3D] = []
@@ -306,6 +318,15 @@ class ZedHandler:
             identity.identity_changed = False
 
         return results
+
+    @property
+    def last_processing_time_seconds(self) -> float | None:
+        """Return the latest object-detection processing time in seconds."""
+
+        if self._last_processing_time_ns is None:
+            return None
+        
+        return self._last_processing_time_ns / 1_000_000_000
 
     def grab_and_get_objects(self) -> list[ZedObject3D] | None:
         """Acquire a frame and return its objects, or ``None`` if unavailable."""
@@ -499,6 +520,12 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--svo", help="Optional SVO file instead of a live ZED camera")
 
+    parser.add_argument(
+        "--measure-processing-time",
+        action="store_true",
+        help="Measure and print custom object-detection processing time",
+    )
+
     return parser.parse_args()
 
 
@@ -523,10 +550,12 @@ def main() -> None:
             dynamic_input_size=args.dynamic_input_size,
             svo_path=args.svo,
             static_camera=args.static_camera,
+            measure_processing_time=args.measure_processing_time,
         ) as zed:
             print("ZED native YOLO detection and tracking are running")
             print("Class 0 (person): ignored")
             print("Class 1 (ball): displayed and printed")
+
             image_buffer = sl.Mat()
 
             while True:
@@ -535,6 +564,13 @@ def main() -> None:
 
                 objects = zed.get_objects()
                 print_objects(objects)
+                if args.measure_processing_time:
+                    processing_time_seconds = zed.last_processing_time_seconds
+                    if processing_time_seconds is not None:
+                        print(
+                            "object detection processing time: "
+                            f"{processing_time_seconds * 1000:.3f} ms"
+                        )
 
                 if not args.no_display:
                     zed.get_frame(image_buffer=image_buffer)

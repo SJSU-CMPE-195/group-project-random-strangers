@@ -3,9 +3,6 @@
 Model classes:
     0 = person
     1 = ball (only ball is left on for object tracking)
-
-    run:
-    python screencapGrabber.py --onnx best.onnx
 """
 
 from __future__ import annotations
@@ -94,6 +91,42 @@ def configure_runtime_filter(confidence_percent: float) -> sl.CustomObjectDetect
     return runtime
 
 
+def initialize_camera(svo_path: str | None = None) -> sl.Camera:
+    """Configure and open the ZED camera or an optional SVO input."""
+
+    zed = sl.Camera()
+    input_type = sl.InputType()
+
+    if svo_path:
+        input_type.set_from_svo_file(svo_path)
+
+    init = sl.InitParameters(input_t=input_type)
+    init.camera_resolution = sl.RESOLUTION.VGA
+    init.camera_fps = 100
+    init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
+    init.coordinate_units = sl.UNIT.METER
+    init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
+    init.depth_maximum_distance = 20
+
+    check_success(zed.open(init), "Opening ZED camera")
+    return zed
+
+
+def deinitialize_camera(zed: sl.Camera) -> None:
+    """Release ZED resources and close any OpenCV preview windows."""
+
+    cv2.destroyAllWindows()
+    zed.disable_object_detection()
+    zed.disable_positional_tracking()
+    zed.close()
+
+
+'''
+Running the screen capture as main:
+    run:
+    python screencapGrabber.py --onnx best.onnx
+'''
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a custom YOLO ONNX model natively through ZED SDK 5.5+.")
 
@@ -115,7 +148,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main() -> None:
     args = parse_args()
     onnx_path = Path(args.onnx)
 
@@ -129,23 +162,7 @@ if __name__ == "__main__":
         if args.dynamic_input_size <= 0 or args.dynamic_input_size % 32 != 0:
             raise ValueError("--dynamic-input-size must be a positive multiple of 32")
 
-    zed = sl.Camera()
-    input_type = sl.InputType()
-
-    if args.svo:
-        input_type.set_from_svo_file(args.svo)
-
-    #camera configuration
-    init = sl.InitParameters(input_t=input_type)
-    init.camera_resolution = sl.RESOLUTION.VGA
-    init.camera_fps = 100
-    init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
-    init.coordinate_units = sl.UNIT.METER
-    init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
-    init.depth_maximum_distance = 20
-
-    #open the camera
-    check_success(zed.open(init), "Opening ZED camera")
+    zed = initialize_camera(args.svo)
 
     try:
         #enable object tracking
@@ -201,8 +218,8 @@ if __name__ == "__main__":
                     break
 
     finally:
-        if not args.no_display:
-            cv2.destroyAllWindows()
-        zed.disable_object_detection()
-        zed.disable_positional_tracking()
-        zed.close()
+        deinitialize_camera(zed)
+
+
+if __name__ == "__main__":
+    main()

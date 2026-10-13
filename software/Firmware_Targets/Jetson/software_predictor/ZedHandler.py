@@ -17,6 +17,8 @@ import cv2
 import numpy as np
 import pyzed.sl as sl
 
+from software.Tools.onnx_optimizer import optimize_onnx_model
+
 
 BALL_CLASS_ID = 1
 DEFAULT_CONFIDENCE_PERCENT = 25.0
@@ -32,7 +34,10 @@ def check_success(status: sl.ERROR_CODE, operation: str) -> None:
 def draw_balls(frame: sl.Mat | np.ndarray, objects: sl.Objects) -> None:
     """Draw only class-1 objects returned by the ZED tracker."""
 
-    frame_data = frame.get_data() if isinstance(frame, sl.Mat) else frame
+    if isinstance(frame, sl.Mat):
+        frame_data = frame.get_data()
+    else:
+        frame_data = frame
     for obj in objects.object_list:
         if int(obj.raw_label) != BALL_CLASS_ID:
             continue
@@ -107,7 +112,7 @@ def initialize_camera(svo_path: str | None = None) -> sl.Camera:
     init = sl.InitParameters(input_t=input_type)
     init.camera_resolution = sl.RESOLUTION.VGA
     init.camera_fps = 100
-    init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
+    init.depth_mode = sl.DEPTH_MODE.NEURAL_LIGHT
     init.coordinate_units = sl.UNIT.METER
     init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
     init.depth_maximum_distance = 20
@@ -507,6 +512,12 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--onnx", required=True, help="Path to the exported YOLO ONNX model, for example best.onnx")
 
+    parser.add_argument(
+        "--optimize-onnx",
+        action="store_true",
+        help="Simplify the ONNX model once and reuse <name>.optimized.onnx on later runs",
+    )
+
     parser.add_argument("--confidence", type=float, default=DEFAULT_CONFIDENCE_PERCENT, help="Ball confidence threshold as a percentage (default: 25)")
     
     parser.add_argument("--dynamic-input-size", type=int, metavar="SIZE", help=(
@@ -535,6 +546,10 @@ def main() -> None:
 
     if not onnx_path.is_file():
         raise FileNotFoundError(f"ONNX model not found: {onnx_path}")
+
+    if args.optimize_onnx:
+        onnx_path = optimize_onnx_model(onnx_path)
+        print(f"Using optimized ONNX model: {onnx_path}")
 
     if not 0.0 <= args.confidence <= 100.0:
         raise ValueError("--confidence must be between 0 and 100")

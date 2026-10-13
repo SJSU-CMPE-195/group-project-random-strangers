@@ -168,8 +168,10 @@ class ZedHandler:
             while True:
                 if not handler.grab():
                     continue
-                for obj in handler.get_objects():
+                objects, frame_timestamp_ns = handler.get_objects()
+                for obj in objects:
                     print(obj.object_id, obj.position, obj.identity_changed)
+                print(f"frame timestamp: {frame_timestamp_ns} ns")
         finally:
             handler.close()
     """
@@ -211,6 +213,7 @@ class ZedHandler:
         self._runtime = sl.RuntimeParameters()
         self._custom_runtime = configure_runtime_filter(confidence_percent)
         self._frame_ready = False
+        self._frame_timestamp_ns: int | None = None
         self._zed = initialize_camera(svo_path)
 
         try:
@@ -253,10 +256,19 @@ class ZedHandler:
 
         status = self._zed.grab(self._runtime)
         self._frame_ready = status == sl.ERROR_CODE.SUCCESS
+        if self._frame_ready:
+            self._frame_timestamp_ns = int(
+                self._zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_nanoseconds()
+            )
         return self._frame_ready
 
-    def get_objects(self) -> list[ZedObject3D]:
-        """Return objects detected in the most recently grabbed frame."""
+    def get_objects(self) -> tuple[list[ZedObject3D], int]:
+        """Return objects and the image timestamp from the latest grabbed frame.
+
+        The timestamp is returned as nanoseconds from the ZED SDK image clock.
+        It identifies when the frame was captured, rather than when object
+        retrieval completed.
+        """
 
         if self._zed is None:
             raise RuntimeError("ZED camera is closed")
@@ -322,7 +334,9 @@ class ZedHandler:
             )
             identity.identity_changed = False
 
-        return results
+        if self._frame_timestamp_ns is None:
+            raise RuntimeError("Frame timestamp is unavailable")
+        return results, self._frame_timestamp_ns
 
     @property
     def last_processing_time_seconds(self) -> float | None:
@@ -333,15 +347,17 @@ class ZedHandler:
         
         return self._last_processing_time_ns / 1_000_000_000
 
-    def grab_and_get_objects(self) -> list[ZedObject3D] | None:
-        """Acquire a frame and return its objects, or ``None`` if unavailable."""
+    def grab_and_get_objects(
+        self,
+    ) -> tuple[list[ZedObject3D], int] | None:
+        """Acquire a frame and return its objects and timestamp, or ``None``."""
 
         if not self.grab():
             return None
         return self.get_objects()
 
-    def grab_and_get_objects_blocking(self) -> list[ZedObject3D]:
-        """Wait until a frame is available, then return its detected objects."""
+    def grab_and_get_objects_blocking(self) -> tuple[list[ZedObject3D], int]:
+        """Wait for a frame, then return its objects and image timestamp."""
 
         while not self.grab():
             if self._zed is None:
@@ -577,8 +593,9 @@ def main() -> None:
                 if not zed.grab():
                     continue
 
-                objects = zed.get_objects()
+                objects, frame_timestamp_ns = zed.get_objects()
                 print_objects(objects)
+                print(f"frame timestamp: {frame_timestamp_ns} ns")
                 if args.measure_processing_time:
                     processing_time_seconds = zed.last_processing_time_seconds
                     if processing_time_seconds is not None:

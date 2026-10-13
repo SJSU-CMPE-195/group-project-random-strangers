@@ -2,13 +2,9 @@
 
 The reusable trajectory-fitting interface is kept at the top of this file.
 
-ZED coordinate system:
-    RIGHT_HANDED_Y_UP
-    +X = right
-    +Y = up
-    -Z = forward
-
-Gravity is fixed at [0, -9.80665, 0] m/s^2 and is never estimated from measurements.
+Trajectory fitting uses ZED's gravity-aligned RIGHT_HANDED_Y_UP world frame.
+The world +Y axis points up, so gravity is fixed at [0, -9.80665, 0] m/s^2.
+World-space predictions are transformed into the current camera frame only for visualization.
 """
 
 from __future__ import annotations
@@ -21,7 +17,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ZedHandler import ZedCameraIntrinsics, ZedObject2D, ZedObject3D
+from ZedHandler import ZedCameraIntrinsics, ZedCameraPose, ZedObject2D, ZedObject3D
 
 
 # =============================================================================
@@ -72,7 +68,7 @@ def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequ
 
     #timestamps are absolute seconds from any monotonic clock
     times = np.asarray(timestamps, dtype=np.float64).reshape(-1)
-    #positions must be an N by 3 array of xyz camera coordinates
+    #positions must be an N by 3 array of gravity-aligned world coordinates
     positions = np.asarray(positions_xyz, dtype=np.float64)
 
     #reject malformed inputs before doing any linear algebra
@@ -124,14 +120,23 @@ def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequ
 #maximum stored depth samples for one ball
 MAX_MEASUREMENTS = 30
 
-#minimum samples before attempting a trajectory fit
-MIN_FIT_MEASUREMENTS = 4
+#minimum samples before a track can possibly be considered projectile motion
+MIN_FIT_MEASUREMENTS = 12
 
-#reject fits whose average 3d position error is too large
-MAX_FIT_ERROR_M = 0.15
+#minimum observed time needed before gravity curvature is meaningful instead of fitting a tiny arbitrary motion
+MIN_PROJECTILE_DURATION_SECONDS = 0.15
 
-#fallback window sizes used if older samples make the full fit bad
-FIT_WINDOWS = (30, 20, 12, 8, 4)
+#reject fixed-gravity fits whose average 3d position error is too large
+MAX_FIT_ERROR_M = 0.10
+
+#fixed-gravity motion must fit at least this much better than a simple constant-velocity path
+MIN_BALLISTIC_ERROR_IMPROVEMENT_M = 0.002
+
+#also require a relative improvement so stationary or constant-speed objects are not labeled as projectiles
+MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO = 0.97
+
+#fallback window sizes used if older samples no longer describe the current throw
+FIT_WINDOWS = (30, 24, 20, 16, 12)
 
 #remove trajectory state when a stable object id has not appeared for this long
 DEFAULT_STALE_TRACK_SECONDS = 0.30
@@ -148,11 +153,8 @@ PREDICTION_SECONDS = 1.0
 #number of 3d future samples used to draw the prediction
 PREDICTION_SAMPLES = 24
 
-#positions closer than this to the camera plane are unsafe to project
+#camera-space points closer than this to the camera plane are unsafe to project
 MIN_CAMERA_DEPTH_M = 0.05
-
-#reject obviously invalid depth positions beyond this distance
-MAX_POSITION_DISTANCE_M = 100.0
 
 #different stable ids cycle through these bgra colors
 TRACK_COLORS = ((0, 220, 255, 255), (0, 255, 120, 255), (255, 160, 0, 255), (255, 80, 180, 255))
@@ -165,8 +167,19 @@ class BallMeasurement:
     #absolute capture time in seconds
     timestamp: float
 
-    #xyz position in zed RIGHT_HANDED_Y_UP camera coordinates
+    #xyz position in the gravity-aligned zed world frame
     position: tuple[float, float, float]
+
+
+@dataclass(frozen=True, slots=True)
+class ScreenMeasurement:
+    """One debug-only measured ball position in actual left-image pixels."""
+
+    #absolute capture time in seconds
+    timestamp: float
+
+    #center of the zed 2d detection box in left-image pixels
+    position: tuple[float, float]
 
 
 @dataclass(slots=True)
@@ -176,10 +189,13 @@ class BallTrack:
     #recent valid 3d samples, automatically capped at MAX_MEASUREMENTS
     measurements: deque[BallMeasurement] = field(default_factory=lambda: deque(maxlen=MAX_MEASUREMENTS))
 
+    #debug-only screen positions sampled only when get_frame() is called
+    screen_measurements: deque[ScreenMeasurement] = field(default_factory=lambda: deque(maxlen=MAX_MEASUREMENTS))
+
     #updated whenever the id appears, even if depth is invalid on that frame
     last_seen_timestamp: float = float("-inf")
 
-    #most recent accepted ballistic fit, or None until enough good data exists
+    #most recent accepted ballistic fit, or None when the motion does not currently look ballistic
     fit: TrajectoryFit | None = None
 
 
@@ -228,6 +244,7 @@ class BallTracker:
                 #camera time going backwards means the old history can no longer be fit safely
                 if timestamp_seconds < previous_time:
                     track.measurements.clear()
+                    track.screen_measurements.clear()
                     track.fit = None
 
             #store this valid point and immediately refresh the trajectory fit
@@ -236,6 +253,24 @@ class BallTracker:
 
         #remove tracks that have genuinely stopped receiving detector updates
         self.prune(timestamp_seconds)
+
+    def update_screen_positions(self, boxes_2d: Sequence[ZedObject2D], timestamp_seconds: float) -> None:
+        """Store true image-space ball centers only on debug display frames."""
+
+        for box in boxes_2d:
+            track = self.tracks.get(box.object_id)
+            if track is None:
+                continue
+
+            center = _box_center(box.bounding_box_2d)
+            if center is None:
+                continue
+
+            #do not add the same camera frame twice if the overlay function is called more than once
+            if track.screen_measurements and timestamp_seconds <= track.screen_measurements[-1].timestamp:
+                continue
+
+            track.screen_measurements.append(ScreenMeasurement(timestamp=timestamp_seconds, position=center))
 
     def prune(self, timestamp_seconds: float) -> None:
         """Remove stable ids that have not been reported recently."""
@@ -248,7 +283,7 @@ class BallTracker:
 
 
 def _validate_position(position_xyz: Sequence[float]) -> tuple[float, float, float] | None:
-    """Return a usable camera-space XYZ point or None if the depth measurement is bad."""
+    """Return a usable gravity-aligned world-space XYZ point or None when ZED depth is invalid."""
 
     if len(position_xyz) != 3:
         return None
@@ -257,23 +292,60 @@ def _validate_position(position_xyz: Sequence[float]) -> tuple[float, float, flo
     y = float(position_xyz[1])
     z = float(position_xyz[2])
 
-    #nan or infinity usually means the zed depth result was invalid for this frame
+    #world coordinates can grow as the camera moves, so only reject non-finite depth results here
     if not (math.isfinite(x) and math.isfinite(y) and math.isfinite(z)):
-        return None
-
-    #reject impossible outliers before they can ruin the trajectory fit
-    if x * x + y * y + z * z > MAX_POSITION_DISTANCE_M**2:
-        return None
-
-    #RIGHT_HANDED_Y_UP uses negative z in front of the camera
-    if -z <= MIN_CAMERA_DEPTH_M:
         return None
 
     return x, y, z
 
 
+def _constant_velocity_fit_error(times: np.ndarray, positions: np.ndarray) -> float:
+    """Return the RMS error of the best constant-velocity 3D path through the same samples."""
+
+    #compare against a non-projectile baseline so stationary and constant-speed motion cannot pass just because the window is short
+    reference_time = float(times[-1])
+    dt = times - reference_time
+    mean_dt = float(dt.mean())
+    centered_dt = dt - mean_dt
+    denominator = float(centered_dt @ centered_dt)
+
+    if denominator <= 1e-15:
+        return float("inf")
+
+    mean_position = positions.mean(axis=0)
+    velocity = (centered_dt[:, None] * (positions - mean_position)).sum(axis=0) / denominator
+    position = mean_position - velocity * mean_dt
+    residuals = position + dt[:, None] * velocity - positions
+    return float(np.sqrt(np.mean(np.sum(residuals * residuals, axis=1))))
+
+
+def _is_projectile_motion(times: np.ndarray, positions: np.ndarray, fit: TrajectoryFit) -> bool:
+    """Return true only when fixed gravity explains the motion better than constant velocity."""
+
+    #very short tracks can make almost any smooth motion look ballistic, so wait until gravity has had measurable time to curve the path
+    if len(times) < MIN_FIT_MEASUREMENTS or float(times[-1] - times[0]) < MIN_PROJECTILE_DURATION_SECONDS:
+        return False
+
+    #large residuals mean the points do not follow the fixed-gravity model closely enough
+    if fit.rms_error_m > MAX_FIT_ERROR_M:
+        return False
+
+    #a held ball or constant-speed target should fit a straight constant-velocity path better than a gravity parabola
+    linear_error = _constant_velocity_fit_error(times, positions)
+    if not math.isfinite(linear_error) or linear_error <= 1e-9:
+        return False
+
+    #require both an absolute and relative improvement before displaying a predicted projectile path
+    if linear_error - fit.rms_error_m < MIN_BALLISTIC_ERROR_IMPROVEMENT_M:
+        return False
+    if fit.rms_error_m > linear_error * MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO:
+        return False
+
+    return True
+
+
 def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> TrajectoryFit | None:
-    """Fit the longest recent sample window that still looks ballistic."""
+    """Fit the longest recent sample window that passes the projectile-motion checks."""
 
     #convert once so recent windows can use normal slicing
     samples = tuple(measurements)
@@ -289,6 +361,11 @@ def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> Traject
     for window_size in window_sizes:
         window = samples[-window_size:]
         times = np.fromiter((sample.timestamp for sample in window), dtype=np.float64, count=window_size)
+
+        #skip windows too short in real time before allocating the positions array or running the regression
+        if float(times[-1] - times[0]) < MIN_PROJECTILE_DURATION_SECONDS:
+            continue
+
         positions = np.asarray([sample.position for sample in window], dtype=np.float64)
 
         try:
@@ -296,8 +373,8 @@ def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> Traject
         except ValueError:
             continue
 
-        #accept the longest recent window whose measurements follow the fixed-gravity model closely enough
-        if fit.rms_error_m <= MAX_FIT_ERROR_M:
+        #only publish a fit when the points behave more like a gravity-driven projectile than a straight moving object
+        if _is_projectile_motion(times, positions, fit):
             return fit
 
     return None
@@ -308,11 +385,39 @@ def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> Traject
 # =============================================================================
 
 
-def _project_camera_points(points_xyz: np.ndarray, intrinsics: ZedCameraIntrinsics, frame_shape: tuple[int, ...]) -> tuple[np.ndarray, np.ndarray]:
-    """Project RIGHT_HANDED_Y_UP 3D camera points onto the rectified left image."""
+def _camera_to_world_rotation(camera_pose: ZedCameraPose) -> np.ndarray:
+    """Convert ZED's camera-to-world quaternion into a 3x3 rotation matrix."""
 
-    #force an N by 3 array so scalar and vector callers use the same projection path
-    points = np.asarray(points_xyz, dtype=np.float64).reshape(-1, 3)
+    qx, qy, qz, qw = camera_pose.orientation
+    quaternion_norm = math.sqrt(qx * qx + qy * qy + qz * qz + qw * qw)
+    if quaternion_norm <= 1e-12:
+        raise ValueError("camera orientation quaternion is invalid")
+
+    #normalize because small numerical drift should not change the projection scale
+    qx /= quaternion_norm
+    qy /= quaternion_norm
+    qz /= quaternion_norm
+    qw /= quaternion_norm
+
+    #this rotation maps a point from the current camera frame into the ZED world frame
+    return np.array([[1.0 - 2.0 * (qy * qy + qz * qz), 2.0 * (qx * qy - qz * qw), 2.0 * (qx * qz + qy * qw)], [2.0 * (qx * qy + qz * qw), 1.0 - 2.0 * (qx * qx + qz * qz), 2.0 * (qy * qz - qx * qw)], [2.0 * (qx * qz - qy * qw), 2.0 * (qy * qz + qx * qw), 1.0 - 2.0 * (qx * qx + qy * qy)]], dtype=np.float64)
+
+
+def _world_to_camera_points(points_world: np.ndarray, camera_pose: ZedCameraPose) -> np.ndarray:
+    """Transform gravity-aligned world points into the current left-camera coordinate frame."""
+
+    points = np.asarray(points_world, dtype=np.float64).reshape(-1, 3)
+    camera_position_world = np.asarray(camera_pose.position, dtype=np.float64)
+    camera_to_world = _camera_to_world_rotation(camera_pose)
+
+    #for row vectors, multiplying by camera_to_world is equivalent to applying its transpose to column vectors
+    return (points - camera_position_world) @ camera_to_world
+
+
+def _project_camera_points(points_camera: np.ndarray, intrinsics: ZedCameraIntrinsics, frame_shape: tuple[int, ...]) -> tuple[np.ndarray, np.ndarray]:
+    """Project RIGHT_HANDED_Y_UP camera-frame points onto the rectified left image."""
+
+    points = np.asarray(points_camera, dtype=np.float64).reshape(-1, 3)
     frame_height, frame_width = frame_shape[:2]
 
     #scale calibration if the returned debug image size differs from the calibration resolution
@@ -323,17 +428,24 @@ def _project_camera_points(points_xyz: np.ndarray, intrinsics: ZedCameraIntrinsi
     cx = intrinsics.cx * scale_x
     cy = intrinsics.cy * scale_y
 
-    #zed +X points right, +Y points up, and -Z points forward
+    #RIGHT_HANDED_Y_UP camera coordinates use +X right, +Y up, and -Z forward
     x = points[:, 0]
     image_y = -points[:, 1]
     depth = -points[:, 2]
 
-    #only points in front of the camera can be projected safely
+    #front-of-camera checks belong here because the fitter now operates entirely in world coordinates
     valid = np.isfinite(points).all(axis=1) & (depth > MIN_CAMERA_DEPTH_M)
     pixels = np.full((len(points), 2), np.nan, dtype=np.float64)
     pixels[valid, 0] = fx * x[valid] / depth[valid] + cx
     pixels[valid, 1] = fy * image_y[valid] / depth[valid] + cy
     return pixels, valid
+
+
+def _project_world_points(points_world: np.ndarray, camera_pose: ZedCameraPose, intrinsics: ZedCameraIntrinsics, frame_shape: tuple[int, ...]) -> tuple[np.ndarray, np.ndarray]:
+    """Transform world points into the current camera frame and project them into image pixels."""
+
+    camera_points = _world_to_camera_points(points_world, camera_pose)
+    return _project_camera_points(camera_points, intrinsics, frame_shape)
 
 
 def _draw_segment(frame: np.ndarray, start: np.ndarray, end: np.ndarray, color: tuple[int, int, int, int], thickness: int) -> None:
@@ -375,29 +487,33 @@ def _draw_detection_box(frame: np.ndarray, box: ZedObject2D, ball: ZedObject3D |
     cv2.putText(frame, label, (max(4, x), max(18, y - 6)), cv2.FONT_HERSHEY_SIMPLEX, 0.42, color, 1, cv2.LINE_AA)
 
 
-def _draw_measured_trail(frame: np.ndarray, measurements: Sequence[BallMeasurement], intrinsics: ZedCameraIntrinsics, color: tuple[int, int, int, int]) -> tuple[int, int] | None:
-    """Project and draw the measured 3D ball history onto the camera image."""
+def _box_center(bounding_box_2d: Sequence[Sequence[float]]) -> tuple[float, float] | None:
+    """Return the center of one ZED 2D box in actual left-image pixels."""
+
+    points = np.asarray(bounding_box_2d, dtype=np.float64)
+    if points.ndim != 2 or points.shape[0] < 2 or points.shape[1] < 2 or not np.isfinite(points[:, :2]).all():
+        return None
+
+    #average all sdk box corners instead of assuming a particular corner ordering
+    center = points[:, :2].mean(axis=0)
+    return float(center[0]), float(center[1])
+
+
+def _draw_measured_trail(frame: np.ndarray, measurements: Sequence[ScreenMeasurement], color: tuple[int, int, int, int]) -> tuple[int, int] | None:
+    """Draw measured history from the real ZED 2D detections instead of reprojected 3D centroids."""
 
     import cv2
 
     if not measurements:
         return None
 
-    #project every recent valid 3d measurement into image pixels in one vectorized operation
-    positions = np.asarray([measurement.position for measurement in measurements], dtype=np.float64)
-    pixels, valid = _project_camera_points(positions, intrinsics, frame.shape)
-    valid_pixels = pixels[valid]
+    #using the real detector box centers avoids camera/world-axis mistakes and depth-centroid projection offsets in the debug trail
+    pixels = np.asarray([measurement.position for measurement in measurements], dtype=np.float64)
 
-    if len(valid_pixels) == 0:
-        return None
-
-    #connect only neighboring samples that both project in front of the camera
     for index in range(len(pixels) - 1):
-        if valid[index] and valid[index + 1]:
-            _draw_segment(frame, pixels[index], pixels[index + 1], color, 2)
+        _draw_segment(frame, pixels[index], pixels[index + 1], color, 2)
 
-    #mark the newest visible measured position with a filled circle
-    latest = valid_pixels[-1]
+    latest = pixels[-1]
     latest_point = (int(round(float(latest[0]))), int(round(float(latest[1]))))
     if 0 <= latest_point[0] < frame.shape[1] and 0 <= latest_point[1] < frame.shape[0]:
         cv2.circle(frame, latest_point, 4, color, -1, cv2.LINE_AA)
@@ -405,13 +521,20 @@ def _draw_measured_trail(frame: np.ndarray, measurements: Sequence[BallMeasureme
     return latest_point
 
 
-def _draw_prediction(frame: np.ndarray, fit: TrajectoryFit, timestamp_seconds: float, intrinsics: ZedCameraIntrinsics, color: tuple[int, int, int, int]) -> None:
-    """Draw the fitted future 3D trajectory as dashed image-space segments."""
+def _draw_prediction(frame: np.ndarray, fit: TrajectoryFit, timestamp_seconds: float, camera_pose: ZedCameraPose, intrinsics: ZedCameraIntrinsics, color: tuple[int, int, int, int], anchor_pixel: tuple[int, int] | None) -> None:
+    """Transform the world-space prediction into the current camera frame and draw it."""
 
-    #prediction begins at now, but never before the fit's reference state
+    #trajectory math stays entirely in the gravity-aligned world frame
     start_time = max(timestamp_seconds, fit.reference_time)
     future_times = np.linspace(start_time, start_time + PREDICTION_SECONDS, PREDICTION_SAMPLES, dtype=np.float64)
-    pixels, valid = _project_camera_points(fit.predict(future_times), intrinsics, frame.shape)
+    future_world_positions = fit.predict(future_times)
+    pixels, valid = _project_world_points(future_world_positions, camera_pose, intrinsics, frame.shape)
+
+    #the 3d object center and 2d detector center can differ slightly, so visually anchor the projected curve to the current detection
+    if anchor_pixel is not None and np.any(valid):
+        first_valid_index = int(np.flatnonzero(valid)[0])
+        pixel_offset = np.asarray(anchor_pixel, dtype=np.float64) - pixels[first_valid_index]
+        pixels[valid] += pixel_offset
 
     #skip every other segment to create a cheap dashed line without alpha blending
     for index in range(0, len(pixels) - 1, 2):
@@ -419,10 +542,13 @@ def _draw_prediction(frame: np.ndarray, fit: TrajectoryFit, timestamp_seconds: f
             _draw_segment(frame, pixels[index], pixels[index + 1], color, 2)
 
 
-def draw_tracking_overlay(frame: np.ndarray, tracker: BallTracker, current_objects: Sequence[ZedObject3D], boxes_2d: Sequence[ZedObject2D], timestamp_seconds: float, intrinsics: ZedCameraIntrinsics) -> None:
+def draw_tracking_overlay(frame: np.ndarray, tracker: BallTracker, current_objects: Sequence[ZedObject3D], boxes_2d: Sequence[ZedObject2D], timestamp_seconds: float, camera_pose: ZedCameraPose | None, intrinsics: ZedCameraIntrinsics) -> None:
     """Overlay current detector boxes, measured paths, and fitted future paths."""
 
     import cv2
+
+    #store the current real image-space centers only on display frames so the hot 100 hz path is unchanged
+    tracker.update_screen_positions(boxes_2d, timestamp_seconds)
 
     #lookup lets each debug box get confidence without searching the object list repeatedly
     objects_by_id = {obj.object_id: obj for obj in current_objects}
@@ -433,17 +559,17 @@ def draw_tracking_overlay(frame: np.ndarray, tracker: BallTracker, current_objec
         _draw_detection_box(frame, box, objects_by_id.get(box.object_id), color)
 
     for object_id, track in tracker.tracks.items():
-        #only draw recent history even though the fitter may retain a longer window
-        recent_measurements = [measurement for measurement in track.measurements if timestamp_seconds - measurement.timestamp <= TRAIL_DURATION_SECONDS]
-        if not recent_measurements:
+        #draw the measured path from true 2d detections rather than projected depth points
+        recent_screen_measurements = [measurement for measurement in track.screen_measurements if timestamp_seconds - measurement.timestamp <= TRAIL_DURATION_SECONDS]
+        if not recent_screen_measurements:
             continue
 
         color = TRACK_COLORS[object_id % len(TRACK_COLORS)]
-        latest_pixel = _draw_measured_trail(frame, recent_measurements, intrinsics, color)
+        latest_pixel = _draw_measured_trail(frame, recent_screen_measurements, color)
 
-        #prediction appears only after enough measurements form an acceptable ballistic fit
-        if track.fit is not None:
-            _draw_prediction(frame, track.fit, timestamp_seconds, intrinsics, color)
+        #prediction appears only for projectile motion and only when the current world-to-camera pose is valid
+        if track.fit is not None and camera_pose is not None:
+            _draw_prediction(frame, track.fit, timestamp_seconds, camera_pose, intrinsics, color, latest_pixel)
 
         if latest_pixel is None:
             continue
@@ -462,8 +588,9 @@ def draw_tracking_overlay(frame: np.ndarray, tracker: BallTracker, current_objec
         text_position = (max(4, min(frame.shape[1] - 260, x + 7)), min(frame.shape[0] - 6, y + 16))
         cv2.putText(frame, text, text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.40, color, 1, cv2.LINE_AA)
 
-    #small status line confirms how many stable tracks exist and which gravity model is active
-    cv2.putText(frame, f"tracks={len(tracker.tracks)}  g=-Y {GRAVITY_MPS2:.4f}m/s^2", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (240, 240, 240, 255), 1, cv2.LINE_AA)
+    #small status line confirms that gravity comes from the ZED-aligned world frame rather than camera orientation
+    pose_status = "world pose ok" if camera_pose is not None else "world pose unavailable"
+    cv2.putText(frame, f"tracks={len(tracker.tracks)}  g=-Y {GRAVITY_MPS2:.4f}m/s^2  {pose_status}", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (240, 240, 240, 255), 1, cv2.LINE_AA)
 
 
 # =============================================================================
@@ -557,10 +684,11 @@ def main() -> None:
                 assert cv2 is not None
                 assert intrinsics is not None
 
-                #debug path: only now retrieve pixels and convert current 2d boxes
+                #debug path: retrieve image data plus the current camera pose only when visualization is actually requested
                 frame, boxes_2d = zed.get_frame()
+                camera_pose = zed.get_camera_pose()
                 assert isinstance(frame, np.ndarray)
-                draw_tracking_overlay(frame, tracker, objects, boxes_2d, timestamp_seconds, intrinsics)
+                draw_tracking_overlay(frame, tracker, objects, boxes_2d, timestamp_seconds, camera_pose, intrinsics)
                 cv2.imshow("Ball trajectory tracking", frame)
                 last_display_time = timestamp_seconds
 

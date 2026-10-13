@@ -28,7 +28,7 @@ class ZedObject3D:
     #original class id from the detector
     raw_label: int
 
-    #object center in zed camera coordinates, in meters
+    #object center in the gravity-aligned zed world frame, in meters
     position: tuple[float, float, float]
 
     #detector confidence normalized to 0.0-1.0
@@ -76,6 +76,17 @@ class ZedCameraIntrinsics:
 
     #calibration image height
     height: int
+
+
+@dataclass(frozen=True, slots=True)
+class ZedCameraPose:
+    """Current left-camera pose inside the gravity-aligned ZED world frame."""
+
+    #left-camera origin expressed in world coordinates, in meters
+    position: tuple[float, float, float]
+
+    #camera-to-world orientation quaternion stored as x, y, z, w
+    orientation: tuple[float, float, float, float]
 
 
 @dataclass(slots=True)
@@ -188,6 +199,9 @@ class ZedHandler:
         #camera runtime parameters reused by grab()
         self._runtime = sl.RuntimeParameters()
 
+        #return object positions in the gravity-aligned world frame so fitting is independent of camera tilt
+        self._runtime.measure3D_reference_frame = sl.REFERENCE_FRAME.WORLD
+
         #object retrieval filter reused by get_objects()
         self._object_runtime = _make_runtime_filter(confidence_percent)
 
@@ -205,6 +219,9 @@ class ZedHandler:
 
         #camera intrinsics are read once and then cached
         self._intrinsics: ZedCameraIntrinsics | None = None
+
+        #camera pose storage is allocated lazily because it is only needed for visualization
+        self._camera_pose: sl.Pose | None = None
 
         #create the underlying zed camera
         self._zed = sl.Camera()
@@ -231,6 +248,8 @@ class ZedHandler:
         try:
             #positional tracking is required for tracked custom objects
             positional_tracking = sl.PositionalTrackingParameters()
+            positional_tracking.enable_imu_fusion = True
+            positional_tracking.set_gravity_as_origin = True
             if static_camera:
                 positional_tracking.set_as_static = True
             _check_success(self._zed.enable_positional_tracking(positional_tracking), "Enabling positional tracking")
@@ -414,6 +433,27 @@ class ZedHandler:
         self._intrinsics = ZedCameraIntrinsics(fx=float(camera.fx), fy=float(camera.fy), cx=float(camera.cx), cy=float(camera.cy), width=int(resolution.width), height=int(resolution.height))
         return self._intrinsics
 
+    def get_camera_pose(self) -> ZedCameraPose | None:
+        """Return the current left-camera pose in the gravity-aligned world frame for visualization."""
+
+        if self._zed is None:
+            raise RuntimeError("ZED camera is closed")
+        if not self._frame_ready:
+            raise RuntimeError("Call grab() successfully before get_camera_pose()")
+
+        #pose is only needed when drawing world-space predictions back onto the camera image
+        if self._camera_pose is None:
+            self._camera_pose = sl.Pose()
+
+        #world pose gives the transform from the current left-camera frame into the gravity-aligned world frame
+        tracking_state = self._zed.get_position(self._camera_pose, sl.REFERENCE_FRAME.WORLD)
+        if tracking_state != sl.POSITIONAL_TRACKING_STATE.OK:
+            return None
+
+        translation = self._camera_pose.get_translation().get()
+        orientation = self._camera_pose.get_orientation().get()
+        return ZedCameraPose(position=(float(translation[0]), float(translation[1]), float(translation[2])), orientation=(float(orientation[0]), float(orientation[1]), float(orientation[2]), float(orientation[3])))
+
     @property
     def last_processing_time_seconds(self) -> float | None:
         """Time spent inside retrieve_custom_objects() on the latest timed call."""
@@ -538,9 +578,108 @@ class ZedHandler:
         self._objects_ready = False
         self._image_buffer = None
         self._intrinsics = None
+        self._camera_pose = None
 
     def __enter__(self) -> "ZedHandler":
         return self
 
     def __exit__(self, exc_type: object, exc_value: object, traceback: object) -> None:
         self.close()
+
+
+# =============================================================================
+# STANDALONE DEBUG PROGRAM
+# =============================================================================
+
+
+def parse_args():
+    """Parse command-line options for running ZedHandler by itself."""
+
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run ZED native YOLO ball detection and print tracked detections.")
+    parser.add_argument("--onnx", type=Path, required=True, help="Path to the exported YOLO ONNX model.")
+    parser.add_argument("--confidence", type=float, default=DEFAULT_CONFIDENCE_PERCENT, help="Ball confidence threshold as a percentage.")
+    parser.add_argument("--dynamic-input-size", type=int, help="Optional dynamic ONNX input size such as 512 or 640.")
+    parser.add_argument("--svo", help="Optional SVO recording instead of a live ZED camera.")
+    parser.add_argument("--static-camera", action="store_true", help="Tell ZED positional tracking that the camera does not move.")
+    parser.add_argument("--measure-processing-time", action="store_true", help="Print SDK and total get_objects() processing time.")
+    parser.add_argument("--no-display", action="store_true", help="Do not retrieve or show the camera image.")
+    return parser.parse_args()
+
+
+def main() -> None:
+    """Print tracked balls and optionally show their current 2D detections."""
+
+    args = parse_args()
+
+    #opencv and numpy are only needed by the optional debug display
+    cv2 = None
+    np = None
+    if not args.no_display:
+        import cv2 as _cv2
+        import numpy as _np
+        cv2 = _cv2
+        np = _np
+
+    try:
+        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_processing_time=args.measure_processing_time) as zed:
+            print("ZED ball detection and tracking running")
+            print("Press q in the display window to quit" if not args.no_display else "Press Ctrl+C to quit")
+
+            while True:
+                #hot path uses the same public api as the real application
+                result = zed.grab_and_get_objects()
+                if result is None:
+                    continue
+
+                objects, timestamp_ns = result
+
+                #print every tracked ball returned for this frame
+                for obj in objects:
+                    x, y, z = obj.position
+                    changed = " reassociated" if obj.identity_changed else ""
+                    print(f"id={obj.object_id} state={obj.tracking_state} conf={obj.confidence:.2f} world=({x:.3f}, {y:.3f}, {z:.3f}) m{changed}")
+
+                if args.measure_processing_time:
+                    sdk_time = zed.last_processing_time_seconds
+                    total_time = zed.last_get_objects_time_seconds
+                    if sdk_time is not None and total_time is not None:
+                        print(f"frame={timestamp_ns} ns  SDK={sdk_time * 1000.0:.3f} ms  get_objects={total_time * 1000.0:.3f} ms")
+
+                #skip all image work when display is disabled
+                if args.no_display:
+                    continue
+
+                assert cv2 is not None
+                assert np is not None
+
+                #get_frame performs image retrieval and box conversion only on this debug path
+                frame, boxes = zed.get_frame()
+                objects_by_id = {obj.object_id: obj for obj in objects}
+
+                for box in boxes:
+                    points = np.asarray(box.bounding_box_2d, dtype=np.int32)
+                    if points.ndim != 2 or points.shape[0] < 2:
+                        continue
+
+                    cv2.polylines(frame, [points.reshape(-1, 1, 2)], True, (0, 255, 0, 255), 2, cv2.LINE_AA)
+
+                    ball = objects_by_id.get(box.object_id)
+                    confidence = "" if ball is None else f" conf={ball.confidence:.2f}"
+                    label = f"ball id={box.object_id}{confidence}"
+                    x = int(points[:, 0].min())
+                    y = max(20, int(points[:, 1].min()) - 8)
+                    cv2.putText(frame, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0, 255), 2, cv2.LINE_AA)
+
+                cv2.imshow("ZED tracked balls", frame)
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    break
+
+    finally:
+        if cv2 is not None:
+            cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    main()

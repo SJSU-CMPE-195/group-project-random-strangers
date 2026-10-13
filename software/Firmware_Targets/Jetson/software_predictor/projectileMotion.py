@@ -120,23 +120,29 @@ def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequ
 #maximum stored depth samples for one ball
 MAX_MEASUREMENTS = 30
 
-#minimum samples before a track can possibly be considered projectile motion
-MIN_FIT_MEASUREMENTS = 12
+#minimum number of valid 3d samples before a track can possibly be considered projectile motion
+MIN_FIT_MEASUREMENTS = 8
 
-#minimum observed time needed before gravity curvature is meaningful instead of fitting a tiny arbitrary motion
-MIN_PROJECTILE_DURATION_SECONDS = 0.15
+#ignore early world-space samples while ZED finishes settling its IMU gravity alignment
+GRAVITY_ALIGNMENT_WARMUP_SECONDS = 1.5
 
-#reject fixed-gravity fits whose average 3d position error is too large
-MAX_FIT_ERROR_M = 0.10
+#minimum observed time needed before gravity curvature is large enough to distinguish from straight motion
+MIN_PROJECTILE_DURATION_SECONDS = 0.18
 
-#fixed-gravity motion must fit at least this much better than a simple constant-velocity path
-MIN_BALLISTIC_ERROR_IMPROVEMENT_M = 0.002
+#full 3d sanity limit; projectile classification itself uses vertical-axis curvature below
+MAX_FIT_ERROR_M = 0.25
 
-#also require a relative improvement so stationary or constant-speed objects are not labeled as projectiles
-MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO = 0.97
+#fixed-gravity vertical motion must fit at least this much better than constant vertical velocity
+MIN_BALLISTIC_ERROR_IMPROVEMENT_M = 0.001
+
+#allow modest depth noise while still requiring gravity to improve the vertical fit
+MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO = 0.99
+
+#reject a single-frame position jump that would imply an impossible dodgeball speed
+MAX_PLAUSIBLE_BALL_SPEED_MPS = 50.0
 
 #fallback window sizes used if older samples no longer describe the current throw
-FIT_WINDOWS = (30, 24, 20, 16, 12)
+FIT_WINDOWS = (30, 24, 20, 16, 12, 8)
 
 #remove trajectory state when a stable object id has not appeared for this long
 DEFAULT_STALE_TRACK_SECONDS = 0.30
@@ -198,6 +204,9 @@ class BallTrack:
     #most recent accepted ballistic fit, or None when the motion does not currently look ballistic
     fit: TrajectoryFit | None = None
 
+    #short debug explanation for why a prediction is or is not currently available
+    fit_status: str = "waiting for gravity alignment"
+
 
 class BallTracker:
     """Maintain one ballistic trajectory history for each stable ZedHandler object id."""
@@ -212,8 +221,30 @@ class BallTracker:
         #stable object id to its measurement history and current fit
         self.tracks: dict[int, BallTrack] = {}
 
+        #first ZED image timestamp seen by this tracker; used only for gravity-alignment warmup
+        self.start_timestamp: float | None = None
+
+        #last global timestamp lets an SVO restart or clock reset restart the warmup cleanly
+        self.last_timestamp: float | None = None
+
+        #becomes true once startup samples have been discarded and world-space fitting may begin
+        self.gravity_alignment_ready = False
+
     def update(self, objects: Sequence[ZedObject3D], timestamp_seconds: float) -> None:
         """Update all ball histories from one ZED object result."""
+
+        #restart trajectory state if the input clock moves backwards, such as an SVO restart
+        if self.last_timestamp is not None and timestamp_seconds < self.last_timestamp:
+            self.tracks.clear()
+            self.start_timestamp = timestamp_seconds
+            self.gravity_alignment_ready = False
+        self.last_timestamp = timestamp_seconds
+
+        #start the gravity-alignment warmup from the first successfully retrieved ZED frame
+        if self.start_timestamp is None:
+            self.start_timestamp = timestamp_seconds
+
+        warmup_remaining = GRAVITY_ALIGNMENT_WARMUP_SECONDS - (timestamp_seconds - self.start_timestamp)
 
         for obj in objects:
             #negative ids are not useful for persistent trajectory state
@@ -229,27 +260,58 @@ class BallTracker:
             #keep track alive whenever the detector reports the id, even if depth is bad
             track.last_seen_timestamp = timestamp_seconds
 
-            #only finite physically plausible xyz samples are allowed into the fit
+            #do not mix provisional startup world coordinates with the final gravity-aligned world frame
+            if warmup_remaining > 0.0:
+                track.measurements.clear()
+                track.fit = None
+                track.fit_status = f"gravity warmup {warmup_remaining:.1f}s"
+                continue
+
+            #clear every pre-alignment history exactly once when the warmup ends
+            if not self.gravity_alignment_ready:
+                track.measurements.clear()
+                track.fit = None
+                track.fit_status = "collecting post-alignment samples"
+
+            #only finite world-space xyz samples are allowed into the fit
             position = _validate_position(obj.position)
             if position is None:
+                track.fit = None
+                track.fit_status = "invalid 3d position"
                 continue
 
             if track.measurements:
-                previous_time = track.measurements[-1].timestamp
+                previous = track.measurements[-1]
+                dt = timestamp_seconds - previous.timestamp
 
                 #ignore an accidental duplicate sample from the same captured frame
-                if timestamp_seconds == previous_time:
+                if dt == 0.0:
                     continue
 
-                #camera time going backwards means the old history can no longer be fit safely
-                if timestamp_seconds < previous_time:
+                #clock reversal means this track history is no longer usable
+                if dt < 0.0:
                     track.measurements.clear()
-                    track.screen_measurements.clear()
                     track.fit = None
+                    track.fit_status = "timestamp reset"
+
+                #a sudden world-frame reorientation or bad depth sample appears as an impossible instantaneous speed
+                if dt > 0.0:
+                    dx = position[0] - previous.position[0]
+                    dy = position[1] - previous.position[1]
+                    dz = position[2] - previous.position[2]
+                    measured_speed = math.sqrt(dx * dx + dy * dy + dz * dz) / dt
+                    if measured_speed > MAX_PLAUSIBLE_BALL_SPEED_MPS:
+                        track.measurements.clear()
+                        track.fit = None
+                        track.fit_status = f"world/depth jump {measured_speed:.0f}m/s"
 
             #store this valid point and immediately refresh the trajectory fit
             track.measurements.append(BallMeasurement(timestamp=timestamp_seconds, position=position))
-            track.fit = _fit_recent_measurements(track.measurements)
+            track.fit, track.fit_status = _fit_recent_measurements(track.measurements)
+
+        #the global world frame is considered usable only after the warmup has fully elapsed
+        if warmup_remaining <= 0.0:
+            self.gravity_alignment_ready = True
 
         #remove tracks that have genuinely stopped receiving detector updates
         self.prune(timestamp_seconds)
@@ -299,10 +361,9 @@ def _validate_position(position_xyz: Sequence[float]) -> tuple[float, float, flo
     return x, y, z
 
 
-def _constant_velocity_fit_error(times: np.ndarray, positions: np.ndarray) -> float:
-    """Return the RMS error of the best constant-velocity 3D path through the same samples."""
+def _constant_velocity_axis_error(times: np.ndarray, values: np.ndarray) -> float:
+    """Return RMS error of the best constant-velocity line for one coordinate axis."""
 
-    #compare against a non-projectile baseline so stationary and constant-speed motion cannot pass just because the window is short
     reference_time = float(times[-1])
     dt = times - reference_time
     mean_dt = float(dt.mean())
@@ -312,39 +373,48 @@ def _constant_velocity_fit_error(times: np.ndarray, positions: np.ndarray) -> fl
     if denominator <= 1e-15:
         return float("inf")
 
-    mean_position = positions.mean(axis=0)
-    velocity = (centered_dt[:, None] * (positions - mean_position)).sum(axis=0) / denominator
-    position = mean_position - velocity * mean_dt
-    residuals = position + dt[:, None] * velocity - positions
-    return float(np.sqrt(np.mean(np.sum(residuals * residuals, axis=1))))
+    mean_value = float(values.mean())
+    velocity = float((centered_dt * (values - mean_value)).sum() / denominator)
+    value_at_reference = mean_value - velocity * mean_dt
+    residuals = value_at_reference + dt * velocity - values
+    return float(np.sqrt(np.mean(residuals * residuals)))
 
 
-def _is_projectile_motion(times: np.ndarray, positions: np.ndarray, fit: TrajectoryFit) -> bool:
-    """Return true only when fixed gravity explains the motion better than constant velocity."""
+def _projectile_motion_check(times: np.ndarray, positions: np.ndarray, fit: TrajectoryFit) -> tuple[bool, str]:
+    """Check whether the measured vertical curvature is actually consistent with gravity."""
 
-    #very short tracks can make almost any smooth motion look ballistic, so wait until gravity has had measurable time to curve the path
-    if len(times) < MIN_FIT_MEASUREMENTS or float(times[-1] - times[0]) < MIN_PROJECTILE_DURATION_SECONDS:
-        return False
+    duration = float(times[-1] - times[0])
+    if len(times) < MIN_FIT_MEASUREMENTS:
+        return False, f"need {MIN_FIT_MEASUREMENTS} samples"
+    if duration < MIN_PROJECTILE_DURATION_SECONDS:
+        return False, f"need {MIN_PROJECTILE_DURATION_SECONDS - duration:.2f}s more"
 
-    #large residuals mean the points do not follow the fixed-gravity model closely enough
+    #keep a generous full-3d sanity bound so a wildly incorrect depth track is never predicted
     if fit.rms_error_m > MAX_FIT_ERROR_M:
-        return False
+        return False, f"3d fit err {fit.rms_error_m:.2f}m"
 
-    #a held ball or constant-speed target should fit a straight constant-velocity path better than a gravity parabola
-    linear_error = _constant_velocity_fit_error(times, positions)
-    if not math.isfinite(linear_error) or linear_error <= 1e-9:
-        return False
+    #gravity changes only world Y, so compare models on Y instead of letting unrelated X/Z depth noise hide the curvature
+    predicted_y = fit.predict(times)[:, 1]
+    ballistic_y_error = float(np.sqrt(np.mean((predicted_y - positions[:, 1]) ** 2)))
+    linear_y_error = _constant_velocity_axis_error(times, positions[:, 1])
 
-    #require both an absolute and relative improvement before displaying a predicted projectile path
-    if linear_error - fit.rms_error_m < MIN_BALLISTIC_ERROR_IMPROVEMENT_M:
-        return False
-    if fit.rms_error_m > linear_error * MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO:
-        return False
+    #a stationary or constant-velocity object has essentially no evidence of gravitational curvature
+    if not math.isfinite(linear_y_error) or linear_y_error <= 1e-9:
+        return False, "no vertical curvature"
 
-    return True
+    improvement = linear_y_error - ballistic_y_error
+    ratio = ballistic_y_error / linear_y_error
+
+    #require gravity to provide a real, but intentionally modest, improvement over straight vertical motion
+    if improvement < MIN_BALLISTIC_ERROR_IMPROVEMENT_M:
+        return False, f"linear-like y {ballistic_y_error:.3f}/{linear_y_error:.3f}m"
+    if ratio > MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO:
+        return False, f"weak gravity y {ballistic_y_error:.3f}/{linear_y_error:.3f}m"
+
+    return True, f"projectile y {ballistic_y_error:.3f}/{linear_y_error:.3f}m"
 
 
-def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> TrajectoryFit | None:
+def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> tuple[TrajectoryFit | None, str]:
     """Fit the longest recent sample window that passes the projectile-motion checks."""
 
     #convert once so recent windows can use normal slicing
@@ -352,18 +422,22 @@ def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> Traject
     sample_count = len(samples)
 
     if sample_count < MIN_FIT_MEASUREMENTS:
-        return None
+        return None, f"{sample_count}/{MIN_FIT_MEASUREMENTS} samples"
 
     #try all available measurements first, then progressively shorter recent windows
     window_sizes = [sample_count]
     window_sizes.extend(size for size in FIT_WINDOWS if MIN_FIT_MEASUREMENTS <= size < sample_count)
+    first_rejection = "no valid fit"
 
-    for window_size in window_sizes:
+    for window_index, window_size in enumerate(window_sizes):
         window = samples[-window_size:]
         times = np.fromiter((sample.timestamp for sample in window), dtype=np.float64, count=window_size)
 
         #skip windows too short in real time before allocating the positions array or running the regression
-        if float(times[-1] - times[0]) < MIN_PROJECTILE_DURATION_SECONDS:
+        duration = float(times[-1] - times[0])
+        if duration < MIN_PROJECTILE_DURATION_SECONDS:
+            if window_index == 0:
+                first_rejection = f"need {MIN_PROJECTILE_DURATION_SECONDS - duration:.2f}s more"
             continue
 
         positions = np.asarray([sample.position for sample in window], dtype=np.float64)
@@ -371,13 +445,17 @@ def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> Traject
         try:
             fit = fit_trajectory(times, positions)
         except ValueError:
+            if window_index == 0:
+                first_rejection = "trajectory fit failed"
             continue
 
-        #only publish a fit when the points behave more like a gravity-driven projectile than a straight moving object
-        if _is_projectile_motion(times, positions, fit):
-            return fit
+        accepted, reason = _projectile_motion_check(times, positions, fit)
+        if accepted:
+            return fit, reason
+        if window_index == 0:
+            first_rejection = reason
 
-    return None
+    return None, first_rejection
 
 
 # =============================================================================
@@ -578,9 +656,9 @@ def draw_tracking_overlay(frame: np.ndarray, tracker: BallTracker, current_objec
         if not (0 <= x < frame.shape[1] and 0 <= y < frame.shape[0]):
             continue
 
-        #show sample count while fitting, then show fit quality and estimated speed
+        #show exactly why a prediction is absent so projectile gating can be tuned from real camera data
         if track.fit is None:
-            text = f"{len(track.measurements)}/{MIN_FIT_MEASUREMENTS} samples"
+            text = track.fit_status
         else:
             speed = float(np.linalg.norm(track.fit.velocity))
             text = f"fit={track.fit.measurement_count}  err={track.fit.rms_error_m:.3f}m  v={speed:.1f}m/s"
@@ -590,7 +668,8 @@ def draw_tracking_overlay(frame: np.ndarray, tracker: BallTracker, current_objec
 
     #small status line confirms that gravity comes from the ZED-aligned world frame rather than camera orientation
     pose_status = "world pose ok" if camera_pose is not None else "world pose unavailable"
-    cv2.putText(frame, f"tracks={len(tracker.tracks)}  g=-Y {GRAVITY_MPS2:.4f}m/s^2  {pose_status}", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (240, 240, 240, 255), 1, cv2.LINE_AA)
+    gravity_status = "gravity ready" if tracker.gravity_alignment_ready else "gravity settling"
+    cv2.putText(frame, f"tracks={len(tracker.tracks)}  {gravity_status}  {pose_status}", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (240, 240, 240, 255), 1, cv2.LINE_AA)
 
 
 # =============================================================================

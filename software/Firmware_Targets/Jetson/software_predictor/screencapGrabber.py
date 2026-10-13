@@ -5,6 +5,18 @@ import tensorrt as trt
 import pycuda.driver as imgoinginsane
 import pyzed.sl as sl
 
+from projectileMotion import calculateFunction, predictorFunction
+#need to update this file to push coords to proj motion.py
+
+imgoinginsane.init()
+
+device = imgoinginsane.Device(0)
+
+cudaContext = device.retain_primary_context()
+
+cudaContext.push()
+previousPoint = None
+
 # engine_path = ~/documents/group_random_strangers/software/best.engine  #path to engine file
 confidenceIndex = 0.25 
 targetIndex = 1 # maybe 2, if we want to attack people lmao
@@ -81,19 +93,66 @@ def letterbox(image, size=640):
 #code i grabbed that sets the bx bounds to a scaled size.
     return canvas, scale, pad_x, pad_y
 
+def preprocess(frame):
+
+    # 1. Resize/pad the ZED frame to 640x640
+    img, scale, pad_x, pad_y = letterbox(frame)
+
+    # 2. OpenCV/ZED gives BGR, YOLO expects RGB
+    img = cv2.cvtColor(
+        img,
+        cv2.COLOR_BGR2RGB
+    )
+
+    # 3. Change shape:
+    # (height, width, channels)
+    #       ↓
+    # (channels, height, width)
+    #
+    # (640, 640, 3)
+    #       ↓
+    # (3, 640, 640)
+    img = img.transpose(
+        2,
+        0,
+        1
+    )
+
+    # 4. Convert to float32 and make memory contiguous
+    img = np.ascontiguousarray(
+        img,
+        dtype=np.float32
+    )
+
+    # 5. Normalize pixels:
+    # 0-255 -> 0.0-1.0
+    img /= 255.0
+
+    # 6. Add batch dimension:
+    # (3, 640, 640)
+    #       ↓
+    # (1, 3, 640, 640)
+    img = np.expand_dims(
+        img,
+        axis=0
+    )
+
+    # Return the processed image plus the
+    # resize information needed later by decode()
+    return img, scale, pad_x, pad_y
 
 def infer(input_tensor):
 
     # Copy processed image into CPU input buffer
     np.copyto(
-        host_input,
+        hostInput,
         input_tensor
     )
 
     # Copy CPU input → GPU input
-    cuda.memcpy_htod_async(
-        device_input,
-        host_input,
+    imgoinginsane.memcpy_htod_async(
+        deviceInput,
+        hostInput,
         stream
     )
 
@@ -103,9 +162,9 @@ def infer(input_tensor):
     )
 
     # Copy GPU output toCPU output
-    cuda.memcpy_dtoh_async(
-        host_output,
-        device_output,
+    imgoinginsane.memcpy_dtoh_async(
+        hostOutput,
+        deviceOutput,
         stream
     )
 
@@ -113,7 +172,7 @@ def infer(input_tensor):
     stream.synchronize()
 
     # Return independent copy of results
-    return host_output.copy()
+    return hostOutput.copy()
 
 
 # ============================================================
@@ -354,41 +413,63 @@ def get_xyz(
         np.asarray(samples),
         axis=0
     )
+def updateProjectilePhysics(t, x, y, z):
+    global previousPoint
 
+    # Package the current ZED measurement
+    currentPoint = (t, x, y, z)
+
+    # First detection:
+    # we only have one point, so we cannot calculate velocity yet
+    if previousPoint is None:
+        previousPoint = currentPoint
+        return None
+
+    # Send the two measurements to projectileMotion.py
+    velocity = calculateFunction(
+        previousPoint,
+        currentPoint
+    )
+
+    # Save current point for the next frame
+    previousPoint = currentPoint
+
+    if velocity is None:
+        return None
+
+    vx, vy, vz = velocity
+
+    # Predict from the CURRENT location
+    futurePoint = predictorFunction(
+        (x, y, z),
+        vx,
+        vy,
+        vz
+    )
+
+    return futurePoint
+#configure zed cam
 
 # ============================================================
-# CREATE AND CONFIGURE ZED CAMERA
+# ZED CAMERA INIT
 # ============================================================
 
 zed = sl.Camera()
 
 init = sl.InitParameters()
 
-
 # Camera mode
-init.camera_resolution = (
-    sl.RESOLUTION.HD720
-)
-
+init.camera_resolution = sl.RESOLUTION.HD720
 init.camera_fps = 60
 
-
 # Fast depth mode
-init.depth_mode = (
-    sl.DEPTH_MODE.PERFORMANCE
-)
-
+init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
 
 # XYZ values will be meters
-init.coordinate_units = (
-    sl.UNIT.METER
-)
+init.coordinate_units = sl.UNIT.METER
 
-
-# Make positive Y point upward
-init.coordinate_system = (
-    sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
-)
+# Positive Y points upward
+init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
 
 
 # ============================================================
@@ -413,21 +494,15 @@ zed_image = sl.Mat()
 
 point_cloud = sl.Mat()
 
-
 print("ZED running")
 
 
 # ============================================================
 # MAIN LOOP
 # ============================================================
-
 try:
 
     while True:
-
-        # ----------------------------------------------------
-        # 1. Grab new stereo frame
-        # ----------------------------------------------------
 
         if (
             zed.grab(runtime_params)
@@ -435,50 +510,29 @@ try:
         ):
             continue
 
-
-        # ----------------------------------------------------
-        # 2. Retrieve left camera image
-        # ----------------------------------------------------
+        timestamp = zed.get_timestamp(
+            sl.TIME_REFERENCE.IMAGE
+        )
+        t = timestamp.get_nanoseconds() / 1e9
 
         zed.retrieve_image(
             zed_image,
             sl.VIEW.LEFT
         )
 
-
-        # ----------------------------------------------------
-        # 3. Retrieve XYZ point cloud
-        # ----------------------------------------------------
-
         zed.retrieve_measure(
             point_cloud,
             sl.MEASURE.XYZ
         )
 
-
-        # ----------------------------------------------------
-        # 4. Convert ZED image into OpenCV / NumPy array
-        # ----------------------------------------------------
-
-        frame_bgra = (
-            zed_image.get_data()
-        )
-
+        frame_bgra = zed_image.get_data()
 
         frame = cv2.cvtColor(
             frame_bgra,
             cv2.COLOR_BGRA2BGR
         )
 
-
-        frame_h, frame_w = (
-            frame.shape[:2]
-        )
-
-
-        # ----------------------------------------------------
-        # 5. Preprocess image
-        # ----------------------------------------------------
+        frame_h, frame_w = frame.shape[:2]
 
         (
             input_tensor,
@@ -487,19 +541,9 @@ try:
             pad_y
         ) = preprocess(frame)
 
-
-        # ----------------------------------------------------
-        # 6. Run YOLO through TensorRT
-        # ----------------------------------------------------
-
         output = infer(
             input_tensor
         )
-
-
-        # ----------------------------------------------------
-        # 7. Turn raw YOLO output into detections
-        # ----------------------------------------------------
 
         detections = decode(
             output,
@@ -510,32 +554,17 @@ try:
             frame_h
         )
 
-
-        # ----------------------------------------------------
-        # 8. Process each detected ball
-        # ----------------------------------------------------
-
+        # IMPORTANT:
+        # This stays INSIDE while True
         for det in detections:
 
-            # Find center of bounding box
             u = int(
-                (
-                    det["x1"]
-                    + det["x2"]
-                ) / 2
+                (det["x1"] + det["x2"]) / 2
             )
 
             v = int(
-                (
-                    det["y1"]
-                    + det["y2"]
-                ) / 2
+                (det["y1"] + det["y2"]) / 2
             )
-
-
-            # ------------------------------------------------
-            # 9. Ask ZED for XYZ at that location
-            # ------------------------------------------------
 
             xyz = get_xyz(
                 point_cloud,
@@ -543,27 +572,34 @@ try:
                 v
             )
 
-
             if xyz is None:
                 continue
 
-
             x, y, z = xyz
 
-
-            # ------------------------------------------------
-            # 10. Print projectile position
-            # ------------------------------------------------
+            futurePoint = updateProjectilePhysics(
+                t,
+                x,
+                y,
+                z
+            )
 
             print(
                 f"conf={det['confidence']:.2f} "
-                f"XYZ=("
-                f"{x:.3f}, "
-                f"{y:.3f}, "
-                f"{z:.3f}"
-                f") m"
+                f"XYZ=({x:.3f}, {y:.3f}, {z:.3f}) m"
             )
 
-finally:
+            if futurePoint is not None:
+                future_x, future_y, future_z = futurePoint
 
+                print(
+                    f"Predicted XYZ=("
+                    f"{future_x:.3f}, "
+                    f"{future_y:.3f}, "
+                    f"{future_z:.3f}"
+                    f") m"
+                )
+
+finally:
     zed.close()
+    cudaContext.pop()

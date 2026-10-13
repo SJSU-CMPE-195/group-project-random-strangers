@@ -711,7 +711,7 @@ def parse_args():
     parser.add_argument("--static-camera", action="store_true", help="Tell ZED positional tracking that the camera does not move.")
     parser.add_argument("--display-fps", type=float, default=DEFAULT_DISPLAY_FPS, help="Debug display rate only; object detection still runs on every camera frame.")
     parser.add_argument("--stale-track-seconds", type=float, default=DEFAULT_STALE_TRACK_SECONDS, help="Remove trajectory state after an id has not been updated for this long.")
-    parser.add_argument("--measure-processing-time", action="store_true", help="Print SDK object processing and total get_objects latency.")
+    parser.add_argument("--measure-framerate", action="store_true", help="Measure actual application frame rate through the ZED pipeline and print rolling statistics once per second.")
     parser.add_argument("--no-display", action="store_true", help="Disable image retrieval and OpenCV drawing completely.")
     return parser.parse_args()
 
@@ -747,10 +747,15 @@ def main() -> None:
     display_period = 1.0 / args.display_fps
     last_display_time = float("-inf")
 
+    #timing is reported sparsely so terminal output does not disturb the 100 hz loop
+    last_timing_report_time = float("-inf")
+
     try:
-        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_processing_time=args.measure_processing_time) as zed:
+        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_processing_time=args.measure_framerate) as zed:
             #intrinsics are only needed when 3d predictions will be drawn on the image
             intrinsics = None if args.no_display else zed.get_camera_intrinsics()
+            if args.measure_framerate and not args.no_display:
+                print("Timing note: use --no-display for the most repeatable benchmark results")
 
             while True:
                 #hot path: grab, native yolo/tracking, minimal object conversion
@@ -765,12 +770,15 @@ def main() -> None:
                 #update fitting on every available camera frame
                 tracker.update(objects, timestamp_seconds)
 
-                #optional profiling shows how much time is sdk work versus python-side handling
-                if args.measure_processing_time:
-                    sdk_time = zed.last_processing_time_seconds
-                    total_time = zed.last_get_objects_time_seconds
-                    if sdk_time is not None and total_time is not None:
-                        print(f"SDK={sdk_time * 1000.0:.3f} ms  get_objects={total_time * 1000.0:.3f} ms")
+                #optional profiling reports actual delivered application frame rate about once per second
+                if args.measure_framerate and timestamp_seconds - last_timing_report_time >= 1.0:
+                    stats = zed.timing_stats
+                    if stats is not None:
+                        print(f"app fps latest={stats.latest_fps:.1f}  avg={stats.mean_fps:.1f}  median={stats.median_fps:.1f}  p95-frame={stats.p95_seconds * 1000.0:.2f} ms ({stats.p95_frame_fps:.1f} fps)  n={stats.sample_count}")
+                        last_timing_report_time = timestamp_seconds
+                    elif zed.timing_warmup_remaining > 0:
+                        print(f"timing warmup: {zed.timing_warmup_remaining} frame intervals remaining")
+                        last_timing_report_time = timestamp_seconds
 
                 #stop here so image retrieval and drawing cost nothing in headless mode
                 if args.no_display:

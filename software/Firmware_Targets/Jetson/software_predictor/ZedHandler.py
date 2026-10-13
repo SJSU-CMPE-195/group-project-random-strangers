@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 import time
+from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -16,6 +17,10 @@ import pyzed.sl as sl
 
 BALL_CLASS_ID = 1
 DEFAULT_CONFIDENCE_PERCENT = 25.0
+TIMING_WARMUP_FRAMES = 100
+TIMING_WINDOW_FRAMES = 120
+DEFAULT_DISPLAY_FPS = 30.0
+DEFAULT_PRINT_FPS = 10.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,6 +92,46 @@ class ZedCameraPose:
 
     #camera-to-world orientation quaternion stored as x, y, z, w
     orientation: tuple[float, float, float, float]
+
+
+@dataclass(frozen=True, slots=True)
+class ZedTimingStats:
+    """Rolling application-level frame throughput statistics."""
+
+    #wall-clock period between the two most recent completed object frames
+    latest_seconds: float
+
+    #mean completed-frame period over the rolling window
+    mean_seconds: float
+
+    #median completed-frame period over the rolling window
+    median_seconds: float
+
+    #95th percentile completed-frame period, useful as a slow-frame metric
+    p95_seconds: float
+
+    #number of post-warmup frame intervals currently in the window
+    sample_count: int
+
+    @property
+    def latest_fps(self) -> float:
+        """Instantaneous application FPS from the latest completed-frame interval."""
+        return 1.0 / self.latest_seconds if self.latest_seconds > 0.0 else 0.0
+
+    @property
+    def mean_fps(self) -> float:
+        """Rolling application FPS based on total frames divided by total wall time."""
+        return 1.0 / self.mean_seconds if self.mean_seconds > 0.0 else 0.0
+
+    @property
+    def median_fps(self) -> float:
+        """FPS corresponding to the median completed-frame period."""
+        return 1.0 / self.median_seconds if self.median_seconds > 0.0 else 0.0
+
+    @property
+    def p95_frame_fps(self) -> float:
+        """FPS corresponding to the 95th-percentile slow frame period."""
+        return 1.0 / self.p95_seconds if self.p95_seconds > 0.0 else 0.0
 
 
 @dataclass(slots=True)
@@ -188,12 +233,20 @@ class ZedHandler:
         #squared threshold avoids taking a square root during every reassociation comparison
         self._max_reassociation_distance_sq = max_reassociation_distance_m**2
 
-        #optional timing adds perf_counter calls around the hot path
+        #optional timing measures actual completed application frame throughput
         self._measure_processing_time = measure_processing_time
 
-        #latest timing measurements, only populated when timing is enabled
-        self._last_sdk_processing_time_ns: int | None = None
-        self._last_get_objects_time_ns: int | None = None
+        #wall time when the previous grab+object result finished
+        self._last_completed_frame_ns: int | None = None
+
+        #period between the two most recent completed object frames
+        self._last_frame_period_ns: int | None = None
+
+        #ignore startup frames because cuda/model/depth warmup makes them unrepresentative
+        self._timing_warmup_remaining = TIMING_WARMUP_FRAMES
+
+        #rolling completed-frame periods include sdk work and application work between frames
+        self._timing_samples_ns: deque[int] = deque(maxlen=TIMING_WINDOW_FRAMES)
 
         #monotonic handler frame number used for identity age checks
         self._frame_number = 0
@@ -295,15 +348,16 @@ class ZedHandler:
         if self._zed is None:
             raise RuntimeError("ZED camera is closed")
 
-        #grab advances the camera pipeline but does not copy the image to python
+        #grab advances depth and other sdk processing but does not copy image pixels to python
         status = self._zed.grab(self._runtime)
+
         self._frame_ready = status == sl.ERROR_CODE.SUCCESS
         self._objects_ready = False
 
         if self._frame_ready:
             #increment only for real captured frames so identity age is measured in camera frames
             self._frame_number += 1
-            
+
             #use the image clock so detections and trajectory measurements share capture time
             self._frame_timestamp_ns = int(self._zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_nanoseconds())
 
@@ -317,19 +371,8 @@ class ZedHandler:
         if not self._frame_ready:
             raise RuntimeError("Call grab() successfully before get_objects()")
 
-        #timing is optional because even perf_counter calls are unnecessary on the normal hot path
-        total_start_ns = time.perf_counter_ns() if self._measure_processing_time else 0
-        sdk_start_ns = total_start_ns
-
-        #this is the expensive sdk inference/tracking/object retrieval step
+        #retrieve_custom_objects may be the synchronization point for asynchronous sdk work
         status = self._zed.retrieve_custom_objects(self._objects, self._object_runtime)
-
-        if self._measure_processing_time:
-            sdk_end_ns = time.perf_counter_ns()
-            self._last_sdk_processing_time_ns = sdk_end_ns - sdk_start_ns
-        else:
-            self._last_sdk_processing_time_ns = None
-
         _check_success(status, "Retrieving ZED objects")
 
         #local references avoid repeated attribute lookups inside the per-object loop
@@ -381,9 +424,20 @@ class ZedHandler:
             raise RuntimeError("Frame timestamp is unavailable")
 
         if self._measure_processing_time:
-            self._last_get_objects_time_ns = time.perf_counter_ns() - total_start_ns
-        else:
-            self._last_get_objects_time_ns = None
+            #measure delivered application throughput at the point a complete object frame is ready
+            completed_ns = time.perf_counter_ns()
+
+            if self._last_completed_frame_ns is not None:
+                frame_period_ns = completed_ns - self._last_completed_frame_ns
+                self._last_frame_period_ns = frame_period_ns
+
+                #cuda and neural-network startup is intentionally excluded from rolling statistics
+                if self._timing_warmup_remaining > 0:
+                    self._timing_warmup_remaining -= 1
+                else:
+                    self._timing_samples_ns.append(frame_period_ns)
+
+            self._last_completed_frame_ns = completed_ns
 
         return results, self._frame_timestamp_ns
 
@@ -470,20 +524,75 @@ class ZedHandler:
         return ZedCameraPose(position=(float(translation[0]), float(translation[1]), float(translation[2])), orientation=(float(orientation[0]), float(orientation[1]), float(orientation[2]), float(orientation[3])))
 
     @property
-    def last_processing_time_seconds(self) -> float | None:
-        """Time spent inside retrieve_custom_objects() on the latest timed call."""
+    def last_frame_period_seconds(self) -> float | None:
+        """Wall-clock period between the two most recent completed object frames."""
 
-        if self._last_sdk_processing_time_ns is None:
+        if self._last_frame_period_ns is None:
             return None
-        return self._last_sdk_processing_time_ns * 1e-9
+        return self._last_frame_period_ns * 1e-9
+
+    @property
+    def application_fps(self) -> float | None:
+        """Instantaneous application FPS from completed ZED object frames."""
+
+        period = self.last_frame_period_seconds
+        if period is None or period <= 0.0:
+            return None
+        return 1.0 / period
+
+    @property
+    def timing_stats(self) -> ZedTimingStats | None:
+        """Rolling post-warmup application frame-rate statistics."""
+
+        samples = self._timing_samples_ns
+        count = len(samples)
+        if count == 0 or self._last_frame_period_ns is None:
+            return None
+
+        #sorting happens only when stats are requested, never for every camera frame
+        ordered = sorted(samples)
+        mean_ns = sum(ordered) / count
+
+        middle = count // 2
+        if count % 2:
+            median_ns = ordered[middle]
+        else:
+            median_ns = 0.5 * (ordered[middle - 1] + ordered[middle])
+
+        p95_index = max(0, math.ceil(0.95 * count) - 1)
+        p95_ns = ordered[p95_index]
+
+        return ZedTimingStats(latest_seconds=self._last_frame_period_ns * 1e-9, mean_seconds=mean_ns * 1e-9, median_seconds=median_ns * 1e-9, p95_seconds=p95_ns * 1e-9, sample_count=count)
+
+    @property
+    def timing_warmup_remaining(self) -> int:
+        """Number of startup frame intervals still excluded from rolling timing statistics."""
+
+        return self._timing_warmup_remaining
+
+    @property
+    def last_end_to_end_latency_seconds(self) -> float | None:
+        """Compatibility alias; now returns completed-frame period rather than call latency."""
+
+        return self.last_frame_period_seconds
+
+    @property
+    def last_sdk_processing_latency_seconds(self) -> float | None:
+        """Compatibility alias; now returns completed-frame period rather than SDK call latency."""
+
+        return self.last_frame_period_seconds
+
+    @property
+    def last_processing_time_seconds(self) -> float | None:
+        """Compatibility alias; now returns completed-frame period rather than processing latency."""
+
+        return self.last_frame_period_seconds
 
     @property
     def last_get_objects_time_seconds(self) -> float | None:
-        """Total get_objects() time including Python conversion and reassociation."""
+        """Compatibility alias; now returns completed-frame period rather than get_objects latency."""
 
-        if self._last_get_objects_time_ns is None:
-            return None
-        return self._last_get_objects_time_ns * 1e-9
+        return self.last_frame_period_seconds
 
     @staticmethod
     def _distance_squared(identity: _TrackedIdentity, x: float, y: float, z: float) -> float:
@@ -618,15 +727,22 @@ def parse_args():
     parser.add_argument("--dynamic-input-size", type=int, help="Optional dynamic ONNX input size such as 512 or 640.")
     parser.add_argument("--svo", help="Optional SVO recording instead of a live ZED camera.")
     parser.add_argument("--static-camera", action="store_true", help="Tell ZED positional tracking that the camera does not move.")
-    parser.add_argument("--measure-processing-time", action="store_true", help="Print SDK and total get_objects() processing time.")
+    parser.add_argument("--measure-framerate", action="store_true", help="Measure actual application frame rate through the ZED pipeline and print rolling statistics once per second.")
+    parser.add_argument("--display-fps", type=float, default=DEFAULT_DISPLAY_FPS, help="Debug display rate only; detection still runs on every available camera frame.")
+    parser.add_argument("--print-fps", type=float, default=DEFAULT_PRINT_FPS, help="Maximum rate for printing detections; detection still runs on every available camera frame. Use 0 to disable detection printing.")
     parser.add_argument("--no-display", action="store_true", help="Do not retrieve or show the camera image.")
     return parser.parse_args()
 
 
 def main() -> None:
-    """Print tracked balls and optionally show their current 2D detections."""
+    """Run object processing continuously while throttling terminal and display work."""
 
     args = parse_args()
+
+    if args.display_fps <= 0.0:
+        raise ValueError("--display-fps must be positive")
+    if args.print_fps < 0.0:
+        raise ValueError("--print-fps must not be negative")
 
     #opencv and numpy are only needed by the optional debug display
     cv2 = None
@@ -637,39 +753,56 @@ def main() -> None:
         cv2 = _cv2
         np = _np
 
+    display_period = 1.0 / args.display_fps
+    print_period = float("inf") if args.print_fps == 0.0 else 1.0 / args.print_fps
+    last_display_time = float("-inf")
+    last_print_time = float("-inf")
+    last_timing_report_ns = 0
+
     try:
-        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_processing_time=args.measure_processing_time) as zed:
+        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_processing_time=args.measure_framerate) as zed:
             print("ZED ball detection and tracking running")
             print("Press q in the display window to quit" if not args.no_display else "Press Ctrl+C to quit")
 
             while True:
-                #hot path uses the same public api as the real application
+                #hot path always grabs and processes the next available camera frame first
                 result = zed.grab_and_get_objects()
                 if result is None:
                     continue
 
                 objects, timestamp_ns = result
+                timestamp_seconds = timestamp_ns * 1e-9
 
-                #print every tracked ball returned for this frame
-                for obj in objects:
-                    x, y, z = obj.position
-                    changed = " reassociated" if obj.identity_changed else ""
-                    print(f"id={obj.object_id} state={obj.tracking_state} conf={obj.confidence:.2f} world=({x:.3f}, {y:.3f}, {z:.3f}) m{changed}")
+                #terminal io is throttled because printing every 100 hz frame can become the bottleneck
+                if args.print_fps > 0.0 and timestamp_seconds - last_print_time >= print_period:
+                    for obj in objects:
+                        x, y, z = obj.position
+                        changed = " reassociated" if obj.identity_changed else ""
+                        print(f"id={obj.object_id} state={obj.tracking_state} conf={obj.confidence:.2f} world=({x:.3f}, {y:.3f}, {z:.3f}) m{changed}")
+                    last_print_time = timestamp_seconds
 
-                if args.measure_processing_time:
-                    sdk_time = zed.last_processing_time_seconds
-                    total_time = zed.last_get_objects_time_seconds
-                    if sdk_time is not None and total_time is not None:
-                        print(f"frame={timestamp_ns} ns  SDK={sdk_time * 1000.0:.3f} ms  get_objects={total_time * 1000.0:.3f} ms")
+                #report application-level delivered frame rate about once per wall-clock second
+                if args.measure_framerate:
+                    now_ns = time.perf_counter_ns()
+                    if last_timing_report_ns == 0 or now_ns - last_timing_report_ns >= 1_000_000_000:
+                        stats = zed.timing_stats
+                        if stats is not None:
+                            print(f"app fps latest={stats.latest_fps:.1f}  avg={stats.mean_fps:.1f}  median={stats.median_fps:.1f}  p95-frame={stats.p95_seconds * 1000.0:.2f} ms ({stats.p95_frame_fps:.1f} fps)  n={stats.sample_count}  balls={len(objects)}")
+                        elif zed.timing_warmup_remaining > 0:
+                            print(f"timing warmup: {zed.timing_warmup_remaining} frame intervals remaining")
+                        last_timing_report_ns = now_ns
 
-                #skip all image work when display is disabled
+                #headless mode returns immediately to grab() with no image or opencv work
                 if args.no_display:
+                    continue
+
+                #image retrieval and drawing run only at the requested debug display rate
+                if timestamp_seconds - last_display_time < display_period:
                     continue
 
                 assert cv2 is not None
                 assert np is not None
 
-                #get_frame performs image retrieval and box conversion only on this debug path
                 frame, boxes = zed.get_frame()
                 objects_by_id = {obj.object_id: obj for obj in objects}
 
@@ -688,6 +821,8 @@ def main() -> None:
                     cv2.putText(frame, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0, 255), 2, cv2.LINE_AA)
 
                 cv2.imshow("ZED tracked balls", frame)
+                last_display_time = timestamp_seconds
+
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
 

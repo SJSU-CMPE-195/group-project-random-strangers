@@ -138,6 +138,20 @@ def _make_runtime_filter(confidence_percent: float) -> sl.CustomObjectDetectionR
     ball = sl.CustomObjectDetectionProperties()
     ball.detection_confidence_threshold = confidence_percent
 
+    #a thrown ball moves freely in 3d, so never constrain the zed tracker to the ground plane
+    if hasattr(ball, "is_grounded"):
+        ball.is_grounded = False
+    if hasattr(ball, "is_static"):
+        ball.is_static = False
+
+    #keep the sdk tracker responsive because the trajectory fitter handles its own smoothing/modeling
+    if hasattr(ball, "velocity_smoothing_factor"):
+        ball.velocity_smoothing_factor = 0.0
+    if hasattr(ball, "min_velocity_threshold"):
+        ball.min_velocity_threshold = 0.0
+    if hasattr(ball, "prediction_timeout_s"):
+        ball.prediction_timeout_s = 0.05
+
     runtime.object_class_detection_properties = {0: person, BALL_CLASS_ID: ball}
     return runtime
 
@@ -237,7 +251,8 @@ class ZedHandler:
         init.coordinate_units = sl.UNIT.METER
         init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
         init.depth_maximum_distance = 20
-        init.depth_stabilization = 0
+        #small amount of temporal stabilization reduces depth jitter without heavily smearing fast motion
+        init.depth_stabilization = 10
 
         #use the sdk's cuda graph path when this sdk version exposes it
         if hasattr(init, "allow_depth_cuda_graph"):

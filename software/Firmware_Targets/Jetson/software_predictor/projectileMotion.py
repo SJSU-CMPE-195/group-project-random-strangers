@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 import numpy as np
+import pyzed.sl as sl
 
 from ZedHandler import ZedCameraIntrinsics, ZedCameraPose, ZedObject2D, ZedObject3D
 
@@ -44,8 +45,11 @@ class TrajectoryFit:
     #estimated xyz velocity at reference_time
     velocity: np.ndarray
 
-    #root-mean-square 3d fit error across the measurements
+    #root-mean-square euclidean 3d fit error across the measurements
     rms_error_m: float
+
+    #per-axis rms residuals in world x, y, z; stereo depth z is usually the noisiest coordinate
+    rms_error_xyz_m: np.ndarray
 
     #number of measurements used to create this fit
     measurement_count: int
@@ -108,9 +112,12 @@ def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequ
     #measure fit quality against the original unmodified measurements
     predicted_positions = position + dt[:, None] * velocity + 0.5 * (dt * dt)[:, None] * GRAVITY_VECTOR
     residuals = predicted_positions - positions
-    rms_error_m = float(np.sqrt(np.mean(np.sum(residuals * residuals, axis=1))))
+    rms_error_xyz_m = np.sqrt(np.mean(residuals * residuals, axis=0))
 
-    return TrajectoryFit(reference_time=reference_time, position=position, velocity=velocity, rms_error_m=rms_error_m, measurement_count=len(times))
+    #this is rms euclidean distance, so the three axis rms values add in quadrature
+    rms_error_m = float(np.linalg.norm(rms_error_xyz_m))
+
+    return TrajectoryFit(reference_time=reference_time, position=position, velocity=velocity, rms_error_m=rms_error_m, rms_error_xyz_m=rms_error_xyz_m, measurement_count=len(times))
 
 
 # =============================================================================
@@ -129,8 +136,10 @@ GRAVITY_ALIGNMENT_WARMUP_SECONDS = 1.5
 #minimum observed time needed before gravity curvature is large enough to distinguish from straight motion
 MIN_PROJECTILE_DURATION_SECONDS = 0.18
 
-#full 3d sanity limit; projectile classification itself uses vertical-axis curvature below
-MAX_FIT_ERROR_M = 0.25
+#per-axis sanity limits; depth gets a larger allowance because stereo z is the noisiest coordinate
+MAX_LATERAL_FIT_ERROR_M = 0.35
+MAX_VERTICAL_FIT_ERROR_M = 0.25
+MAX_DEPTH_FIT_ERROR_M = 1.25
 
 #fixed-gravity vertical motion must fit at least this much better than constant vertical velocity
 MIN_BALLISTIC_ERROR_IMPROVEMENT_M = 0.001
@@ -259,6 +268,11 @@ class BallTracker:
 
             #keep track alive whenever the detector reports the id, even if depth is bad
             track.last_seen_timestamp = timestamp_seconds
+
+            #SEARCHING positions are sdk predictions rather than new measured positions, so do not fit them as observations
+            if obj.tracking_state != sl.OBJECT_TRACKING_STATE.OK:
+                track.fit_status = f"zed state {obj.tracking_state}"
+                continue
 
             #do not mix provisional startup world coordinates with the final gravity-aligned world frame
             if warmup_remaining > 0.0:
@@ -389,9 +403,14 @@ def _projectile_motion_check(times: np.ndarray, positions: np.ndarray, fit: Traj
     if duration < MIN_PROJECTILE_DURATION_SECONDS:
         return False, f"need {MIN_PROJECTILE_DURATION_SECONDS - duration:.2f}s more"
 
-    #keep a generous full-3d sanity bound so a wildly incorrect depth track is never predicted
-    if fit.rms_error_m > MAX_FIT_ERROR_M:
-        return False, f"3d fit err {fit.rms_error_m:.2f}m"
+    #check axes independently so depth noise does not make a good vertical projectile fit look bad
+    x_error, y_error, z_error = (float(value) for value in fit.rms_error_xyz_m)
+    if x_error > MAX_LATERAL_FIT_ERROR_M:
+        return False, f"x fit err {x_error:.2f}m"
+    if y_error > MAX_VERTICAL_FIT_ERROR_M:
+        return False, f"y fit err {y_error:.2f}m"
+    if z_error > MAX_DEPTH_FIT_ERROR_M:
+        return False, f"depth fit err {z_error:.2f}m"
 
     #gravity changes only world Y, so compare models on Y instead of letting unrelated X/Z depth noise hide the curvature
     predicted_y = fit.predict(times)[:, 1]
@@ -411,7 +430,7 @@ def _projectile_motion_check(times: np.ndarray, positions: np.ndarray, fit: Traj
     if ratio > MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO:
         return False, f"weak gravity y {ballistic_y_error:.3f}/{linear_y_error:.3f}m"
 
-    return True, f"projectile y {ballistic_y_error:.3f}/{linear_y_error:.3f}m"
+    return True, f"projectile y {ballistic_y_error:.3f}/{linear_y_error:.3f}m xyz {x_error:.2f}/{y_error:.2f}/{z_error:.2f}"
 
 
 def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> tuple[TrajectoryFit | None, str]:
@@ -661,7 +680,8 @@ def draw_tracking_overlay(frame: np.ndarray, tracker: BallTracker, current_objec
             text = track.fit_status
         else:
             speed = float(np.linalg.norm(track.fit.velocity))
-            text = f"fit={track.fit.measurement_count}  err={track.fit.rms_error_m:.3f}m  v={speed:.1f}m/s"
+            x_error, y_error, z_error = track.fit.rms_error_xyz_m
+            text = f"fit={track.fit.measurement_count}  3d={track.fit.rms_error_m:.2f}m xyz={x_error:.2f}/{y_error:.2f}/{z_error:.2f}  v={speed:.1f}m/s"
 
         text_position = (max(4, min(frame.shape[1] - 260, x + 7)), min(frame.shape[0] - 6, y + 16))
         cv2.putText(frame, text, text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.40, color, 1, cv2.LINE_AA)

@@ -70,9 +70,7 @@ class TrajectoryFit:
 
         #combine x, y, and z into one position for each timestamp
         positions = np.column_stack((x, y, z))
-
-            return positions[0]
-        else:
+        return positions
 
 
 def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequence[Sequence[float]] | np.ndarray) -> TrajectoryFit:

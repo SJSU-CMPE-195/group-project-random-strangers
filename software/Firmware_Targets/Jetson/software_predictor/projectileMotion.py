@@ -767,7 +767,7 @@ def main() -> None:
     last_timing_report_time = float("-inf")
 
     try:
-        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_framerate=args.measure_framerate, depth_stabilization=args.depth_stabilization, tracking_compute=args.tracking_compute, sdk_object_tracking=not args.no_sdk_tracking, depth_mode=args.depth_mode) as zed:
+        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_framerate=args.measure_framerate, depth_stabilization=args.depth_stabilization, tracking_compute=args.tracking_compute, depth_mode=args.depth_mode) as zed:
             #intrinsics are only needed when 3d predictions will be drawn on the image
             intrinsics = None if args.no_display else zed.get_camera_intrinsics()
             print(f"Performance config: depth={args.depth_mode} GEN_3 area-memory=off tracking-compute={args.tracking_compute} depth-stabilization={args.depth_stabilization} sdk-object-tracking={not args.no_sdk_tracking} input={args.dynamic_input_size or 'model/default'}")

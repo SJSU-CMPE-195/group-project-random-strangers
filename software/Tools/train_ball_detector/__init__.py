@@ -1,1 +1,0 @@
-"""Ball-detector training utilities."""

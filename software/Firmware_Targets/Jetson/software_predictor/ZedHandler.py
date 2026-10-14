@@ -21,6 +21,9 @@ TIMING_WARMUP_FRAMES = 100
 TIMING_WINDOW_FRAMES = 120
 DEFAULT_DISPLAY_FPS = 30.0
 DEFAULT_PRINT_FPS = 10.0
+DEFAULT_DEPTH_STABILIZATION = 0
+DEFAULT_TRACKING_COMPUTE = "cpu"
+DEFAULT_DEPTH_MODE = "neural-light"
 
 
 @dataclass(frozen=True, slots=True)
@@ -178,10 +181,14 @@ def _make_runtime_filter(confidence_percent: float) -> sl.CustomObjectDetectionR
     #disable person detections by setting their required confidence to 100 percent
     person = sl.CustomObjectDetectionProperties()
     person.detection_confidence_threshold = 100.0
+    if hasattr(person, "enabled"):
+        person.enabled = False
 
     #allow ball detections at the requested confidence threshold
     ball = sl.CustomObjectDetectionProperties()
     ball.detection_confidence_threshold = confidence_percent
+    if hasattr(ball, "enabled"):
+        ball.enabled = True
 
     #a thrown ball moves freely in 3d, so never constrain the zed tracker to the ground plane
     if hasattr(ball, "is_grounded"):
@@ -195,7 +202,9 @@ def _make_runtime_filter(confidence_percent: float) -> sl.CustomObjectDetectionR
     if hasattr(ball, "min_velocity_threshold"):
         ball.min_velocity_threshold = 0.0
     if hasattr(ball, "prediction_timeout_s"):
-        ball.prediction_timeout_s = 0.05
+        ball.prediction_timeout_s = 0.0
+    if hasattr(ball, "min_confirmation_time_s"):
+        ball.min_confirmation_time_s = 0.0
 
     runtime.object_class_detection_properties = {0: person, BALL_CLASS_ID: ball}
     return runtime
@@ -213,7 +222,7 @@ class ZedHandler:
     get_frame() is the optional debug/display path.
     """
 
-    def __init__(self, onnx_path: str | Path, confidence_percent: float = DEFAULT_CONFIDENCE_PERCENT, dynamic_input_size: int | None = None, svo_path: str | None = None, static_camera: bool = False, max_missing_frames: int = 5, max_reassociation_distance_m: float = 2.0, measure_processing_time: bool = False, allow_reduced_precision_inference: bool = True) -> None:
+    def __init__(self, onnx_path: str | Path, confidence_percent: float = DEFAULT_CONFIDENCE_PERCENT, dynamic_input_size: int | None = None, svo_path: str | None = None, static_camera: bool = False, max_missing_frames: int = 5, max_reassociation_distance_m: float = 2.0, measure_framerate: bool = False, allow_reduced_precision_inference: bool = True, depth_stabilization: int = DEFAULT_DEPTH_STABILIZATION, tracking_compute: str = DEFAULT_TRACKING_COMPUTE, sdk_object_tracking: bool = True, depth_mode: str = DEFAULT_DEPTH_MODE) -> None:
         #validate arguments before opening the camera
         model_path = Path(onnx_path)
         if not model_path.is_file():
@@ -226,6 +235,12 @@ class ZedHandler:
             raise ValueError("max_missing_frames must not be negative")
         if max_reassociation_distance_m <= 0.0:
             raise ValueError("max_reassociation_distance_m must be positive")
+        if not 0 <= depth_stabilization <= 100:
+            raise ValueError("depth_stabilization must be between 0 and 100")
+        if tracking_compute not in ("auto", "cpu", "gpu"):
+            raise ValueError("tracking_compute must be auto, cpu, or gpu")
+        if depth_mode not in ("neural-light", "performance"):
+            raise ValueError("depth_mode must be neural-light or performance")
 
         #maximum number of missed camera frames where an identity can still be recovered
         self._max_missing_frames = max_missing_frames
@@ -234,7 +249,10 @@ class ZedHandler:
         self._max_reassociation_distance_sq = max_reassociation_distance_m**2
 
         #optional timing measures actual completed application frame throughput
-        self._measure_processing_time = measure_processing_time
+        self._measure_framerate = measure_framerate
+
+        #zed temporal object tracking can be disabled to benchmark a lighter app-side reassociation path
+        self._sdk_object_tracking = sdk_object_tracking
 
         #wall time when the previous grab+object result finished
         self._last_completed_frame_ns: int | None = None
@@ -290,6 +308,9 @@ class ZedHandler:
         #camera pose storage is allocated lazily because it is only needed for visualization
         self._camera_pose: sl.Pose | None = None
 
+        #stable ids assigned to ball objects in the current sdk object list, in filtered ball order
+        self._current_ball_stable_ids: list[int] = []
+
         #create the underlying zed camera
         self._zed = sl.Camera()
         input_type = sl.InputType()
@@ -300,12 +321,13 @@ class ZedHandler:
         init = sl.InitParameters(input_t=input_type)
         init.camera_resolution = sl.RESOLUTION.VGA
         init.camera_fps = 100
-        init.depth_mode = sl.DEPTH_MODE.NEURAL_LIGHT
+        #NEURAL_LIGHT is the fastest current neural mode; legacy PERFORMANCE is exposed for benchmarking
+        init.depth_mode = sl.DEPTH_MODE.NEURAL_LIGHT if depth_mode == "neural-light" else sl.DEPTH_MODE.PERFORMANCE
         init.coordinate_units = sl.UNIT.METER
         init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
         init.depth_maximum_distance = 20
-        #small amount of temporal stabilization reduces depth jitter without heavily smearing fast motion
-        init.depth_stabilization = 10
+        #stabilization costs latency/work and the trajectory estimator already smooths over many samples
+        init.depth_stabilization = depth_stabilization
 
         #use the sdk's cuda graph path when this sdk version exposes it
         if hasattr(init, "allow_depth_cuda_graph"):
@@ -314,10 +336,29 @@ class ZedHandler:
         _check_success(self._zed.open(init), "Opening ZED camera")
 
         try:
-            #positional tracking is required for tracked custom objects
+            #world coordinates need positional tracking, but mapping/relocalization is unnecessary here
             positional_tracking = sl.PositionalTrackingParameters()
             positional_tracking.enable_imu_fusion = True
             positional_tracking.set_gravity_as_origin = True
+
+            #GEN_3 is lightweight and does not depend on depth for camera motion estimation
+            if hasattr(positional_tracking, "mode") and hasattr(sl, "POSITIONAL_TRACKING_MODE") and hasattr(sl.POSITIONAL_TRACKING_MODE, "GEN_3"):
+                positional_tracking.mode = sl.POSITIONAL_TRACKING_MODE.GEN_3
+
+            #area mapping is wasted work for this short-lived fixed world coordinate system
+            if hasattr(positional_tracking, "enable_area_memory"):
+                positional_tracking.enable_area_memory = False
+            if hasattr(positional_tracking, "enable_pose_smoothing"):
+                positional_tracking.enable_pose_smoothing = False
+
+            #SDK 5.5 can keep GEN_3 work on CPU so the GPU is freer for YOLO and depth
+            if tracking_compute != "auto" and hasattr(positional_tracking, "compute_preference"):
+                preference_type = getattr(sl, "POSITIONAL_TRACKING_COMPUTE_PREFERENCE", None)
+                if preference_type is not None:
+                    preference_name = "PREFER_CPU" if tracking_compute == "cpu" else "PREFER_GPU"
+                    if hasattr(preference_type, preference_name):
+                        positional_tracking.compute_preference = getattr(preference_type, preference_name)
+
             if static_camera:
                 positional_tracking.set_as_static = True
             _check_success(self._zed.enable_positional_tracking(positional_tracking), "Enabling positional tracking")
@@ -326,8 +367,14 @@ class ZedHandler:
             detection = sl.ObjectDetectionParameters()
             detection.detection_model = sl.OBJECT_DETECTION_MODEL.CUSTOM_YOLOLIKE_BOX_OBJECTS
             detection.custom_onnx_file = str(model_path.resolve())
-            detection.enable_tracking = True
+            detection.enable_tracking = sdk_object_tracking
             detection.enable_segmentation = False
+
+            #YOLO already suppresses duplicate boxes; skip the SDK's extra 3d NMS pass
+            if hasattr(detection, "filtering_mode") and hasattr(sl, "OBJECT_FILTERING_MODE") and hasattr(sl.OBJECT_FILTERING_MODE, "NONE"):
+                detection.filtering_mode = sl.OBJECT_FILTERING_MODE.NONE
+            if hasattr(detection, "prediction_timeout_s"):
+                detection.prediction_timeout_s = 0.0
 
             #allow fp16 or other reduced precision inference when supported
             if hasattr(detection, "allow_reduced_precision_inference"):
@@ -353,6 +400,7 @@ class ZedHandler:
 
         self._frame_ready = status == sl.ERROR_CODE.SUCCESS
         self._objects_ready = False
+        self._current_ball_stable_ids.clear()
 
         if self._frame_ready:
             #increment only for real captured frames so identity age is measured in camera frames
@@ -396,10 +444,14 @@ class ZedHandler:
             z = float(position[2])
             valid_position = math.isfinite(x) and math.isfinite(y) and math.isfinite(z)
 
-            #remapped id if sdk temporarily loses track
-            identity = self._resolve_identity(sdk_id=sdk_id, x=x, y=y, z=z, position_is_valid=valid_position)
+            #native tracking is optional because this handler can reassociate detections by 3d proximity itself
+            if self._sdk_object_tracking:
+                identity = self._resolve_identity(sdk_id=sdk_id, x=x, y=y, z=z, position_is_valid=valid_position)
+            else:
+                identity = self._resolve_identity_untracked(x=x, y=y, z=z, position_is_valid=valid_position)
             identity.last_seen_frame = frame_number
             identity.output_frame = frame_number
+            self._current_ball_stable_ids.append(identity.stable_id)
 
             #keep the previous good 3d point if this frame's depth temporarily becomes invalid
             if valid_position:
@@ -423,7 +475,7 @@ class ZedHandler:
         if self._frame_timestamp_ns is None:
             raise RuntimeError("Frame timestamp is unavailable")
 
-        if self._measure_processing_time:
+        if self._measure_framerate:
             #measure delivered application throughput at the point a complete object frame is ready
             completed_ns = time.perf_counter_ns()
 
@@ -468,20 +520,20 @@ class ZedHandler:
         #boxes are also converted only on display frames
         boxes: list[ZedObject2D] = []
         append = boxes.append
-        frame_number = self._frame_number
-
+        ball_index = 0
         for obj in self._objects.object_list:
             raw_label = int(obj.raw_label)
             if raw_label != BALL_CLASS_ID:
                 continue
 
-            #translate the current sdk id back to the same stable id returned by get_objects()
-            identity = self._identities_by_sdk_id.get(int(obj.id))
-            if identity is None or identity.output_frame != frame_number:
-                continue
+            #stable ids were recorded in this same filtered order by get_objects()
+            if ball_index >= len(self._current_ball_stable_ids):
+                break
+            stable_id = self._current_ball_stable_ids[ball_index]
+            ball_index += 1
 
             bounding_box_2d = tuple((float(point[0]), float(point[1])) for point in obj.bounding_box_2d)
-            append(ZedObject2D(object_id=identity.stable_id, raw_label=raw_label, bounding_box_2d=bounding_box_2d))
+            append(ZedObject2D(object_id=stable_id, raw_label=raw_label, bounding_box_2d=bounding_box_2d))
 
         #get_data returns the sdk-backed BGRA numpy view without a full-frame color conversion
         return self._image_buffer.get_data(), boxes
@@ -570,30 +622,6 @@ class ZedHandler:
 
         return self._timing_warmup_remaining
 
-    @property
-    def last_end_to_end_latency_seconds(self) -> float | None:
-        """Compatibility alias; now returns completed-frame period rather than call latency."""
-
-        return self.last_frame_period_seconds
-
-    @property
-    def last_sdk_processing_latency_seconds(self) -> float | None:
-        """Compatibility alias; now returns completed-frame period rather than SDK call latency."""
-
-        return self.last_frame_period_seconds
-
-    @property
-    def last_processing_time_seconds(self) -> float | None:
-        """Compatibility alias; now returns completed-frame period rather than processing latency."""
-
-        return self.last_frame_period_seconds
-
-    @property
-    def last_get_objects_time_seconds(self) -> float | None:
-        """Compatibility alias; now returns completed-frame period rather than get_objects latency."""
-
-        return self.last_frame_period_seconds
-
     @staticmethod
     def _distance_squared(identity: _TrackedIdentity, x: float, y: float, z: float) -> float:
         """Squared distance from a stored track position to a new detection position."""
@@ -675,6 +703,35 @@ class ZedHandler:
         self._identities_by_sdk_id[sdk_id] = identity
         return identity
 
+    def _resolve_identity_untracked(self, x: float, y: float, z: float, position_is_valid: bool) -> _TrackedIdentity:
+        """Associate a direct frame detection using only recent 3D position, without ZED object tracking."""
+
+        frame_number = self._frame_number
+        best: _TrackedIdentity | None = None
+        best_distance_sq = self._max_reassociation_distance_sq
+
+        if position_is_valid:
+            for candidate in self._identities_by_stable_id.values():
+                if candidate.output_frame == frame_number:
+                    continue
+                if not candidate.has_valid_position:
+                    continue
+                if frame_number - candidate.last_seen_frame > self._max_missing_frames:
+                    continue
+
+                distance_sq = self._distance_squared(candidate, x, y, z)
+                if distance_sq <= best_distance_sq:
+                    best = candidate
+                    best_distance_sq = distance_sq
+
+        if best is not None:
+            return best
+
+        identity = _TrackedIdentity(stable_id=self._next_stable_id, sdk_id=-1, last_seen_frame=frame_number, x=x if position_is_valid else 0.0, y=y if position_is_valid else 0.0, z=z if position_is_valid else 0.0, has_valid_position=position_is_valid)
+        self._next_stable_id += 1
+        self._identities_by_stable_id[identity.stable_id] = identity
+        return identity
+
     def _prune_identities(self) -> None:
         """Delete private identity records after they are too old to be reassociated."""
 
@@ -683,7 +740,7 @@ class ZedHandler:
 
         for stable_id in stale_ids:
             identity = self._identities_by_stable_id.pop(stable_id)
-            if self._identities_by_sdk_id.get(identity.sdk_id) is identity:
+            if identity.sdk_id >= 0 and self._identities_by_sdk_id.get(identity.sdk_id) is identity:
                 del self._identities_by_sdk_id[identity.sdk_id]
 
     def close(self) -> None:
@@ -703,6 +760,7 @@ class ZedHandler:
         self._image_buffer = None
         self._intrinsics = None
         self._camera_pose = None
+        self._current_ball_stable_ids.clear()
 
     def __enter__(self) -> "ZedHandler":
         return self
@@ -724,10 +782,14 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run ZED native YOLO ball detection and print tracked detections.")
     parser.add_argument("--onnx", type=Path, required=True, help="Path to the exported YOLO ONNX model.")
     parser.add_argument("--confidence", type=float, default=DEFAULT_CONFIDENCE_PERCENT, help="Ball confidence threshold as a percentage.")
-    parser.add_argument("--dynamic-input-size", type=int, help="Optional dynamic ONNX input size such as 512 or 640.")
+    parser.add_argument("--dynamic-input-size", type=int, help="Dynamic ONNX inference size. Try 320 or 384 for much higher FPS; ZED defaults dynamic models to 512 when unset.")
     parser.add_argument("--svo", help="Optional SVO recording instead of a live ZED camera.")
     parser.add_argument("--static-camera", action="store_true", help="Tell ZED positional tracking that the camera does not move.")
     parser.add_argument("--measure-framerate", action="store_true", help="Measure actual application frame rate through the ZED pipeline and print rolling statistics once per second.")
+    parser.add_argument("--depth-stabilization", type=int, default=DEFAULT_DEPTH_STABILIZATION, help="ZED depth stabilization from 0-100. Default 0 for maximum throughput.")
+    parser.add_argument("--depth-mode", choices=("neural-light", "performance"), default=DEFAULT_DEPTH_MODE, help="Depth engine. neural-light is the supported fast neural mode; performance is the deprecated legacy mode but can be faster on some GPUs.")
+    parser.add_argument("--tracking-compute", choices=("auto", "cpu", "gpu"), default=DEFAULT_TRACKING_COMPUTE, help="GEN_3 positional-tracking compute preference. CPU usually leaves more GPU for YOLO/depth.")
+    parser.add_argument("--no-sdk-tracking", action="store_true", help="Disable ZED temporal object tracking and use this handler's lightweight 3D reassociation instead.")
     parser.add_argument("--display-fps", type=float, default=DEFAULT_DISPLAY_FPS, help="Debug display rate only; detection still runs on every available camera frame.")
     parser.add_argument("--print-fps", type=float, default=DEFAULT_PRINT_FPS, help="Maximum rate for printing detections; detection still runs on every available camera frame. Use 0 to disable detection printing.")
     parser.add_argument("--no-display", action="store_true", help="Do not retrieve or show the camera image.")
@@ -760,8 +822,9 @@ def main() -> None:
     last_timing_report_ns = 0
 
     try:
-        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_processing_time=args.measure_framerate) as zed:
+        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_framerate=args.measure_framerate, depth_stabilization=args.depth_stabilization, tracking_compute=args.tracking_compute, sdk_object_tracking=not args.no_sdk_tracking, depth_mode=args.depth_mode) as zed:
             print("ZED ball detection and tracking running")
+            print(f"Performance config: depth={args.depth_mode} GEN_3 area-memory=off tracking-compute={args.tracking_compute} depth-stabilization={args.depth_stabilization} sdk-object-tracking={not args.no_sdk_tracking} input={args.dynamic_input_size or 'model/default'}")
             print("Press q in the display window to quit" if not args.no_display else "Press Ctrl+C to quit")
 
             while True:

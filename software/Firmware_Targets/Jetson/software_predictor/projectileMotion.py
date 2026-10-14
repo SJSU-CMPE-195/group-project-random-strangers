@@ -269,8 +269,8 @@ class BallTracker:
             #keep track alive whenever the detector reports the id, even if depth is bad
             track.last_seen_timestamp = timestamp_seconds
 
-            #SEARCHING positions are sdk predictions rather than new measured positions, so do not fit them as observations
-            if obj.tracking_state != sl.OBJECT_TRACKING_STATE.OK:
+            #SEARCHING/TERMINATE positions are sdk predictions or dying tracks rather than new detector measurements
+            if obj.tracking_state in (sl.OBJECT_TRACKING_STATE.SEARCHING, sl.OBJECT_TRACKING_STATE.TERMINATE):
                 track.fit_status = f"zed state {obj.tracking_state}"
                 continue
 
@@ -707,11 +707,15 @@ def parse_args():
     parser.add_argument("--onnx", type=Path, required=True, help="Path to the exported YOLO ONNX model.")
     parser.add_argument("--svo", help="Optional SVO recording instead of a live camera.")
     parser.add_argument("--confidence", type=float, default=25.0, help="Ball detector confidence threshold as a percentage.")
-    parser.add_argument("--dynamic-input-size", type=int, help="Optional dynamic ONNX input size, for example 512 or 640.")
+    parser.add_argument("--dynamic-input-size", type=int, help="Dynamic ONNX inference size. Try 320 or 384 for much higher FPS; ZED defaults dynamic models to 512 when unset.")
     parser.add_argument("--static-camera", action="store_true", help="Tell ZED positional tracking that the camera does not move.")
     parser.add_argument("--display-fps", type=float, default=DEFAULT_DISPLAY_FPS, help="Debug display rate only; object detection still runs on every camera frame.")
     parser.add_argument("--stale-track-seconds", type=float, default=DEFAULT_STALE_TRACK_SECONDS, help="Remove trajectory state after an id has not been updated for this long.")
     parser.add_argument("--measure-framerate", action="store_true", help="Measure actual application frame rate through the ZED pipeline and print rolling statistics once per second.")
+    parser.add_argument("--depth-stabilization", type=int, default=0, help="ZED depth stabilization from 0-100. Default 0 for maximum throughput.")
+    parser.add_argument("--depth-mode", choices=("neural-light", "performance"), default="neural-light", help="Depth engine. neural-light is the supported fast neural mode; performance is the deprecated legacy mode but can be faster on some GPUs.")
+    parser.add_argument("--tracking-compute", choices=("auto", "cpu", "gpu"), default="cpu", help="GEN_3 positional-tracking compute preference. CPU usually leaves more GPU for YOLO/depth.")
+    parser.add_argument("--no-sdk-tracking", action="store_true", help="Disable ZED temporal object tracking and use lightweight app-side 3D reassociation.")
     parser.add_argument("--no-display", action="store_true", help="Disable image retrieval and OpenCV drawing completely.")
     return parser.parse_args()
 
@@ -734,6 +738,8 @@ def main() -> None:
         raise ValueError("--display-fps must be positive")
     if args.stale_track_seconds <= 0.0:
         raise ValueError("--stale-track-seconds must be positive")
+    if not 0 <= args.depth_stabilization <= 100:
+        raise ValueError("--depth-stabilization must be between 0 and 100")
 
     #avoid importing opencv at all when the display is disabled
     cv2 = None
@@ -751,9 +757,10 @@ def main() -> None:
     last_timing_report_time = float("-inf")
 
     try:
-        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_processing_time=args.measure_framerate) as zed:
+        with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_framerate=args.measure_framerate, depth_stabilization=args.depth_stabilization, tracking_compute=args.tracking_compute, sdk_object_tracking=not args.no_sdk_tracking, depth_mode=args.depth_mode) as zed:
             #intrinsics are only needed when 3d predictions will be drawn on the image
             intrinsics = None if args.no_display else zed.get_camera_intrinsics()
+            print(f"Performance config: depth={args.depth_mode} GEN_3 area-memory=off tracking-compute={args.tracking_compute} depth-stabilization={args.depth_stabilization} sdk-object-tracking={not args.no_sdk_tracking} input={args.dynamic_input_size or 'model/default'}")
             if args.measure_framerate and not args.no_display:
                 print("Timing note: use --no-display for the most repeatable benchmark results")
 

@@ -1,6 +1,6 @@
-"""Fast fixed-gravity projectile fitting
+"""fixed-gravity projectile fitting
 
-The reusable trajectory-fitting interface is kept at the top of this file.
+The trajectory-fitting interface is kept at the top of this file.
 
 Trajectory fitting uses ZED's gravity-aligned RIGHT_HANDED_Y_UP world frame.
 The world +Y axis points up, so gravity is fixed at [0, -9.80665, 0] m/s^2.
@@ -27,55 +27,68 @@ from ZedHandler import ZedCameraIntrinsics, ZedCameraPose, ZedObject2D, ZedObjec
 
 #standard gravitational acceleration in meters per second squared
 GRAVITY_MPS2 = 9.80665
-
-#gravity points straight down because the zed coordinate system uses +Y as up
-GRAVITY_VECTOR = np.array([0.0, -GRAVITY_MPS2, 0.0], dtype=np.float64)
+GRAVITY_VECTOR = np.array([0.0, -GRAVITY_MPS2, 0.0], dtype=np.float64) #ZED uses +Y as up
 
 
 @dataclass(frozen=True, slots=True)
 class TrajectoryFit:
-    """Fixed-gravity ballistic state expressed at reference_time."""
-
-    #absolute timestamp where position and velocity are defined
-    reference_time: float
-
-    #estimated xyz position at reference_time
-    position: np.ndarray
-
-    #estimated xyz velocity at reference_time
-    velocity: np.ndarray
-
-    #root-mean-square euclidean 3d fit error across the measurements
-    rms_error_m: float
-
-    #per-axis rms residuals in world x, y, z; stereo depth z is usually the noisiest coordinate
-    rms_error_xyz_m: np.ndarray
+    """Represents a predicted trajectory"""
 
     #number of measurements used to create this fit
     measurement_count: int
 
+    #Trajectory is solved assuming the first point is at t=0, so this time is the absolute start time
+    absolute_start_time: float
+
+    #position and velocity estimated at start time
+    position: np.ndarray
+    velocity: np.ndarray
+
+    #root-mean-square fit error across the measurements
+    rms_error_m: float #total
+    rms_error_xyz_m: np.ndarray #per dimension
+
     def predict(self, times: float | Sequence[float] | np.ndarray) -> np.ndarray:
-        """Predict XYZ position at one or more absolute timestamps."""
+        """Predict XYZ position at one or more absolute timestamps.
+        
+            inputs:
+                times: a float or a list of times to get the predicted location
+            
+            outputs:
+                a corresponding list of positions
 
-        #convert scalars or arrays into a common numpy representation
-        time_array = np.asarray(times, dtype=np.float64)
+        """
 
-        #work relative to the fit reference time to avoid large absolute timestamp math
-        dt = time_array - self.reference_time
+        #convert time(s) into a common numpy representation and convert to relative time
+        times = np.asarray(times, dtype=float)
+        dt = np.atleast_1d(times - self.absolute_start_time)
 
-        #p = p0 + v*dt + 1/2*g*dt^2
-        return self.position + dt[..., None] * self.velocity + 0.5 * (dt * dt)[..., None] * GRAVITY_VECTOR
+        #calculate coordinate points from p = p0 + v*dt + 1/2*g*dt^2
+        x = self.position[0] + self.velocity[0] * dt + 0.5 * GRAVITY_VECTOR[0] * dt**2
+        y = self.position[1] + self.velocity[1] * dt + 0.5 * GRAVITY_VECTOR[1] * dt**2
+        z = self.position[2] + self.velocity[2] * dt + 0.5 * GRAVITY_VECTOR[2] * dt**2
+
+        #combine x, y, and z into one position for each timestamp
+        positions = np.column_stack((x, y, z))
+
+        #a single input time should return one xyz position instead of a 1x3 array
+        if dt.ndim == 0:
+            return positions[0]
+        else:
+            return positions
 
 
 def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequence[Sequence[float]] | np.ndarray) -> TrajectoryFit:
-    """Fit a 3D ballistic trajectory while treating gravity as perfectly known."""
+    """Fit a 3D ballistic trajectory while treating gravity as perfectly known.
 
-    #timestamps are absolute seconds from any monotonic clock
+        inputs:
+            timestamps: a list of measurement times in absolute seconds
+            positions_xyz: a corresponding list of (x, y, z) coordinates measured at those timestamps
+    """
+
     times = np.asarray(timestamps, dtype=np.float64).reshape(-1)
-    #positions must be an N by 3 array of gravity-aligned world coordinates
     positions = np.asarray(positions_xyz, dtype=np.float64)
 
-    #reject malformed inputs before doing any linear algebra
     if positions.ndim != 2 or positions.shape[1] != 3:
         raise ValueError("positions_xyz must have shape (N, 3)")
     if len(times) != len(positions):
@@ -87,51 +100,47 @@ def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequ
     if np.any(np.diff(times) <= 0.0):
         raise ValueError("timestamps must be strictly increasing")
 
-    #define the fitted state at the newest measurement time
+    #set reference time to the last measurement
     reference_time = float(times[-1])
+    dt = times - reference_time #times with respect to last measurement
 
-    #relative time keeps the regression numerically stable even when camera timestamps are large
-    dt = times - reference_time
+    #remove gravity from the y-measurements to leave y=y0+v0*t
+    corrected_y = positions[:, 1] - 0.5 * GRAVITY_VECTOR[1] * dt**2
 
-    #subtract known gravitational displacement so the remaining motion is linear in time
-    corrected_positions = positions - 0.5 * (dt * dt)[:, None] * GRAVITY_VECTOR
+    #since all equations are now in the form p(t)=p0+v0*t, fit them all
+    x_coefficients = np.polyfit(dt, positions[:, 0], 1)
+    y_coefficients = np.polyfit(dt, corrected_y, 1)
+    z_coefficients = np.polyfit(dt, positions[:, 2], 1)
 
-    #center time before solving the linear regression
-    mean_dt = float(dt.mean())
-    centered_dt = dt - mean_dt
-    denominator = float(centered_dt @ centered_dt)
+    p0 = np.array([x_coefficients[1], y_coefficients[1], z_coefficients[1]], dtype=np.float64)
+    v0 = np.array([x_coefficients[0], y_coefficients[0], z_coefficients[0]], dtype=np.float64)
 
-    if denominator <= 1e-15:
-        raise ValueError("timestamps are too close together")
+    #measure fit quality against the original unmodified world-space measurements
+    fitted_x = p0[0] + dt * v0[0] + 0.5 * dt**2 * GRAVITY_VECTOR[0]
+    fitted_y = p0[1] + dt * v0[1] + 0.5 * dt**2 * GRAVITY_VECTOR[1]
+    fitted_z = p0[2] + dt * v0[2] + 0.5 * dt**2 * GRAVITY_VECTOR[2]
+    fitted_positions = np.column_stack((fitted_x, fitted_y, fitted_z))
+    residuals = fitted_positions - positions
 
-    #solve all three axes at once because each corrected axis is position + velocity*time
-    mean_position = corrected_positions.mean(axis=0)
-    velocity = (centered_dt[:, None] * (corrected_positions - mean_position)).sum(axis=0) / denominator
-    position = mean_position - velocity * mean_dt
-
-    #measure fit quality against the original unmodified measurements
-    predicted_positions = position + dt[:, None] * velocity + 0.5 * (dt * dt)[:, None] * GRAVITY_VECTOR
-    residuals = predicted_positions - positions
-    rms_error_xyz_m = np.sqrt(np.mean(residuals * residuals, axis=0))
-
-    #this is rms euclidean distance, so the three axis rms values add in quadrature
+    rms_error_xyz_m = np.sqrt(np.mean(residuals**2, axis=0))
     rms_error_m = float(np.linalg.norm(rms_error_xyz_m))
 
-    return TrajectoryFit(reference_time=reference_time, position=position, velocity=velocity, rms_error_m=rms_error_m, rms_error_xyz_m=rms_error_xyz_m, measurement_count=len(times))
+    return TrajectoryFit(absolute_start_time=reference_time, position=p0, velocity=v0, rms_error_m=rms_error_m, rms_error_xyz_m=rms_error_xyz_m, measurement_count=len(times))
 
 
-# =============================================================================
-# LIVE TRAJECTORY TRACKING
-# =============================================================================
+# =========================================================================================
+# LIVE TRAJECTORY TRACKING (just a demo to see if the stuff works, don't use in final code)
+# =========================================================================================
 
-#maximum stored depth samples for one ball
+#maximum stored position samples for one ball
 MAX_MEASUREMENTS = 30
-
-#minimum number of valid 3d samples before a track can possibly be considered projectile motion
-MIN_FIT_MEASUREMENTS = 8
 
 #ignore early world-space samples while ZED finishes settling its IMU gravity alignment
 GRAVITY_ALIGNMENT_WARMUP_SECONDS = 1.5
+
+#### SETTINGS THAT HELP STOP A HELD BALL FROM BEING PREDICTED ####
+
+MIN_FIT_MEASUREMENTS = 4
 
 #minimum observed time needed before gravity curvature is large enough to distinguish from straight motion
 MIN_PROJECTILE_DURATION_SECONDS = 0.18
@@ -150,8 +159,10 @@ MAX_BALLISTIC_TO_LINEAR_ERROR_RATIO = 0.99
 #reject a single-frame position jump that would imply an impossible dodgeball speed
 MAX_PLAUSIBLE_BALL_SPEED_MPS = 50.0
 
-#fallback window sizes used if older samples no longer describe the current throw
+#number of samples to check for each ball to see if a trajectory estimate is valid
 FIT_WINDOWS = (30, 24, 20, 16, 12, 8)
+
+
 
 #remove trajectory state when a stable object id has not appeared for this long
 DEFAULT_STALE_TRACK_SECONDS = 0.30
@@ -177,18 +188,18 @@ TRACK_COLORS = ((0, 220, 255, 255), (0, 255, 120, 255), (255, 160, 0, 255), (255
 
 @dataclass(frozen=True, slots=True)
 class BallMeasurement:
-    """One valid 3D position sample used by the ballistic fitter."""
+    """One 3D position"""
 
     #absolute capture time in seconds
     timestamp: float
 
-    #xyz position in the gravity-aligned zed world frame
+    #xyz position
     position: tuple[float, float, float]
 
 
 @dataclass(frozen=True, slots=True)
 class ScreenMeasurement:
-    """One debug-only measured ball position in actual left-image pixels."""
+    """measured ball position in actual left-image pixels."""
 
     #absolute capture time in seconds
     timestamp: float
@@ -199,12 +210,12 @@ class ScreenMeasurement:
 
 @dataclass(slots=True)
 class BallTrack:
-    """Trajectory history and current fit for one stable ZedHandler object id."""
+    """Trajectory history and current fit for one ball"""
 
     #recent valid 3d samples, automatically capped at MAX_MEASUREMENTS
     measurements: deque[BallMeasurement] = field(default_factory=lambda: deque(maxlen=MAX_MEASUREMENTS))
 
-    #debug-only screen positions sampled only when get_frame() is called
+    #screen positions
     screen_measurements: deque[ScreenMeasurement] = field(default_factory=lambda: deque(maxlen=MAX_MEASUREMENTS))
 
     #updated whenever the id appears, even if depth is invalid on that frame
@@ -218,7 +229,7 @@ class BallTrack:
 
 
 class BallTracker:
-    """Maintain one ballistic trajectory history for each stable ZedHandler object id."""
+    """Maintain a ballistic trajectory history for each ball"""
 
     def __init__(self, stale_after_seconds: float = DEFAULT_STALE_TRACK_SECONDS) -> None:
         if stale_after_seconds <= 0.0:
@@ -242,21 +253,20 @@ class BallTracker:
     def update(self, objects: Sequence[ZedObject3D], timestamp_seconds: float) -> None:
         """Update all ball histories from one ZED object result."""
 
-        #restart trajectory state if the input clock moves backwards, such as an SVO restart
+        #restart trajectory state if the input clock moves backwards
         if self.last_timestamp is not None and timestamp_seconds < self.last_timestamp:
             self.tracks.clear()
             self.start_timestamp = timestamp_seconds
             self.gravity_alignment_ready = False
         self.last_timestamp = timestamp_seconds
 
-        #start the gravity-alignment warmup from the first successfully retrieved ZED frame
+        #wait for the ZED camera to establish gravity orientation
         if self.start_timestamp is None:
             self.start_timestamp = timestamp_seconds
 
         warmup_remaining = GRAVITY_ALIGNMENT_WARMUP_SECONDS - (timestamp_seconds - self.start_timestamp)
 
         for obj in objects:
-            #negative ids are not useful for persistent trajectory state
             if obj.object_id < 0:
                 continue
 
@@ -274,20 +284,20 @@ class BallTracker:
                 track.fit_status = f"zed state {obj.tracking_state}"
                 continue
 
-            #do not mix provisional startup world coordinates with the final gravity-aligned world frame
+            #do not mix startup coordinates (output for approximately 1.5 seconds) with the final gravity-aligned coordinates
             if warmup_remaining > 0.0:
                 track.measurements.clear()
                 track.fit = None
                 track.fit_status = f"gravity warmup {warmup_remaining:.1f}s"
                 continue
 
-            #clear every pre-alignment history exactly once when the warmup ends
+            #clear every pre-alignment history once when the warmup ends
             if not self.gravity_alignment_ready:
                 track.measurements.clear()
                 track.fit = None
                 track.fit_status = "collecting post-alignment samples"
 
-            #only finite world-space xyz samples are allowed into the fit
+            #remove random infinite coordinates
             position = _validate_position(obj.position)
             if position is None:
                 track.fit = None
@@ -327,11 +337,11 @@ class BallTracker:
         if warmup_remaining <= 0.0:
             self.gravity_alignment_ready = True
 
-        #remove tracks that have genuinely stopped receiving detector updates
+        #remove tracks that have stopped receiving updates
         self.prune(timestamp_seconds)
 
     def update_screen_positions(self, boxes_2d: Sequence[ZedObject2D], timestamp_seconds: float) -> None:
-        """Store true image-space ball centers only on debug display frames."""
+        """Store image-space ball centers"""
 
         for box in boxes_2d:
             track = self.tracks.get(box.object_id)
@@ -478,7 +488,7 @@ def _fit_recent_measurements(measurements: Sequence[BallMeasurement]) -> tuple[T
 
 
 # =============================================================================
-# CAMERA OVERLAY
+# CAMERA OVERLAY (AI Generated because this isn't important to the final code)
 # =============================================================================
 
 
@@ -622,7 +632,7 @@ def _draw_prediction(frame: np.ndarray, fit: TrajectoryFit, timestamp_seconds: f
     """Transform the world-space prediction into the current camera frame and draw it."""
 
     #trajectory math stays entirely in the gravity-aligned world frame
-    start_time = max(timestamp_seconds, fit.reference_time)
+    start_time = max(timestamp_seconds, fit.absolute_start_time)
     future_times = np.linspace(start_time, start_time + PREDICTION_SECONDS, PREDICTION_SAMPLES, dtype=np.float64)
     future_world_positions = fit.predict(future_times)
     pixels, valid = _project_world_points(future_world_positions, camera_pose, intrinsics, frame.shape)

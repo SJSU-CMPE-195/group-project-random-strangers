@@ -71,11 +71,8 @@ class TrajectoryFit:
         #combine x, y, and z into one position for each timestamp
         positions = np.column_stack((x, y, z))
 
-        #a single input time should return one xyz position instead of a 1x3 array
-        if dt.ndim == 0:
             return positions[0]
         else:
-            return positions
 
 
 def fit_trajectory(timestamps: Sequence[float] | np.ndarray, positions_xyz: Sequence[Sequence[float]] | np.ndarray) -> TrajectoryFit:
@@ -164,7 +161,7 @@ FIT_WINDOWS = (30, 24, 20, 16, 12, 8)
 
 
 
-#remove trajectory state when a stable object id has not appeared for this long
+#remove trajectory state when a ZED id has not appeared for this long
 DEFAULT_STALE_TRACK_SECONDS = 0.30
 
 #debug display can run slower than the 100 hz detection path
@@ -182,7 +179,7 @@ PREDICTION_SAMPLES = 24
 #camera-space points closer than this to the camera plane are unsafe to project
 MIN_CAMERA_DEPTH_M = 0.05
 
-#different stable ids cycle through these bgra colors
+#different ZED ids cycle through these bgra colors
 TRACK_COLORS = ((0, 220, 255, 255), (0, 255, 120, 255), (255, 160, 0, 255), (255, 80, 180, 255))
 
 
@@ -238,7 +235,7 @@ class BallTracker:
         #time an id may disappear before its trajectory state is deleted
         self.stale_after_seconds = stale_after_seconds
         
-        #stable object id to its measurement history and current fit
+        #ZED object id to its measurement history and current fit
         self.tracks: dict[int, BallTrack] = {}
 
         #first ZED image timestamp seen by this tracker; used only for gravity-alignment warmup
@@ -270,7 +267,7 @@ class BallTracker:
             if obj.object_id < 0:
                 continue
 
-            #create state the first time a stable object id appears
+            #create state the first time a ZED object id appears
             track = self.tracks.get(obj.object_id)
             if track is None:
                 track = BallTrack()
@@ -359,7 +356,7 @@ class BallTracker:
             track.screen_measurements.append(ScreenMeasurement(timestamp=timestamp_seconds, position=center))
 
     def prune(self, timestamp_seconds: float) -> None:
-        """Remove stable ids that have not been reported recently."""
+        """Remove ZED ids that have not been reported recently."""
 
         #collect first so the dictionary is not modified while it is being iterated
         stale_ids = [object_id for object_id, track in self.tracks.items() if timestamp_seconds - track.last_seen_timestamp > self.stale_after_seconds]
@@ -725,7 +722,6 @@ def parse_args():
     parser.add_argument("--depth-stabilization", type=int, default=0, help="ZED depth stabilization from 0-100. Default 0 for maximum throughput.")
     parser.add_argument("--depth-mode", choices=("neural-light", "performance"), default="neural-light", help="Depth engine. neural-light is the supported fast neural mode; performance is the deprecated legacy mode but can be faster on some GPUs.")
     parser.add_argument("--tracking-compute", choices=("auto", "cpu", "gpu"), default="cpu", help="GEN_3 positional-tracking compute preference. CPU usually leaves more GPU for YOLO/depth.")
-    parser.add_argument("--no-sdk-tracking", action="store_true", help="Disable ZED temporal object tracking and use lightweight app-side 3D reassociation.")
     parser.add_argument("--no-display", action="store_true", help="Disable image retrieval and OpenCV drawing completely.")
     return parser.parse_args()
 
@@ -757,7 +753,6 @@ def main() -> None:
         import cv2 as _cv2
         cv2 = _cv2
 
-    #trajectory state is independent from ZedHandler's private sdk-id reassociation state
     tracker = BallTracker(args.stale_track_seconds)
     #display period lets the camera/object path run faster than the debug visualization
     display_period = 1.0 / args.display_fps
@@ -770,7 +765,7 @@ def main() -> None:
         with ZedHandler(onnx_path=args.onnx, confidence_percent=args.confidence, dynamic_input_size=args.dynamic_input_size, svo_path=args.svo, static_camera=args.static_camera, measure_framerate=args.measure_framerate, depth_stabilization=args.depth_stabilization, tracking_compute=args.tracking_compute, depth_mode=args.depth_mode) as zed:
             #intrinsics are only needed when 3d predictions will be drawn on the image
             intrinsics = None if args.no_display else zed.get_camera_intrinsics()
-            print(f"Performance config: depth={args.depth_mode} GEN_3 area-memory=off tracking-compute={args.tracking_compute} depth-stabilization={args.depth_stabilization} sdk-object-tracking={not args.no_sdk_tracking} input={args.dynamic_input_size or 'model/default'}")
+            print(f"Performance config: depth={args.depth_mode} GEN_3 area-memory=off tracking-compute={args.tracking_compute} depth-stabilization={args.depth_stabilization} sdk-object-tracking=True input={args.dynamic_input_size or 'model/default'}")
             if args.measure_framerate and not args.no_display:
                 print("Timing note: use --no-display for the most repeatable benchmark results")
 
@@ -791,10 +786,7 @@ def main() -> None:
                 if args.measure_framerate and timestamp_seconds - last_timing_report_time >= 1.0:
                     stats = zed.timing_stats
                     if stats is not None:
-                        print(f"app fps latest={stats.latest_fps:.1f}  avg={stats.mean_fps:.1f}  median={stats.median_fps:.1f}  p95-frame={stats.p95_seconds * 1000.0:.2f} ms ({stats.p95_frame_fps:.1f} fps)  n={stats.sample_count}")
-                        last_timing_report_time = timestamp_seconds
-                    elif zed.timing_warmup_remaining > 0:
-                        print(f"timing warmup: {zed.timing_warmup_remaining} frame intervals remaining")
+                        print(f"zed fps current={stats.latest_fps:.1f}  avg={stats.mean_fps:.1f}  median={stats.median_fps:.1f}  p05={stats.p05_fps:.1f}  n={stats.sample_count}")
                         last_timing_report_time = timestamp_seconds
 
                 #stop here so image retrieval and drawing cost nothing in headless mode

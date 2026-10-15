@@ -141,9 +141,10 @@ public:
     const char* get_master_fault_reason() const;
 
     /**
-     * @brief Sets the callback invoked when a new fault becomes active.
+     * @brief Sets the callback invoked when the first fault becomes active.
      *
-     * Passing nullptr disables the callback.
+     * This callback is invoked only when the aggregate master fault state
+     * changes from clear to set. Passing nullptr disables the callback.
      */
     void attach_master_fault_set_callback(Callback_t callback);
 
@@ -153,17 +154,43 @@ public:
     void clear_master_fault_callbacks();
 
     /**
-     * @brief Sets the callback invoked when an active fault is cleared.
+     * @brief Sets the callback invoked when the last active fault is cleared.
      *
-     * Passing nullptr disables the callback.
+     * This callback is invoked only when the aggregate master fault state
+     * changes from set to clear. Passing nullptr disables the callback.
      */
     void attach_master_fault_clear_callback(Callback_t callback);
 
     /**
+     * @brief Sets the callback invoked whenever any fault becomes active.
+     *
+     * This callback is invoked once for each fault that changes from inactive
+     * to active, including when another fault is already active. Passing
+     * nullptr disables the callback.
+     */
+    void attach_any_fault_set_callback(Callback_t callback);
+
+    /**
+     * @brief Sets the callback invoked whenever any active fault is cleared.
+     *
+     * This callback is invoked once for each fault that changes from active
+     * to inactive, including when another fault remains active. Passing
+     * nullptr disables the callback.
+     */
+    void attach_any_fault_clear_callback(Callback_t callback);
+
+    /**
+     * @brief Disables both any-fault set and any-fault clear callbacks.
+     */
+    void clear_any_fault_callbacks();
+
+    /**
      * @brief Activates a fault and invokes its callbacks once.
      *
-     * Invalid IDs are ignored. Dispatching an already-active fault does not
-     * invoke callbacks again.
+     * The fault set callback is invoked when this fault was previously
+     * inactive. The master set callback is invoked only when this is the
+     * first active fault. Invalid IDs are ignored. Dispatching an
+     * already-active fault does not invoke callbacks again.
      */
     void dispatch_fault(FaultId_t fault_id);
 
@@ -182,8 +209,10 @@ public:
     /**
      * @brief Clears a fault and invokes its callbacks once.
      *
-     * Invalid IDs are ignored. Clearing an already-cleared fault does not
-     * invoke callbacks again.
+     * The fault clear callback is invoked when this fault was previously
+     * active. The master clear callback is invoked only when this is the
+     * last active fault. Invalid IDs are ignored. Clearing an already-cleared
+     * fault does not invoke callbacks again.
      */
     void clear_fault_state(FaultId_t fault_id);
 
@@ -235,6 +264,8 @@ private:
     Callback_t fault_clear_callbacks[storage_count]{};
     Callback_t master_set_callback = nullptr;
     Callback_t master_clear_callback = nullptr;
+    Callback_t any_fault_set_callback = nullptr;
+    Callback_t any_fault_clear_callback = nullptr;
 
     //ensure that fault ids are non-zero and unique at compile time
     constexpr static bool fault_ids_valid = []() constexpr {

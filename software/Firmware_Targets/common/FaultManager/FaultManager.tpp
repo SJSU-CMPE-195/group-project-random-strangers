@@ -100,6 +100,22 @@ void FaultManager<Faults...>::attach_master_fault_clear_callback(const Callback_
 }
 
 template<typename... Faults>
+void FaultManager<Faults...>::attach_any_fault_set_callback(const Callback_t callback) {
+    any_fault_set_callback = callback;
+}
+
+template<typename... Faults>
+void FaultManager<Faults...>::attach_any_fault_clear_callback(const Callback_t callback) {
+    any_fault_clear_callback = callback;
+}
+
+template<typename... Faults>
+void FaultManager<Faults...>::clear_any_fault_callbacks() {
+    any_fault_set_callback = nullptr;
+    any_fault_clear_callback = nullptr;
+}
+
+template<typename... Faults>
 void FaultManager<Faults...>::dispatch_fault(const FaultId_t fault_id) {
     const unsigned fault_index = find_fault_index(fault_id);
     if (fault_index < fault_condition_count) dispatch_fault_at(fault_index);
@@ -149,18 +165,27 @@ template<typename... Faults>
 void FaultManager<Faults...>::dispatch_fault_at(const unsigned fault_index) {
     if (fault_triggered[fault_index]) return;
 
+    const bool master_fault_was_active = has_active_fault();
     fault_triggered[fault_index] = true;
 
     if (fault_set_callbacks[fault_index] != nullptr) fault_set_callbacks[fault_index]();
-    if (master_set_callback != nullptr) master_set_callback();
+    if (any_fault_set_callback != nullptr) any_fault_set_callback();
+    if (!master_fault_was_active && master_set_callback != nullptr) {
+        master_set_callback();
+    }
 }
 
 template<typename... Faults>
 void FaultManager<Faults...>::clear_fault_at(const unsigned fault_index) {
     if (!fault_triggered[fault_index]) return;
 
+    const bool master_fault_was_active = has_active_fault();
     fault_triggered[fault_index] = false;
 
     if (fault_clear_callbacks[fault_index] != nullptr) fault_clear_callbacks[fault_index]();
-    if (master_clear_callback != nullptr) master_clear_callback();
+    if (any_fault_clear_callback != nullptr) any_fault_clear_callback();
+    if (master_fault_was_active && !has_active_fault() &&
+        master_clear_callback != nullptr) {
+        master_clear_callback();
+    }
 }

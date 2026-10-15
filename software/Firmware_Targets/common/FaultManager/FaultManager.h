@@ -80,8 +80,8 @@ struct FixedStringChecks {
 template<typename... Faults>
 class FaultManager {
 public:
-    using FaultId = unsigned char;
-    using Callback = void (*)(void);
+    using FaultId_t = unsigned char;
+    using Callback_t = void (*)(void);
 
     /**
      * @brief Creates a manager with all faults initially cleared.
@@ -99,7 +99,7 @@ public:
     /**
      * @brief Returns the first active fault ID, or zero when none is active.
      */
-    FaultId get_master_fault_code() const;
+    FaultId_t get_master_fault_code() const;
 
     /**
      * @brief Returns the number of currently active faults.
@@ -112,7 +112,7 @@ public:
      * Faults are returned in the same order as their FaultCondition template
      * arguments. Returns zero when the position is outside the active list.
      */
-    FaultId get_active_fault_code(unsigned active_fault_index) const;
+    FaultId_t get_active_fault_code(unsigned active_fault_index) const;
 
     /**
      * @brief Returns the reason for an active fault at a zero-based position.
@@ -124,12 +124,12 @@ public:
     /**
      * @brief Returns the reason for an active fault ID, or nullptr otherwise.
      */
-    const char* get_fault_reason(FaultId fault_id) const;
+    const char* get_fault_reason(FaultId_t fault_id) const;
 
     /**
      * @brief Returns true when the specified fault ID is currently active.
      */
-    bool is_fault_active(FaultId fault_id) const;
+    bool is_fault_active(FaultId_t fault_id) const;
 
     /**
      * @brief Returns the reason for the first active fault, or nullptr when
@@ -145,7 +145,7 @@ public:
      *
      * Passing nullptr disables the callback.
      */
-    void attach_master_fault_set_callback(Callback callback);
+    void attach_master_fault_set_callback(Callback_t callback);
 
     /**
      * @brief Disables both master set and master clear callbacks.
@@ -157,7 +157,7 @@ public:
      *
      * Passing nullptr disables the callback.
      */
-    void attach_master_fault_clear_callback(Callback callback);
+    void attach_master_fault_clear_callback(Callback_t callback);
 
     /**
      * @brief Activates a fault and invokes its callbacks once.
@@ -165,19 +165,19 @@ public:
      * Invalid IDs are ignored. Dispatching an already-active fault does not
      * invoke callbacks again.
      */
-    void dispatch_fault(FaultId fault_id);
+    void dispatch_fault(FaultId_t fault_id);
 
     /**
      * @brief Sets the callback invoked when a specific fault becomes active.
      *
      * Invalid IDs are ignored. Passing nullptr disables the callback.
      */
-    void attach_fault_set_callback(FaultId fault_id, Callback callback);
+    void attach_fault_set_callback(FaultId_t fault_id, Callback_t callback);
 
     /**
      * @brief Disables the set callback for a specific fault.
      */
-    void clear_fault_set_callback(FaultId fault_id);
+    void clear_fault_set_callback(FaultId_t fault_id);
 
     /**
      * @brief Clears a fault and invokes its callbacks once.
@@ -185,29 +185,29 @@ public:
      * Invalid IDs are ignored. Clearing an already-cleared fault does not
      * invoke callbacks again.
      */
-    void clear_fault_state(FaultId fault_id);
+    void clear_fault_state(FaultId_t fault_id);
 
     /**
      * @brief Sets the callback invoked when a specific fault is cleared.
      *
      * Invalid IDs are ignored. Passing nullptr disables the callback.
      */
-    void attach_fault_clear_callback(FaultId fault_id, Callback callback);
+    void attach_fault_clear_callback(FaultId_t fault_id, Callback_t callback);
 
     /**
      * @brief Disables the clear callback for a specific fault.
      */
-    void clear_fault_clear_callback(FaultId fault_id);
+    void clear_fault_clear_callback(FaultId_t fault_id);
 
     /**
      * @brief Returns the set callback for a specific fault, or nullptr.
      */
-    Callback get_fault_set_callback_fn(FaultId fault_id) const;
+    Callback_t get_fault_set_callback_fn(FaultId_t fault_id) const;
 
     /**
      * @brief Returns the clear callback for a specific fault, or nullptr.
      */
-    Callback get_fault_clear_callback_fn(FaultId fault_id) const;
+    Callback_t get_fault_clear_callback_fn(FaultId_t fault_id) const;
 
 private:
     static constexpr unsigned fault_condition_count = sizeof...(Faults);
@@ -217,7 +217,7 @@ private:
     static constexpr unsigned storage_count =
         fault_condition_count == 0 ? 1 : fault_condition_count;
 
-    inline static constexpr FaultId fault_ids[storage_count] = {
+    inline static constexpr FaultId_t fault_ids[storage_count] = {
         Faults::fault_id...
     };
 
@@ -225,16 +225,16 @@ private:
         Faults::fault_reason.data...
     };
 
-    unsigned find_fault_index(FaultId fault_id) const;
+    unsigned find_fault_index(FaultId_t fault_id) const;
     bool has_active_fault() const;
     void dispatch_fault_at(unsigned fault_index);
     void clear_fault_at(unsigned fault_index);
 
     bool fault_triggered[storage_count]{};
-    Callback fault_set_callbacks[storage_count]{};
-    Callback fault_clear_callbacks[storage_count]{};
-    Callback master_set_callback = nullptr;
-    Callback master_clear_callback = nullptr;
+    Callback_t fault_set_callbacks[storage_count]{};
+    Callback_t fault_clear_callbacks[storage_count]{};
+    Callback_t master_set_callback = nullptr;
+    Callback_t master_clear_callback = nullptr;
 
     //ensure that fault ids are non-zero and unique at compile time
     constexpr static bool fault_ids_valid = []() constexpr {

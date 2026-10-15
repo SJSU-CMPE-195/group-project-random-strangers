@@ -1,5 +1,5 @@
 template<typename... Faults>
-unsigned FaultManager<Faults...>::find_fault_index(const FaultId fault_id) const {
+unsigned FaultManager<Faults...>::find_fault_index(const FaultId_t fault_id) const {
     for (unsigned index = 0; index < fault_condition_count; ++index) {
         if (fault_ids[index] == fault_id) return index;
     }
@@ -22,7 +22,7 @@ bool FaultManager<Faults...>::get_master_fault_state() const {
 }
 
 template<typename... Faults>
-typename FaultManager<Faults...>::FaultId FaultManager<Faults...>::get_master_fault_code() const {
+typename FaultManager<Faults...>::FaultId_t FaultManager<Faults...>::get_master_fault_code() const {
     for (unsigned index = 0; index < fault_condition_count; ++index) {
         if (fault_triggered[index]) return fault_ids[index];
     }
@@ -42,7 +42,7 @@ unsigned FaultManager<Faults...>::get_active_fault_count() const {
 }
 
 template<typename... Faults>
-typename FaultManager<Faults...>::FaultId FaultManager<Faults...>::get_active_fault_code(const unsigned active_fault_index) const {
+typename FaultManager<Faults...>::FaultId_t FaultManager<Faults...>::get_active_fault_code(const unsigned active_fault_index) const {
     unsigned active_fault_position = 0;
 
     for (unsigned index = 0; index < fault_condition_count; ++index) {
@@ -66,7 +66,7 @@ const char* FaultManager<Faults...>::get_active_fault_reason(const unsigned acti
 }
 
 template<typename... Faults>
-const char* FaultManager<Faults...>::get_fault_reason(const FaultId fault_id) const {
+const char* FaultManager<Faults...>::get_fault_reason(const FaultId_t fault_id) const {
     const unsigned fault_index = find_fault_index(fault_id);
     if (fault_index >= fault_condition_count || !fault_triggered[fault_index]) return nullptr;
 
@@ -74,7 +74,7 @@ const char* FaultManager<Faults...>::get_fault_reason(const FaultId fault_id) co
 }
 
 template<typename... Faults>
-bool FaultManager<Faults...>::is_fault_active(const FaultId fault_id) const {
+bool FaultManager<Faults...>::is_fault_active(const FaultId_t fault_id) const {
     return get_fault_reason(fault_id) != nullptr;
 }
 
@@ -84,7 +84,7 @@ const char* FaultManager<Faults...>::get_master_fault_reason() const {
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::attach_master_fault_set_callback(const Callback callback) {
+void FaultManager<Faults...>::attach_master_fault_set_callback(const Callback_t callback) {
     master_set_callback = callback;
 }
 
@@ -95,52 +95,52 @@ void FaultManager<Faults...>::clear_master_fault_callbacks() {
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::attach_master_fault_clear_callback(const Callback callback) {
+void FaultManager<Faults...>::attach_master_fault_clear_callback(const Callback_t callback) {
     master_clear_callback = callback;
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::dispatch_fault(const FaultId fault_id) {
+void FaultManager<Faults...>::dispatch_fault(const FaultId_t fault_id) {
     const unsigned fault_index = find_fault_index(fault_id);
     if (fault_index < fault_condition_count) dispatch_fault_at(fault_index);
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::attach_fault_set_callback(const FaultId fault_id, const Callback callback) {
+void FaultManager<Faults...>::attach_fault_set_callback(const FaultId_t fault_id, const Callback_t callback) {
     const unsigned fault_index = find_fault_index(fault_id);
     if (fault_index < fault_condition_count) fault_set_callbacks[fault_index] = callback;
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::clear_fault_set_callback(const FaultId fault_id) {
+void FaultManager<Faults...>::clear_fault_set_callback(const FaultId_t fault_id) {
     attach_fault_set_callback(fault_id, nullptr);
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::clear_fault_state(const FaultId fault_id) {
+void FaultManager<Faults...>::clear_fault_state(const FaultId_t fault_id) {
     const unsigned fault_index = find_fault_index(fault_id);
     if (fault_index < fault_condition_count) clear_fault_at(fault_index);
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::attach_fault_clear_callback(const FaultId fault_id, const Callback callback) {
+void FaultManager<Faults...>::attach_fault_clear_callback(const FaultId_t fault_id, const Callback_t callback) {
     const unsigned fault_index = find_fault_index(fault_id);
     if (fault_index < fault_condition_count) fault_clear_callbacks[fault_index] = callback;
 }
 
 template<typename... Faults>
-void FaultManager<Faults...>::clear_fault_clear_callback(const FaultId fault_id) {
+void FaultManager<Faults...>::clear_fault_clear_callback(const FaultId_t fault_id) {
     attach_fault_clear_callback(fault_id, nullptr);
 }
 
 template<typename... Faults>
-typename FaultManager<Faults...>::Callback FaultManager<Faults...>::get_fault_set_callback_fn(const FaultId fault_id) const {
+typename FaultManager<Faults...>::Callback_t FaultManager<Faults...>::get_fault_set_callback_fn(const FaultId_t fault_id) const {
     const unsigned fault_index = find_fault_index(fault_id);
     return fault_index < fault_condition_count ? fault_set_callbacks[fault_index] : nullptr;
 }
 
 template<typename... Faults>
-typename FaultManager<Faults...>::Callback FaultManager<Faults...>::get_fault_clear_callback_fn(const FaultId fault_id) const {
+typename FaultManager<Faults...>::Callback_t FaultManager<Faults...>::get_fault_clear_callback_fn(const FaultId_t fault_id) const {
     const unsigned fault_index = find_fault_index(fault_id);
     return fault_index < fault_condition_count ? fault_clear_callbacks[fault_index] : nullptr;
 }

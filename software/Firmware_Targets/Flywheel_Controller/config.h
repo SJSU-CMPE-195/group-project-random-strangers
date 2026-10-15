@@ -40,17 +40,19 @@ enum I2C_ADDRESS_MAP : uint8_t {
 };
 
 // --------- Fault Settings ---------
-static constexpr uint8_t FAULT_I2C_INIT = 1;
-static constexpr uint8_t FAULT_LEFT_ESC_INIT = 2;
-static constexpr uint8_t FAULT_RIGHT_ESC_INIT = 3;
-static constexpr uint8_t FAULT_SOLENOID_INIT = 4;
-static constexpr uint8_t FAULT_LEFT_ESC_SIGNAL = 5;
-static constexpr uint8_t FAULT_RIGHT_ESC_SIGNAL = 6;
-static constexpr uint8_t FAULT_LEFT_ESC_TELEMETRY = 7;
-static constexpr uint8_t FAULT_RIGHT_ESC_TELEMETRY = 8;
-static constexpr uint8_t FAULT_INVALID_RPM_TARGET = 9;
+enum FAULTS {
+FAULT_I2C_INIT = 1,
+FAULT_LEFT_ESC_INIT,
+FAULT_RIGHT_ESC_INIT,
+FAULT_SOLENOID_INIT,
+FAULT_LEFT_ESC_SIGNAL,
+FAULT_RIGHT_ESC_SIGNAL,
+FAULT_LEFT_ESC_TELEMETRY,
+FAULT_RIGHT_ESC_TELEMETRY,
+FAULT_INVALID_RPM_TARGET
+};
 
-using Controller_Fault_Manager = FaultManager<
+using Controller_Fault_Manager_t = FaultManager<
     FaultCondition<"I2C init", FAULT_I2C_INIT>,
     FaultCondition<"L ESC init", FAULT_LEFT_ESC_INIT>,
     FaultCondition<"R ESC init", FAULT_RIGHT_ESC_INIT>,
@@ -62,7 +64,7 @@ using Controller_Fault_Manager = FaultManager<
     FaultCondition<"Invalid RPM", FAULT_INVALID_RPM_TARGET>
 >;
 
-using Controller_Fault_Id = Controller_Fault_Manager::FaultId;
+using Controller_Fault_Id_t = Controller_Fault_Manager::FaultId_t;
 
 inline Controller_Fault_Manager fault_manager;
 

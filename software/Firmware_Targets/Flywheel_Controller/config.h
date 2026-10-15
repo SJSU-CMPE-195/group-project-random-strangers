@@ -18,11 +18,12 @@ static constexpr gpio_num_t SDA_PIN = GPIO_NUM_NC;
 static constexpr gpio_num_t SCL_PIN = GPIO_NUM_NC;
 
 enum I2C_ADDRESS_MAP : uint8_t {
-    READY = 0x00, //R: tell if the peripheral is booted
+    READY = 0x00, //R: 1 if the peripheral is booted
 
-    //generic diagnostics: bit (error ID - 1) is set in the error set.
+    MASTER_ERROR = 0x01, //R: 0 when any error is active
+
+    //generic diagnostics: bit [error ID] is set in the error set (starting from LSB = 1).
     //  write an active error ID to ERROR_ID before reading its description.
-    MASTER_ERROR = 0x01, //R: 1 when any error is active
     ERROR_SET_0 = 0x02, //R: bits 0-7 represent error IDs 1-8
     ERROR_SET_1 = 0x03, //R: bits 0-7 represent error IDs 9-16
     ERROR_SET_2 = 0x04, //R: bits 0-7 represent error IDs 17-24
@@ -64,11 +65,9 @@ using Controller_Fault_Manager_t = FaultManager<
     FaultCondition<"Invalid RPM", FAULT_INVALID_RPM_TARGET>
 >;
 
-using Controller_Fault_Id_t = Controller_Fault_Manager::FaultId_t;
+using Controller_Fault_Id_t = Controller_Fault_Manager_t::FaultId_t;
 
-inline Controller_Fault_Manager fault_manager;
-
-static constexpr uint8_t ERROR_REASON_MAX_LENGTH = 127;
+inline Controller_Fault_Manager_t fault_manager;
 
 // --------- DSHOT Settings ---------
 static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_NC, GPIO_NUM_NC};

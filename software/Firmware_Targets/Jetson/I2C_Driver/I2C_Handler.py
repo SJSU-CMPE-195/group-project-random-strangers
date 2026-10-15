@@ -3,13 +3,51 @@ import threading
 from dataclasses import dataclass, field
 from queue import Empty, Queue
 from time import time, monotonic
-from typing import ClassVar
+from typing import Callable, ClassVar, Generic, TypeVar
 import logging
 
 from smbus2 import SMBus, i2c_msg
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+ResultType = TypeVar("ResultType")
+class I2CResult(Generic[ResultType]):
+    """Describes the result from an I2C Transaction, functions as a future
+
+    Args:
+        transaction: The I2CTransaction that was submitted to the driver
+        decoder: An optional function that takes the bytes returned by the
+            transaction and decodes it into a more useful type. Leave this
+            unset for transactions with no result.
+    """
+    def __init__(
+        self,
+        transaction: I2CTransaction,
+        decoder: Callable[[bytes], ResultType] | None = None,
+    ) -> None:
+        self._transaction = transaction
+        self._decoder = decoder
+
+    def done(self) -> bool:
+        return self._transaction.done.is_set()
+
+    def wait(self, timeout: float | None = None) -> bool:
+        return self._transaction.done.wait(timeout)
+
+    def result(self, timeout: float | None = None) -> ResultType | None:
+        if not self._transaction.done.wait(timeout):
+            raise TimeoutError("I2C transaction did not complete in time")
+
+        if self._transaction.error is not None:
+            raise self._transaction.error
+
+        if self._decoder is None:
+            return None
+        elif self._transaction.readData is None:
+            raise RuntimeError("I2C transaction completed without a response")
+        else:
+            return self._decoder(self._transaction.readData)
 
 @dataclass
 class I2CTransaction:
@@ -34,10 +72,11 @@ class I2CTransaction:
     writeData: bytes = bytes(0)
 
     readCount: int = 0
-    readData: bytearray = field(default_factory=bytearray)
+    readData: bytes | None = field(default=None, init=False)
 
-    inProgressLock: threading.Lock = field(default_factory=threading.Lock)
-    done: threading.Event = field(default=threading.Event())
+    inProgressLock: threading.Lock = field(default_factory=threading.Lock, init=False)
+    error: Exception | None = field(default=None, init=False)
+    done: threading.Event = field(default=threading.Event(), init=False)
     
 
 class Jetson_I2C_Handler:
@@ -96,6 +135,15 @@ class Jetson_I2C_Handler:
                 #remove failed instances
                 self._instances.pop(i2c_bus_id, None)
                 raise
+    
+    def submitTransaction(self, transaction: I2CTransaction) -> None:
+        """Submit a transaction to the driver's queue and wait for it to complete.
+
+        Args:
+            transaction: Transaction to submit. 
+        """
+
+        self._transaction_queue.put(transaction)
 
     def startDriverThread(self) -> None:
         """Start the worker thread that consumes the transaction queue.
@@ -263,7 +311,11 @@ class Jetson_I2C_Handler:
                 with next_transaction.inProgressLock:
                     error_reason = self._validate_transaction(next_transaction)
                     if(error_reason is None):
-                        self._perform_transaction(next_transaction)
+                        try:
+                            self._perform_transaction(next_transaction)
+                        except Exception as error:
+                            next_transaction.error = error
+                    
                         next_transaction.done.set()
                     else:
                         logging.warning(error_reason)
@@ -277,7 +329,11 @@ class Jetson_I2C_Handler:
                 with next_transaction.inProgressLock:
                     error_reason = self._validate_transaction(next_transaction)
                     if(error_reason is None):
-                        self._perform_transaction(next_transaction)
+                        try:
+                            self._perform_transaction(next_transaction)
+                        except Exception as error:
+                            next_transaction.error = error
+                            
                         next_transaction.done.set()
                     else:
                         logging.warning(error_reason)
@@ -319,7 +375,7 @@ class Jetson_I2C_Handler:
         if(not isinstance(transaction.readCount, int)):
             if(not transaction.readCount is None):
                 reasons.append("readCount is an invalid type, ")
-        elif(not transaction.readCount == 0 and not isinstance(transaction.readData, bytearray)):
+        elif(not transaction.readCount == 0 and not isinstance(transaction.readData, bytes)):
             reasons.append("invalid read buffer, ")
 
         #check if transaction is already done
@@ -368,7 +424,7 @@ class Jetson_I2C_Handler:
 
             #return the response
             if(read_message is not None):
-                transaction.readData.append(read_message.buf)
+                transaction.readData = read_message.buf
 
             transaction.done.set()
 

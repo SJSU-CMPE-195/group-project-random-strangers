@@ -1,4 +1,4 @@
-# Project Title
+# Automatic Dodgeball Turret
 
 > Automatic Dodgeball Turret for Defence and ATTACK!
 
@@ -24,22 +24,67 @@ With our turret, no longer do you need any particular ability in order to:
  - aim and fire dodgeballs at targets
  - automatically defend against incoming dodgeballs using *hit-to-kill* 
 
-## Proof of Concept Scope
+# Proof-of-Concept Scope
 
-Demonstrate a design that includes:
+Demonstrate a functional prototype capable of detecting, tracking, aiming at, and launching an interceptor toward a dodgeball target.
 
-- [ ] **Fully working mechanical system**
-    - [ ] Gimbal with control in both yaw and roll orientations
-    - [ ] Flywheel-based dodgeball launching system
+## Status Legend
 
-- [ ] **Control system for setting motor parameters**
-    - [ ] Webserver interaction
-    - [ ] I2C-based configuration of ESC drivers
-    - [ ] Parameters persist across resets
+- ✅ Complete
+- 🚧 In progress
+- ⬜ Not started
 
-- [ ] **Targeting and firing system**
-    - [ ] Webserver integration to select point on screen
-    - [ ] Trajectory estimation
+## 1. Mechanical System
+
+- 🚧 **Fully functional mechanical system**
+  - 🚧 Gimbal with control in both yaw and pitch axes
+    - ✅ Virtual model
+    - 🚧 Physical model
+    - ⬜ Testing
+  - 🚧 Flywheel-based dodgeball launching system
+    - ✅ Flywheel design
+    - ⬜ Launch-trigger design
+    - ⬜ Testing
+
+## 2. Electrical System
+
+- 🚧 **Fully functional electrical system**
+  - ✅ Yaw motor operating with position feedback
+  - ✅ Pitch motor operating with position feedback
+  - 🚧 Slip ring installed on the yaw axis
+  - 🚧 Flywheel ESCs operating with feedback
+  - 🚧 Motor power supply operational
+  - 🚧 JST-style electrical connections implemented
+
+## 3. Motor-Control System
+
+- 🚧 **System for configuring and controlling motor parameters**
+  - 🚧 I2C Drivers for Jetson
+  - 🚧 I2C Drivers for Launch Controller
+  - ⬜ I2C Driver for Gimbal Controllers
+  - ⬜ Motor parameters persist across resets
+  - ⬜ Web-server control interface
+
+## 4. Targeting and Firing System
+
+- 🚧 **Targeting and Firing system**
+  - ⬜ Camera-to-gimbal coordinate transformation
+  - ⬜ Interceptor Trajectory Estimation
+  - ⬜ Web-server control for firing at an arbitrary point on the camera view
+  - ⬜ Intercept-time and position calculator
+  - 🚧 Target tracking and trajectory estimatin
+  - ⬜ Firing safety interlocks
+  - ⬜ Launch confirmation and failure detection
+
+## 5. System Integration
+
+- ⬜ End-to-end operation from target detection to firing
+- ⬜ Communication between the Jetson and all motor controllers
+- ⬜ Emergency-stop functionality
+- ⬜ Startup, shutdown, and fault-recovery behavior
+- ⬜ Repeatable firing accuracy testing
+- ⬜ System performance and latency measurements
+    
 
 ---
 
@@ -51,11 +96,17 @@ Demonstrate a design that includes:
 
 ## Tech Stack
 
-| Description | Category | Technology | Running On |
-|----------|------------|-------------|------------|
-| Command and control webserver | Frontend | Next.JS | Jetson |
-| Depth Sensing | Sensing | Microsoft Kinect 2 with libfreenect2 | Jetson |
-| High Speed BLDC Control | Movement | SimpleFOC | ESCs |
+| Function | Category | Technology | Runs On |
+|---|---|---|---|
+| Command and control interface | Frontend | Next.js | Jetson |
+| System command processing | Backend | fastAPI Python service | Jetson |
+| Target interception planning | Planning | Intercept Optimizer in Python | Jetson |
+| Trajectory estimation | Planning | Linear Regression in Python | Jetson |
+| Target recognition | Sensing | YOLOv26 | Jetson |
+| Depth measurement and Tracking | Sensing | ZED 2i Stereo Camera and ZED SDK | Jetson |
+| Motor-controller communication | Communication | Custom I2C protocol | Jetson and Microcontrollers |
+| Gimbal position control | Low-level control | Hall-Effect Angle Sensing and SimpleFOC | Pitch Motor Controllers (2×ESP32) |
+| Flywheel speed control | Movement | ESC Feedback Control | Flywheel Controller (ESP32) |
 
 ## Getting Started  
  **TODO** Add a tutorial to getting all the parts working :)  

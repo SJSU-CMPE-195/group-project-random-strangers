@@ -4,3 +4,6 @@
 [submodule "software/Firmware_Targets/mks_esp32_dualfoc_v2/commander_interface/components/simpleFOCdrivers/Arduino-FOC-drivers"]
 	path = software/Firmware_Targets/mks_esp32_dualfoc_v2/commander_interface/components/simpleFOCdrivers/Arduino-FOC-drivers
 	url = https://github.com/simplefoc/Arduino-FOC-drivers.git
+[submodule "software/Firmware_Targets/common/FaultManager"]
+	path = software/Firmware_Targets/common/FaultManager
+	url = https://github.com/Brendanofawesome/FaultManager.git

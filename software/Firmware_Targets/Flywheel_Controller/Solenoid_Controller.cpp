@@ -12,7 +12,7 @@ Solenoid_Controller solenoid_controller;
 bool Solenoid_Controller::begin() {
     if (SOLENOID_PIN == GPIO_NUM_NC) {
         if (DEBUG) Serial.println("Error: Solenoid pin is not configured");
-        dispatch_fault(FAULT_SOLENOID_INIT);
+        fault_manager.dispatch_fault(FAULT_SOLENOID_INIT);
         return false;
     }
 
@@ -41,7 +41,7 @@ void Solenoid_Controller::force_safe_state() {
 }
 
 void Solenoid_Controller::update(const uint32_t now) {
-    if (I2C_Registers.master_error) {
+    if (fault_manager.get_master_fault_state()) {
         force_safe_state();
         return;
     }

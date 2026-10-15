@@ -4,7 +4,7 @@
 
 namespace Flywheel_Controller {
 
-struct Event_Manager {
+volatile static struct event_manager_t {
     volatile bool fire_solenoid = false;
     volatile bool cancel_solenoid_fire = false;
 
@@ -13,20 +13,21 @@ struct Event_Manager {
 
     volatile bool arm_solenoid = false;
     volatile bool disarm_solenoid = false;
-};
+} event_manager;
 
-struct Controller_Registers {
-    bool ready = false;
-    bool master_error = false;
+volatile static struct I2C_Registers_t {
+    volatile bool ready = false;
 
-    bool flywheels_armed = false;
-    float RPM_target = 0.0f;
-    float RPM_actual = 0.0f;
-    bool solenoid_armed = false;
-};
+    volatile uint32_t active_error_set = 0;
+    volatile uint8_t selected_error_id = 0;
+    volatile uint8_t active_error_reason_length = 0;
 
-extern volatile Event_Manager event_manager;
-extern volatile Controller_Registers I2C_Registers;
+    volatile bool flywheels_armed = false;
+    volatile float RPM_target = 0.0f;
+    volatile float RPM_actual = 0.0f;
+
+    volatile bool solenoid_armed = false;
+} I2C_Registers;
 
 bool initialize_i2c();
 

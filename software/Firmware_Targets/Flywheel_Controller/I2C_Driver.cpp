@@ -7,75 +7,48 @@
 
 namespace Flywheel_Controller {
 
-volatile Event_Manager event_manager;
-volatile Controller_Registers I2C_Registers;
-
 static volatile uint8_t active_register_address = 0;
-static uint32_t active_error_set = 0;
-static uint8_t selected_error_id = 0;
-static char selected_error_reason[ERROR_REASON_MAX_LENGTH + 1] = {};
-static uint8_t selected_error_reason_length = 0;
 
-static void rebuild_error_set() {
+static uint32_t swap_bytes(uint32_t data){
+    return  ((data >> 24) & 0x000000FF) | // Move byte 3 to byte 0
+            ((data >>  8) & 0x0000FF00) | // Move byte 2 to byte 1
+            ((data <<  8) & 0x00FF0000) | // Move byte 1 to byte 2
+            ((data << 24) & 0xFF000000);  // Move byte 0 to byte 3
+}
+
+//builds the active error bitset
+static void refresh_error_set() {
     uint32_t error_set = 0;
     const unsigned active_fault_count = fault_manager.get_active_fault_count();
 
-    for (unsigned active_fault_index = 0;
-         active_fault_index < active_fault_count;
-         ++active_fault_index) {
+    for (unsigned active_fault_index = 0; active_fault_index < active_fault_count; ++active_fault_index) {
         const uint8_t fault_id = fault_manager.get_active_fault_code(active_fault_index);
         if (fault_id >= 1 && fault_id <= 32) error_set |= 1UL << (fault_id - 1);
     }
 
-    active_error_set = error_set;
-}
-
-static void rebuild_selected_error_reason() {
-    const char* reason = fault_manager.get_fault_reason(selected_error_id);
-    uint8_t write_index = 0;
-
-    if (reason != nullptr) {
-        while (write_index < ERROR_REASON_MAX_LENGTH && reason[write_index] != '\0') {
-            selected_error_reason[write_index] = reason[write_index];
-            ++write_index;
-        }
-    }
-
-    selected_error_reason[write_index] = '\0';
-    selected_error_reason_length = write_index;
-}
-
-static void synchronize_fault_state() {
-    I2C_Registers.master_error = fault_manager.get_master_fault_state();
-    rebuild_error_set();
-    rebuild_selected_error_reason();
-}
-
-void dispatch_fault(const uint8_t fault_id) {
-    fault_manager.dispatch_fault(fault_id);
-    synchronize_fault_state();
+    I2C_Registers.active_error_set = swap_bytes(error_set);
 }
 
 bool initialize_i2c() {
-    fault_manager.attach_master_fault_set_callback(synchronize_fault_state);
-    fault_manager.attach_master_fault_clear_callback(synchronize_fault_state);
-    synchronize_fault_state();
+    fault_manager.attach_any_fault_set_callback(refresh_error_set);
+    fault_manager.attach_any_fault_clear_callback(refresh_error_set);
+    refresh_error_set();
 
     if (SDA_PIN == GPIO_NUM_NC || SCL_PIN == GPIO_NUM_NC) {
         if (DEBUG) Serial.println("I2C pin(s) are not configured");
-        dispatch_fault(FAULT_I2C_INIT);
+        fault_manager.dispatch_fault(FAULT_I2C_INIT);
         return false;
     }
 
     if (I2C_ADDRESS <= 0x08 || I2C_ADDRESS >= 0x78) {
         if (DEBUG) Serial.println("I2C address is reserved or outside the 7-bit range");
-        dispatch_fault(FAULT_I2C_INIT);
+        fault_manager.dispatch_fault(FAULT_I2C_INIT);
         return false;
     }
 
     if (!Wire.begin(I2C_ADDRESS, SDA_PIN, SCL_PIN, I2C_FREQUENCY)) {
         if (DEBUG) Serial.println("I2C initialization failed");
-        dispatch_fault(FAULT_I2C_INIT);
+        fault_manager.dispatch_fault(FAULT_I2C_INIT);
         return false;
     }
 
@@ -90,7 +63,7 @@ bool initialize_i2c() {
 void receiveEvent(const int howMany) {
     if (howMany < 1 || !Wire.available()) return; // No data sent
 
-    // The first byte selects the register address.
+    //the first byte selects the register address.
     active_register_address = Wire.read();
 
     while (Wire.available()) {
@@ -99,8 +72,7 @@ void receiveEvent(const int howMany) {
 
         switch (register_address) {
             case I2C_ADDRESS_MAP::ERROR_ID:
-                selected_error_id = incoming_data;
-                rebuild_selected_error_reason();
+                I2C_Registers.selected_error_id = incoming_data;
                 break;
             case I2C_ADDRESS_MAP::RPM_TARGET:
                 reinterpret_cast<volatile uint8_t *>(&I2C_Registers.RPM_target)[0] = incoming_data;
@@ -140,88 +112,116 @@ void receiveEvent(const int howMany) {
                 break;
         }
 
-        active_register_address = static_cast<uint8_t>(active_register_address + 1);
+        active_register_address = active_register_address + 1;
     }
 }
 
 //I2C Controller read
 void requestEvent() {
-    uint8_t response = 0;
-
     switch (active_register_address) {
         case I2C_ADDRESS_MAP::READY:
-            response = I2C_Registers.ready;
+            Wire.write(I2C_Registers.ready);
             break;
 
         case I2C_ADDRESS_MAP::MASTER_ERROR:
-            response = I2C_Registers.master_error;
+            Wire.write(!fault_manager.get_master_fault_state());
             break;
 
-        case I2C_ADDRESS_MAP::ERROR_SET_0:
-            response = static_cast<uint8_t>(active_error_set);
+        case I2C_ADDRESS_MAP::ERROR_SET_0: {
+            uint32_t error_set_copy = I2C_Registers.active_error_set;
+            Wire.write(&reinterpret_cast<const uint8_t*>(&error_set_copy)[0], 4);
             break;
-        case I2C_ADDRESS_MAP::ERROR_SET_1:
-            response = static_cast<uint8_t>(active_error_set >> 8);
+        }
+        case I2C_ADDRESS_MAP::ERROR_SET_1: {
+            uint32_t error_set_copy = I2C_Registers.active_error_set;
+            Wire.write(&reinterpret_cast<const uint8_t*>(&error_set_copy)[1], 3);
             break;
-        case I2C_ADDRESS_MAP::ERROR_SET_2:
-            response = static_cast<uint8_t>(active_error_set >> 16);
+        }
+        case I2C_ADDRESS_MAP::ERROR_SET_2: {
+            uint32_t error_set_copy = I2C_Registers.active_error_set;
+            Wire.write(&reinterpret_cast<const uint8_t*>(&error_set_copy)[2], 2);
             break;
-        case I2C_ADDRESS_MAP::ERROR_SET_3:
-            response = static_cast<uint8_t>(active_error_set >> 24);
+        }
+        case I2C_ADDRESS_MAP::ERROR_SET_3: {
+            Wire.write(reinterpret_cast<const volatile uint8_t*>(&I2C_Registers.active_error_set)[3]);
             break;
+        }
 
         case I2C_ADDRESS_MAP::ERROR_ID:
-            response = selected_error_id;
+            Wire.write(I2C_Registers.selected_error_id);
             break;
+
+        case I2C_ADDRESS_MAP::ERROR_REASON_LENGTH: {
+            const char* fault_reason = fault_manager.get_fault_reason(I2C_Registers.selected_error_id);
+
+            uint8_t reason_length;
+            if(fault_reason == nullptr){
+                reason_length = 0;
+            } else {
+                reason_length = strnlen(fault_reason, 255);
+            }
+            Wire.write(reason_length);
+            break;
+        }
+
+        case I2C_ADDRESS_MAP::ERROR_REASON_START: {
+            const char* fault_reason = fault_manager.get_fault_reason(I2C_Registers.selected_error_id);
+            if(fault_reason == nullptr){
+                return;
+            } else {
+                uint8_t reason_length = strnlen(fault_reason, 255);
+                Wire.write(reinterpret_cast<const unsigned char*>(&fault_reason), reason_length);
+            }
+        }
 
         case I2C_ADDRESS_MAP::FLYWHEELS_ARMED:
-            response = I2C_Registers.flywheels_armed;
+            Wire.write(I2C_Registers.flywheels_armed);
             break;
 
-        case I2C_ADDRESS_MAP::RPM_TARGET:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_target)[0];
+        case I2C_ADDRESS_MAP::RPM_TARGET: {
+            float RPM_Target_Copy = I2C_Registers.RPM_target;
+            Wire.write(&reinterpret_cast<const uint8_t *>(&RPM_Target_Copy)[0], 4);
             break;
-        case I2C_ADDRESS_MAP::RPM_TARGET + 1:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_target)[1];
+        }
+        case I2C_ADDRESS_MAP::RPM_TARGET + 1: {
+            float RPM_Target_Copy = I2C_Registers.RPM_target;
+            Wire.write(&reinterpret_cast<const uint8_t *>(&RPM_Target_Copy)[1], 3);
             break;
-        case I2C_ADDRESS_MAP::RPM_TARGET + 2:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_target)[2];
+        }
+        case I2C_ADDRESS_MAP::RPM_TARGET + 2: {
+            float RPM_Target_Copy = I2C_Registers.RPM_target;
+            Wire.write(&reinterpret_cast<const uint8_t *>(&RPM_Target_Copy)[2], 2);
             break;
-        case I2C_ADDRESS_MAP::RPM_TARGET + 3:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_target)[3];
+        }
+        case I2C_ADDRESS_MAP::RPM_TARGET + 3: {
+            Wire.write(reinterpret_cast<volatile const uint8_t*>(&I2C_Registers.RPM_target)[3]);
             break;
+        }
 
-        case I2C_ADDRESS_MAP::ACTUAL_RPM:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[0];
+        case I2C_ADDRESS_MAP::ACTUAL_RPM: {
+            float RPM_Actual_Copy = I2C_Registers.RPM_actual;
+            Wire.write(&reinterpret_cast<const uint8_t *>(&RPM_Actual_Copy)[0], 4);
             break;
-        case I2C_ADDRESS_MAP::ACTUAL_RPM + 1:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[1];
+        }
+        case I2C_ADDRESS_MAP::ACTUAL_RPM + 1: {
+            float RPM_Actual_Copy = I2C_Registers.RPM_actual;
+            Wire.write(&reinterpret_cast<const uint8_t *>(&RPM_Actual_Copy)[1], 3);
             break;
-        case I2C_ADDRESS_MAP::ACTUAL_RPM + 2:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[2];
+        }
+        case I2C_ADDRESS_MAP::ACTUAL_RPM + 2: {
+            float RPM_Actual_Copy = I2C_Registers.RPM_actual;
+            Wire.write(&reinterpret_cast<const uint8_t *>(&RPM_Actual_Copy)[2], 2);
             break;
-        case I2C_ADDRESS_MAP::ACTUAL_RPM + 3:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[3];
+        }
+        case I2C_ADDRESS_MAP::ACTUAL_RPM + 3: {
+            Wire.write(reinterpret_cast<volatile const uint8_t*>(&I2C_Registers.RPM_actual)[3]);
             break;
+        }
 
         case I2C_ADDRESS_MAP::SOLENOID_ARMED:
-            response = I2C_Registers.solenoid_armed;
+            Wire.write(I2C_Registers.solenoid_armed);
             break;
-
-        case I2C_ADDRESS_MAP::ERROR_REASON_LENGTH:
-            response = selected_error_reason_length;
-            break;
-
-        case I2C_ADDRESS_MAP::ERROR_REASON_START:
-            if (selected_error_reason_length == 0) {
-                Wire.slaveWrite(&response, 1);
-            } else {
-                Wire.slaveWrite(reinterpret_cast<uint8_t *>(selected_error_reason), selected_error_reason_length);
-            }
-            return;
     }
-
-    Wire.slaveWrite(&response, 1);
 }
 
 }; //namespace Flywheel Controller

@@ -238,7 +238,7 @@ class Jetson_I2C_Handler:
 
                     #loop through each set error bit
                     while(error_integer > 0):
-                        lowest_set_bit_pos = (error_integer & -error_integer).bit_length() - 1
+                        lowest_set_bit_pos = (error_integer & -error_integer).bit_length()
                         error_integer &= error_integer - 1
 
                         #command the device to provide the error corresponding to the set bit

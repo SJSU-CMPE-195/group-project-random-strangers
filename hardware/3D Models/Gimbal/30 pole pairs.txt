@@ -1,3 +1,3 @@
-30 pole pairs in main gimbal motor
-Analog Hall sensors 1.3V-2.1V on 3.3V
-	ORDER: Red, Yellow, Green
+version https://git-lfs.github.com/spec/v1
+oid sha256:1a73c4296bd2c787d2c003819b58df9a019a78d20487e8755218e6b0b6d484a7
+size 101

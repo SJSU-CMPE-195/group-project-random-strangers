@@ -7,7 +7,7 @@ from pathlib import Path
 from collections.abc import Mapping
 
 
-def register_map_grabber(register_map_path: str | Path) -> Mapping[str, int]:
+def address_map_grabber(register_map_path: str | Path) -> Mapping[str, int]:
     """Read an I2C address map from a C++ header file.
 
     Args:
@@ -161,4 +161,4 @@ def _parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     arguments = _parse_args()
-    print(register_map_grabber(arguments.register_map_path))
+    print(address_map_grabber(arguments.register_map_path))

@@ -5,8 +5,9 @@ import tensorrt as trt
 import pycuda.driver as imgoinginsane
 import pyzed.sl as sl
 
-from projectileMotion import calculateFunction, predictorFunction
-#need to update this file to push coords to proj motion.py
+# from projectileMotion import calculateFunction, predictorFunction
+from projectileMotion import BallKalman #new kalman filter function
+
 
 imgoinginsane.init()
 
@@ -15,7 +16,8 @@ device = imgoinginsane.Device(0)
 cudaContext = device.retain_primary_context()
 
 cudaContext.push()
-previousPoint = None
+ballfilter = BallKalman()
+
 
 # engine_path = ~/documents/group_random_strangers/software/best.engine  #path to engine file
 confidenceIndex = 0.25 
@@ -414,38 +416,53 @@ def get_xyz(
         axis=0
     )
 def updateProjectilePhysics(t, x, y, z):
-    global previousPoint
 
-    # Package the current ZED measurement
-    currentPoint = (t, x, y, z)
-
-    # First detection:
-    # we only have one point, so we cannot calculate velocity yet
-    if previousPoint is None:
-        previousPoint = currentPoint
-        return None
-
-    # Send the two measurements to projectileMotion.py
-    velocity = calculateFunction(
-        previousPoint,
-        currentPoint
+    measurement = (
+        x,
+        y,
+        z
     )
 
-    # Save current point for the next frame
-    previousPoint = currentPoint
+    state = ballFilter.update(
+        t,
+        measurement
+    )
 
-    if velocity is None:
+
+    # First camera measurement only initializes the filter.
+    if state is None:
         return None
 
-    vx, vy, vz = velocity
 
-    # Predict from the CURRENT location
-    futurePoint = predictorFunction(
-        (x, y, z),
-        vx,
-        vy,
-        vz
+    # Filter's estimate:
+    #
+    # x, y, z
+    # vx, vy, vz
+    filteredX = state[0]
+    filteredY = state[1]
+    filteredZ = state[2]
+
+    vx = state[3]
+    vy = state[4]
+    vz = state[5]
+
+
+    futurePoint = (
+        ballFilter.predictFuture()
     )
+
+
+    print(
+        f"Filtered XYZ=("
+        f"{filteredX:.3f}, "
+        f"{filteredY:.3f}, "
+        f"{filteredZ:.3f}) "
+        f"velocity=("
+        f"{vx:.3f}, "
+        f"{vy:.3f}, "
+        f"{vz:.3f}) m/s"
+    )
+
 
     return futurePoint
 #configure zed cam

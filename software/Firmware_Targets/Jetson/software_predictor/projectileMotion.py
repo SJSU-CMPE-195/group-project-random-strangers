@@ -61,7 +61,7 @@ class BallKalman:
             [1, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0]
-        ]), dtype = numpy.float64
+        ], dtype = numpy.float64)
 
         self.R = numpy.diag([
             0.03**2, 
@@ -73,7 +73,7 @@ class BallKalman:
         self.last_time = None
         self.initialized = False
 
-    def initlize(self, t, measurement):
+    def initialize(self, t, measurement):
         x , y , z = measurement
         self.state[:] = [
             x, y , z, 0.0, 0.0 ,0.0
@@ -104,7 +104,7 @@ class BallKalman:
 
         #bunch of stuff that i pulled from the internet that processes noise. main point is that Q is how much deviation from the 
         #model that is allowed. Air resisstance, spin, bad measurements, notably
-        q = self.acceleration_std**2
+        q = self.accelerationstd**2
 
         Q = numpy.zeros((6, 6))
 
@@ -131,48 +131,50 @@ class BallKalman:
 
             self.P = F @ self.P @ F.T + Q #rmr, @ is matrix mult operator, aka matrix H by vector state.
 
-        def correct (self, measurement): #function to corrct noted deviations in the last one
-            z = numpy.asarray(
-                measurement, 
-                dtype = numpy.float64
-            )
+    def correct (self, measurement): #function to corrct noted deviations in the last one
+        z = numpy.asarray(
+            measurement, 
+            dtype = numpy.float64
+        )
 
-            fix = z - self.H @ self.state
-            S = ( self.H @ self.P @ self.H.T + self.R)
+        fix = z - self.H @ self.state
+        S = ( self.H @ self.P @ self.H.T + self.R)
 
             #kalman gain, how much trust between camera and predicton
 
-            K = (self.P @ self.H.T @ numpy.linalg.inv(S))
+        K = (self.P @ self.H.T @ numpy.linalg.inv(S))
 
 
-            self.state = (
-                self.state + K @ fix
-            )
+        self.state = (
+            self.state + K @ fix
+        )
 
-            I = numpy.eye(6) 
+        I = numpy.eye(6) 
 
-            self.P = ((I - K @ self.H) @ self.P)
+        self.P = ((I - K @ self.H) @ self.P)
 
-        def update (self, t, measurement): #push the new camera measurements into the filter) 
+    def update (self, t, measurement): #push the new camera measurements into the filter) 
 
-            if not self.initalized: 
-                self.initalize( t, measurement)
-                return None 
+        if not self.initialized: 
+            self.initialize( t, measurement)
+            return None 
 
-            self.predict (dt) #physics measurement
-            self.correct(measurement)#what camera saw
+        dt = t - self.last_time
 
-            self.last_time = t
-            return self.state.copy() 
+        self.predict (dt) #physics measurement
+        self.correct(measurement)#what camera saw
 
-        def predicttheFuture(self, seconds = predictorTime):
+        self.last_time = t
+        return self.state.copy() 
+
+    def predicttheFuture(self, seconds = predictorTime):
 
             #ballistic trajectory some time int he future with the filter'd position and velo
 
-            x , y , z, vx , vy , vz = self.state
+        x , y , z, vx , vy , vz = self.state
 
-            futureX = ( x + vx + seconds)
-            futureY = (y + vy - (0.5 * GRAVITY * seconds ** 2))
-            futureZ = (z + vz + seconds)
+        futureX = ( x + vx + seconds)
+        futureY = (y + vy - (0.5 * GRAVITY * seconds ** 2))
+        futureZ = (z + vz + seconds)
 
-            return futureX, futureY, futureZ
+        return futureX, futureY, futureZ

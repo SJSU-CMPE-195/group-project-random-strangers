@@ -22,7 +22,7 @@ ballfilter = BallKalman()
 # engine_path = ~/documents/group_random_strangers/software/best.engine  #path to engine file
 confidenceIndex = 0.25 
 targetIndex = 1 # maybe 2, if we want to attack people lmao
-#IOUthreshold -> intersection over union, maybe worth looking at for precision 
+IOUIndex =0.45 
 
 #Tensorrt setup for loading model into memory and creates a model context
 logger = trt.Logger(trt.Logger.WARNING)
@@ -324,7 +324,7 @@ def decode(
         boxes,
         scores,
         confidenceIndex,
-        #IOUIndex
+        IOUIndex
     )
 
 
@@ -423,7 +423,7 @@ def updateProjectilePhysics(t, x, y, z):
         z
     )
 
-    state = ballFilter.update(
+    state = ballfilter.update(
         t,
         measurement
     )
@@ -448,7 +448,7 @@ def updateProjectilePhysics(t, x, y, z):
 
 
     futurePoint = (
-        ballFilter.predictFuture()
+        ballfilter.predicttheFuture()
     )
 
 

@@ -200,152 +200,152 @@ def decode(
     class_ids = []
 
 
-    for pred in predictions:
+    # ============================================================
+    # 1. SPLIT BOX DATA FROM CLASS SCORES
+    # ============================================================
 
-        # First four numbers:
-        #
-        # center X
-        # center Y
-        # width
-        # height
-        cx, cy, w, h = pred[:4]
+    boxes_raw = predictions[:, :4]
+
+    class_scores = predictions[:, 4:]
 
 
-        # Remaining numbers are class scores
-        class_scores = pred[4:]
+    # ============================================================
+    # 2. FIND BEST CLASS FOR EVERY PREDICTION AT ONCE
+    # ============================================================
+
+    class_ids = np.argmax(
+        class_scores,
+        axis=1
+    )
+
+    confidences = np.max(
+        class_scores,
+        axis=1
+    )
 
 
-        # Find class with highest score
-        class_id = int(
-            np.argmax(class_scores)
-        )
+    # ============================================================
+    # 3. FILTER BY CONFIDENCE AND TARGET CLASS
+    # ============================================================
 
-        confidence = float(
-            class_scores[class_id]
-        )
-
-
-        # Ignore weak detections
-        if confidence < confidenceIndex:
-            continue
+    mask = (
+        (confidences >= confidenceIndex)
+        &
+        (class_ids == targetIndex)
+    )
 
 
-        # Ignore detections that aren't the target class
-        if class_id != targetIndex:
-            continue
+    # Apply the mask to all arrays at once
+    boxes_raw = boxes_raw[mask]
+    confidences = confidences[mask]
+    class_ids = class_ids[mask]
 
 
-        # Convert:
-        #
-        # center + width/height
-        #
-        # into:
-        #
-        # corner coordinates
-        x1 = cx - w / 2
-        y1 = cy - h / 2
-
-        x2 = cx + w / 2
-        y2 = cy + h / 2
-
-
-        # Undo the letterboxing
-        x1 = (
-            x1 - pad_x
-        ) / scale
-
-        y1 = (
-            y1 - pad_y
-        ) / scale
-
-        x2 = (
-            x2 - pad_x
-        ) / scale
-
-        y2 = (
-            y2 - pad_y
-        ) / scale
-
-
-        # Keep coordinates inside image bounds
-        x1 = np.clip(
-            x1,
-            0,
-            frame_w - 1
-        )
-
-        y1 = np.clip(
-            y1,
-            0,
-            frame_h - 1
-        )
-
-        x2 = np.clip(
-            x2,
-            0,
-            frame_w - 1
-        )
-
-        y2 = np.clip(
-            y2,
-            0,
-            frame_h - 1
-        )
-
-
-        # OpenCV NMSBoxes expect
-    
-        # x
-        # y
-        # width
-        # height
-        boxes.append([
-            int(x1),
-            int(y1),
-            int(x2 - x1),
-            int(y2 - y1)
-        ])
-
-        scores.append(
-            confidence
-        )
-
-        class_ids.append(
-            class_id
-        )
-
-
-    # Nothing detected
-    if not boxes:
+    # No ball detections survived filtering
+    if boxes_raw.shape[0] == 0:
         return []
 
+    cx = boxes_raw[:, 0]
+    cy = boxes_raw[:, 1]
+    w = boxes_raw[:, 2]
+    h = boxes_raw[:, 3]
 
-    # Remove overlapping duplicate detections
+
+    x1 = cx - w / 2
+    y1 = cy - h / 2
+
+    x2 = cx + w / 2
+    y2 = cy + h / 2
+
+    x1 = (x1 - pad_x) / scale
+    y1 = (y1 - pad_y) / scale
+
+    x2 = (x2 - pad_x) / scale
+    y2 = (y2 - pad_y) / scale
+
+    x1 = np.clip(
+        x1,
+        0,
+        frame_w - 1
+    )
+
+    y1 = np.clip(
+        y1,
+        0,
+        frame_h - 1
+    )
+
+    x2 = np.clip(
+        x2,
+        0,
+        frame_w - 1
+    )
+
+    y2 = np.clip(
+        y2,
+        0,
+        frame_h - 1
+    )
+
+    boxes = np.column_stack(
+        (
+            x1,
+            y1,
+            x2 - x1,
+            y2 - y1
+        )
+    ).astype(np.int32)
+
+
     indices = cv2.dnn.NMSBoxes(
-        boxes,
-        scores,
+        boxes.tolist(),
+        confidences.tolist(),
         confidenceIndex,
         IOUIndex
     )
 
 
-    detections = []
+    if len(indices) == 0:
+        return []
 
 
-    for i in indices:
+    # Different OpenCV versions sometimes return different shapes,
+    # so flatten it into one simple array.
+    indices = np.asarray(
+        indices
+    ).reshape(-1)
 
-        i = int(i)
 
-        x, y, w, h = boxes[i]
+    # ============================================================
+    # 9. KEEP ONLY BOXES THAT SURVIVED NMS
+    # ============================================================
 
-        detections.append({
-            "x1": x,
-            "y1": y,
-            "x2": x + w,
-            "y2": y + h,
-            "confidence": scores[i],
-            "class_id": class_ids[i]
-        })
+    boxes = boxes[indices]
+    confidences = confidences[indices]
+    class_ids = class_ids[indices]
+
+
+    # ============================================================
+    # 10. RETURN SAME FORMAT AS YOUR OLD FUNCTION
+    # ============================================================
+
+    detections = [
+        {
+            "x1": int(box[0]),
+            "y1": int(box[1]),
+            "x2": int(box[0] + box[2]),
+            "y2": int(box[1] + box[3]),
+            "confidence": float(confidence),
+            "class_id": int(class_id)
+        }
+
+        for box, confidence, class_id
+        in zip(
+            boxes,
+            confidences,
+            class_ids
+        )
+    ]
 
 
     return detections
@@ -429,16 +429,10 @@ def updateProjectilePhysics(t, x, y, z):
         measurement
     )
 
-
-    # First camera measurement only initializes the filter.
+    # First point of a new trajectory only initializes the filter.
     if state is None:
         return None
 
-
-    # Filter's estimate:
-    #
-    # x, y, z
-    # vx, vy, vz
     filteredX = state[0]
     filteredY = state[1]
     filteredZ = state[2]
@@ -446,12 +440,6 @@ def updateProjectilePhysics(t, x, y, z):
     vx = state[3]
     vy = state[4]
     vz = state[5]
-
-
-    futurePoint = (
-        ballfilter.predicttheFuture()
-    )
-
 
     print(
         f"Filtered XYZ=("
@@ -464,8 +452,9 @@ def updateProjectilePhysics(t, x, y, z):
         f"{vz:.3f}) m/s"
     )
 
+    intercept = ballfilter.getFinalIntercept()
 
-    return futurePoint
+    return intercept
 #configure zed cam
 
 # ============================================================
@@ -477,7 +466,7 @@ zed = sl.Camera()
 init = sl.InitParameters()
 
 # Camera mode
-init.camera_resolution = sl.RESOLUTION.HD720
+init.camera_resolution = sl.RESOLUTION.VGA
 init.camera_fps = 60
 
 # Fast depth mode
@@ -519,65 +508,75 @@ print("ZED running")
 # MAIN LOOP
 # ============================================================
 
-lastLoopTime = time.perf_counter()
-
 try:
 
-    while True:
 
-        if (
-            zed.grab(runtime_params)
-            != sl.ERROR_CODE.SUCCESS
-        ):
-            continue
+   while True:
 
-        timestamp = zed.get_timestamp(
-            sl.TIME_REFERENCE.IMAGE
-        )
-        t = timestamp.get_nanoseconds() / 1e9
 
-        zed.retrieve_image(
-            zed_image,
-            sl.VIEW.LEFT
-        )
+       if (
+           zed.grab(runtime_params)
+           != sl.ERROR_CODE.SUCCESS
+       ):
+           continue
 
-        zed.retrieve_measure(
-            point_cloud,
-            sl.MEASURE.XYZ
-        )
 
-        frame_bgra = zed_image.get_data()
+       timestamp = zed.get_timestamp(
+           sl.TIME_REFERENCE.IMAGE
+       )
+       t = timestamp.get_nanoseconds() / 1e9
 
-        frame = cv2.cvtColor(
-            frame_bgra,
-            cv2.COLOR_BGRA2BGR
-        )
 
-        frame_h, frame_w = frame.shape[:2]
+       zed.retrieve_image(
+           zed_image,
+           sl.VIEW.LEFT
+       )
 
-        (
-            input_tensor,
-            scale,
-            pad_x,
-            pad_y
-        ) = preprocess(frame)
 
-        output = infer(
-            input_tensor
-        )
+       zed.retrieve_measure(
+           point_cloud,
+           sl.MEASURE.XYZ
+       )
 
-        detections = decode(
-            output,
-            scale,
-            pad_x,
-            pad_y,
-            frame_w,
-            frame_h
-        )
 
-        # IMPORTANT:
-        # This stays INSIDE while True
-        for det in detections:
+       frame_bgra = zed_image.get_data()
+
+
+       frame = cv2.cvtColor(
+           frame_bgra,
+           cv2.COLOR_BGRA2BGR
+       )
+
+
+       frame_h, frame_w = frame.shape[:2]
+
+
+       (
+           input_tensor,
+           scale,
+           pad_x,
+           pad_y
+       ) = preprocess(frame)
+
+
+       output = infer(
+           input_tensor
+       )
+
+
+       detections = decode(
+           output,
+           scale,
+           pad_x,
+           pad_y,
+           frame_w,
+           frame_h
+       )
+
+
+       # IMPORTANT:
+       # This stays INSIDE while True
+       for det in detections:
 
             u = int(
                 (det["x1"] + det["x2"]) / 2
@@ -598,7 +597,7 @@ try:
 
             x, y, z = xyz
 
-            futurePoint = updateProjectilePhysics(
+            intercept = updateProjectilePhysics(
                 t,
                 x,
                 y,
@@ -610,17 +609,32 @@ try:
                 f"XYZ=({x:.3f}, {y:.3f}, {z:.3f}) m"
             )
 
-            if futurePoint is not None:
-                future_x, future_y, future_z = futurePoint
+            if intercept is not None:
+
+                point = intercept["point"]
 
                 print(
-                    f"Predicted XYZ=("
-                    f"{future_x:.3f}, "
-                    f"{future_y:.3f}, "
-                    f"{future_z:.3f}"
-                    f") m"
+                    f"INTERCEPT XYZ=("
+                    f"{point[0]:.3f}, "
+                    f"{point[1]:.3f}, "
+                    f"{point[2]:.3f}) m"
+                )
+
+                print(
+                    f"Intercept time="
+                    f"{intercept['interceptTime']:.3f}s "
+                    f"flight time="
+                    f"{intercept['flightTime']:.3f}s"
+                )
+
+                print(
+                    f"Aim yaw="
+                    f"{intercept['yawDegrees']:.2f} deg "
+                    f"pitch="
+                    f"{intercept['pitchDegrees']:.2f} deg"
                 )
 
 finally:
+
     zed.close()
     cudaContext.pop()

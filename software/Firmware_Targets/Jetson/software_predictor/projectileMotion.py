@@ -1,97 +1,85 @@
 import numpy
 
 GRAVITY = 9.81
-predictorTime = 0.05 
-def calculateFunction(oldPoint, newPoint): 
-#t0, x0, y0, z0 --> GRAB FROM ZED
-#t1, x1, y1, z1 
 
-   # oldPoint = None   #for now, will need to grab a couple more points
-
-    #some zed shit
+TENNIS_BALL_SPEED = 11.176       # 25 mph in m/s
+PROCESSING_LATENCY = 0.039       # current measured pipeline delay
 
 
-    #grab time, x1, x2, x3 (and y z)
-    #find the angle with the tangent line?
-
-    t0, x0, y0, z0 = oldPoint 
-    t1, x1, y1, z1 = newPoint
-
-    deltaT = t1 - t0
-
-    vx = (x1 - x0) / deltaT
-    vy = (y1 - y0) / deltaT
-    vz = (z1 - z0) / deltaT
-
-    return vx, vy, vz
+LAUNCHER_POSITION = numpy.array([
+    0.0,
+    0.254,
+    0.0
+], dtype=numpy.float64)
 
 
+class BallKalman:
 
-
-def predictorFunction(currentPoint, vx, vy, vz): 
-# vcurrent = x y z 
-#velocity = vx vy vz
-#future time = delta t  
-    x, y, z = currentPoint 
-    t = predictorTime
-    future_x = x + vx * t
-    future_y = y + vy * t - 0.5 * GRAVITY * t**2
-    future_z = z + vz * t
-
-    return future_x, future_y, future_z
-
-
-class BallKalman: 
     def __init__(self):
-        #state [x,y z, vx, vy, vz]
-        self.state = numpy.zeros (6, dtype=numpy.float64)
+        self.state = numpy.zeros(6, dtype=numpy.float64)
 
 
-        self.P = numpy.diag([  #uncertainty estimates. Position is certain, velocity is not since we don't know it immediately.
-                                #correspondnds to [x,y,z,vx,vy,vz]
+        self.measurementCount = 0
+        self.finalIntercept = None
+        self.minMeasurementsForIntercept = 4
+
+
+        self.initialP = numpy.diag([
             0.05**2,
             0.05**2,
             0.10**2,
             5.0**2,
             5.0**2,
             5.0**2
-        ]) 
-        self.P = self.P.copy()
+        ])
 
-        self.H = numpy.array([ #x y z measurements
+        self.P = self.initialP.copy()
+
+        self.H = numpy.array([
             [1, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0]
-        ], dtype = numpy.float64)
+        ], dtype=numpy.float64)
 
         self.R = numpy.diag([
-            0.03**2, 
-            0.03**2, 
+            0.03**2,
+            0.03**2,
             0.08**2
         ])
 
         self.accelerationstd = 2.0
         self.last_time = None
         self.initialized = False
-
         self.maxTrackingGap = 0.5
 
+
     def initialize(self, t, measurement):
-        x , y , z = measurement
+        x, y, z = measurement
+
+        self.measurementCount = 1
+        self.finalIntercept = None
+
         self.state[:] = [
-            x, y , z, 0.0, 0.0 ,0.0
+            x,
+            y,
+            z,
+            0.0,
+            0.0,
+            0.0
         ]
 
+        self.P = self.initialP.copy()
+
         self.last_time = t
-        self.initialized = True 
+        self.initialized = True
 
-    def predict (self, dt): #will make a prediction on where the ball will be next b4 next predcition
 
-        F = numpy.eye(6) #returns a 2D array (matrix) with ones (1) on a specified diagonal and zeros (0) elsewhere.
+    def predict(self, dt):
+        F = numpy.eye(6)
 
-        F [0,3] = dt
-        F[1,4] = dt
-        F[2,5] = dt
+        F[0, 3] = dt
+        F[1, 4] = dt
+        F[2, 5] = dt
 
         gravityEffect = numpy.array([
             0.0,
@@ -100,19 +88,15 @@ class BallKalman:
             0.0,
             -GRAVITY * dt,
             0.0
-        ])
+        ], dtype=numpy.float64)
 
         self.state = F @ self.state + gravityEffect
 
-
-        #bunch of stuff that i pulled from the internet that processes noise. main point is that Q is how much deviation from the 
-        #model that is allowed. Air resisstance, spin, bad measurements, notably
         q = self.accelerationstd**2
 
         Q = numpy.zeros((6, 6))
 
         for positionIndex in range(3):
-
             velocityIndex = positionIndex + 3
 
             Q[positionIndex, positionIndex] = (
@@ -131,49 +115,61 @@ class BallKalman:
                 dt**2 * q
             )
 
+        self.P = F @ self.P @ F.T + Q
 
-            self.P = F @ self.P @ F.T + Q #rmr, @ is matrix mult operator, aka matrix H by vector state.
 
-    def correct (self, measurement): #function to corrct noted deviations in the last one
+    def correct(self, measurement):
         z = numpy.asarray(
-            measurement, 
-            dtype = numpy.float64
+            measurement,
+            dtype=numpy.float64
         )
 
         fix = z - self.H @ self.state
 
-
-
-
-        S = ( self.H @ self.P @ self.H.T + self.R)
+        S = (
+            self.H
+            @ self.P
+            @ self.H.T
+            + self.R
+        )
 
         mahalanobisSquared = (
-                fix.T
-                @ numpy.linalg.inv(S)
-                @ fix
+            fix.T
+            @ numpy.linalg.inv(S)
+            @ fix
         )
-        
+
         if mahalanobisSquared > 11.34:
             return False
 
-            #kalman gain, how much trust between camera and predicton
-
-        K = (self.P @ self.H.T @ numpy.linalg.inv(S))
-
-
-        self.state = (
-            self.state + K @ fix
+        K = (
+            self.P
+            @ self.H.T
+            @ numpy.linalg.inv(S)
         )
 
-        I = numpy.eye(6) 
+        self.state = (
+            self.state
+            + K @ fix
+        )
 
-        self.P = ((I - K @ self.H) @ self.P)
+        I = numpy.eye(6)
 
-    def update (self, t, measurement): #push the new camera measurements into the filter) 
+        self.P = (
+            (I - K @ self.H)
+            @ self.P
+        )
 
-        if not self.initialized: 
-            self.initialize( t, measurement)
-            return None 
+        return True
+
+
+    def update(self, t, measurement):
+        if not self.initialized:
+            self.initialize(
+                t,
+                measurement
+            )
+            return None
 
         dt = t - self.last_time
 
@@ -182,8 +178,6 @@ class BallKalman:
 
         print(f"dt={dt:.3f}s")
 
-        # If the ball has been gone too long, this is no longer
-        # assumed to be the same continuous projectile trajectory.
         if dt > self.maxTrackingGap:
             print(
                 f"New trajectory detected "
@@ -198,20 +192,223 @@ class BallKalman:
             return None
 
         self.predict(dt)
-        self.correct(measurement)
+
+        accepted = self.correct(measurement)
+
+        if accepted:
+            self.measurementCount += 1
 
         self.last_time = t
 
-        return self.state.copy() 
+        return self.state.copy()
 
-    def predicttheFuture(self, seconds = predictorTime):
 
-            #ballistic trajectory some time int he future with the filter'd position and velo
+    def predictTargetPosition(self, seconds):
+        x, y, z, vx, vy, vz = self.state
 
-        x , y , z, vx , vy , vz = self.state
+        targetX = x + vx * seconds
 
-        futureX = ( x + vx * seconds)
-        futureY = (y + vy * seconds -( 0.5 * GRAVITY * seconds **2))
-        futureZ = (z + vz * seconds)
+        targetY = (
+            y
+            + vy * seconds
+            - 0.5 * GRAVITY * seconds**2
+        )
 
-        return futureX, futureY, futureZ
+        targetZ = z + vz * seconds
+
+        return numpy.array([
+            targetX,
+            targetY,
+            targetZ
+        ], dtype=numpy.float64)
+
+
+    def findIntercept(
+        self,
+        launcherPosition=LAUNCHER_POSITION,
+        tennisBallSpeed=TENNIS_BALL_SPEED,
+        processingLatency=PROCESSING_LATENCY,
+        maxTime=2.0,
+        searchStep=0.002
+    ):
+        if not self.initialized:
+            return None
+
+        gravityVector = numpy.array([
+            0.0,
+            -GRAVITY,
+            0.0
+        ], dtype=numpy.float64)
+
+        def interceptError(interceptTime):
+            flightTime = (
+                interceptTime
+                - processingLatency
+            )
+
+            if flightTime <= 0:
+                return None, None, None
+
+            targetPoint = self.predictTargetPosition(
+                interceptTime
+            )
+
+            requiredVelocity = (
+                targetPoint
+                - launcherPosition
+                - 0.5
+                * gravityVector
+                * flightTime**2
+            ) / flightTime
+
+            requiredSpeed = numpy.linalg.norm(
+                requiredVelocity
+            )
+
+            error = (
+                requiredSpeed
+                - tennisBallSpeed
+            )
+
+            return (
+                error,
+                targetPoint,
+                requiredVelocity
+            )
+
+        startTime = processingLatency + 0.005
+
+        times = numpy.arange(
+            startTime,
+            maxTime + searchStep,
+            searchStep
+        )
+
+        previousTime = None
+        previousError = None
+
+        for currentTime in times:
+            (
+                currentError,
+                _,
+                _
+            ) = interceptError(
+                currentTime
+            )
+
+            if currentError is None:
+                continue
+
+            if previousError is not None:
+                if previousError * currentError <= 0:
+                    low = previousTime
+                    high = currentTime
+
+                    for _ in range(30):
+                        mid = (
+                            low + high
+                        ) / 2.0
+
+                        (
+                            midError,
+                            _,
+                            _
+                        ) = interceptError(
+                            mid
+                        )
+
+                        (
+                            lowError,
+                            _,
+                            _
+                        ) = interceptError(
+                            low
+                        )
+
+                        if lowError * midError <= 0:
+                            high = mid
+                        else:
+                            low = mid
+
+                    interceptTime = (
+                        low + high
+                    ) / 2.0
+
+                    (
+                        _,
+                        targetPoint,
+                        launchVelocity
+                    ) = interceptError(
+                        interceptTime
+                    )
+
+                    flightTime = (
+                        interceptTime
+                        - processingLatency
+                    )
+
+                    launchSpeed = numpy.linalg.norm(
+                        launchVelocity
+                    )
+
+                    direction = (
+                        launchVelocity
+                        / launchSpeed
+                    )
+
+                    vx = launchVelocity[0]
+                    vy = launchVelocity[1]
+                    vz = launchVelocity[2]
+
+                    yawDegrees = numpy.degrees(
+                        numpy.arctan2(
+                            vx,
+                            -vz
+                        )
+                    )
+
+                    horizontalSpeed = numpy.sqrt(
+                        vx**2
+                        + vz**2
+                    )
+
+                    pitchDegrees = numpy.degrees(
+                        numpy.arctan2(
+                            vy,
+                            horizontalSpeed
+                        )
+                    )
+
+                    return {
+                        "point": targetPoint,
+                        "interceptTime": interceptTime,
+                        "flightTime": flightTime,
+                        "launchVelocity": launchVelocity,
+                        "direction": direction,
+                        "yawDegrees": yawDegrees,
+                        "pitchDegrees": pitchDegrees
+                    }
+
+            previousTime = currentTime
+            previousError = currentError
+
+        return None
+    def getFinalIntercept(self):
+
+    # Once locked, always return the same prediction
+    # for this trajectory.
+        if self.finalIntercept is not None:
+            return self.finalIntercept
+
+    # Give Kalman a few measurements to learn velocity.
+        if self.measurementCount < self.minMeasurementsForIntercept:
+            return None
+
+        intercept = self.findIntercept()
+
+        if intercept is None:
+            return None
+
+        self.finalIntercept = intercept
+
+        return self.finalIntercept

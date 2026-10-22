@@ -7,8 +7,8 @@ PROCESSING_LATENCY = 0.039       # current measured pipeline delay
 
 
 LAUNCHER_POSITION = numpy.array([
-    0.0,
-    0.254,
+    0.400,
+    0.351,
     0.0
 ], dtype=numpy.float64)
 
@@ -21,7 +21,7 @@ class BallKalman:
 
         self.measurementCount = 0
         self.finalIntercept = None
-        self.minMeasurementsForIntercept = 4
+        self.minMeasurementsForIntercept = 3
 
 
         self.initialP = numpy.diag([
@@ -138,9 +138,9 @@ class BallKalman:
             @ numpy.linalg.inv(S)
             @ fix
         )
-
-        if mahalanobisSquared > 11.34:
-            return False
+        if self.measurementCount >= 3:
+            if mahalanobisSquared > 11.34:
+                return False
 
         K = (
             self.P

@@ -4,6 +4,7 @@ import tensorrt as trt
 #import pycuda.autoinit
 import pycuda.driver as imgoinginsane
 import pyzed.sl as sl
+import time
 
 # from projectileMotion import calculateFunction, predictorFunction
 from projectileMotion import BallKalman #new kalman filter function
@@ -480,7 +481,7 @@ init.camera_resolution = sl.RESOLUTION.HD720
 init.camera_fps = 60
 
 # Fast depth mode
-init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
+init.depth_mode = sl.DEPTH_MODE.NEURAL
 
 # XYZ values will be meters
 init.coordinate_units = sl.UNIT.METER
@@ -517,6 +518,9 @@ print("ZED running")
 # ============================================================
 # MAIN LOOP
 # ============================================================
+
+lastLoopTime = time.perf_counter()
+
 try:
 
     while True:

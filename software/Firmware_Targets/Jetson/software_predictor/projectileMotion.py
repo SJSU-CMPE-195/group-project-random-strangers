@@ -1,6 +1,6 @@
 import numpy
 
-GRAVITY = -9.81
+GRAVITY = 9.81
 predictorTime = 0.05 
 def calculateFunction(oldPoint, newPoint): 
 #t0, x0, y0, z0 --> GRAB FROM ZED
@@ -55,7 +55,8 @@ class BallKalman:
             5.0**2,
             5.0**2,
             5.0**2
-        ])
+        ]) 
+        self.P = self.P.copy()
 
         self.H = numpy.array([ #x y z measurements
             [1, 0, 0, 0, 0, 0],
@@ -72,6 +73,8 @@ class BallKalman:
         self.accelerationstd = 2.0
         self.last_time = None
         self.initialized = False
+
+        self.maxTrackingGap = 0.5
 
     def initialize(self, t, measurement):
         x , y , z = measurement
@@ -138,7 +141,20 @@ class BallKalman:
         )
 
         fix = z - self.H @ self.state
+
+
+
+
         S = ( self.H @ self.P @ self.H.T + self.R)
+
+        mahalanobisSquared = (
+                fix.T
+                @ numpy.linalg.inv(S)
+                @ fix
+        )
+        
+        if mahalanobisSquared > 11.34:
+            return False
 
             #kalman gain, how much trust between camera and predicton
 
@@ -161,10 +177,31 @@ class BallKalman:
 
         dt = t - self.last_time
 
-        self.predict (dt) #physics measurement
-        self.correct(measurement)#what camera saw
+        if dt <= 0:
+            return None
+
+        print(f"dt={dt:.3f}s")
+
+        # If the ball has been gone too long, this is no longer
+        # assumed to be the same continuous projectile trajectory.
+        if dt > self.maxTrackingGap:
+            print(
+                f"New trajectory detected "
+                f"(tracking gap = {dt:.2f}s)"
+            )
+
+            self.initialize(
+                t,
+                measurement
+            )
+
+            return None
+
+        self.predict(dt)
+        self.correct(measurement)
 
         self.last_time = t
+
         return self.state.copy() 
 
     def predicttheFuture(self, seconds = predictorTime):
@@ -173,8 +210,8 @@ class BallKalman:
 
         x , y , z, vx , vy , vz = self.state
 
-        futureX = ( x + vx + seconds)
-        futureY = (y + vy - (0.5 * GRAVITY * seconds ** 2))
-        futureZ = (z + vz + seconds)
+        futureX = ( x + vx * seconds)
+        futureY = (y + vy * seconds -( 0.5 * GRAVITY * seconds **2))
+        futureZ = (z + vz * seconds)
 
         return futureX, futureY, futureZ

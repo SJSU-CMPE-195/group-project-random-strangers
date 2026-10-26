@@ -1,0 +1,29 @@
+project_name: "Ball Tracking and Interception System"
+project_type: "hybrid"
+
+impl_claim: "Given a stream of 3D ball measurements, the system estimates the ball's position and velocity with a gravity-aware Kalman filter and computes a reachable interception point, launch direction, yaw, and pitch."
+
+languages: ["python", "c++"]
+hardware_required: true
+
+setup:
+  - "pip install numpy"
+
+build: []
+
+test:
+  - "python software/Firmware_Targets/Jetson/software_predictor/mock_demo.py"
+
+run:
+  - "python software/Firmware_Targets/Jetson/software_predictor/screencapGrabber.py --onnx software/best.onnx"
+
+mock_mode:
+  available: true
+  commands:
+    - "python software/Firmware_Targets/Jetson/software_predictor/mock_demo.py"
+
+demo:
+  video: ""
+  screenshots: []
+
+notes: "Live operation requires a ZED stereo camera, ZED SDK, trained YOLO model, and project hardware. The live screencapGrabber.py path acquires camera frames and 3D measurements. Mock mode does not require a camera: it generates a known ballistic 3D trajectory and passes those measurements through the actual BallKalman filtering and interception code in projectileMotion.py."

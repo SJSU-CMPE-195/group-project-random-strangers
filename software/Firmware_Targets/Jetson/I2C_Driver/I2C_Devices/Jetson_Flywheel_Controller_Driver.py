@@ -6,8 +6,8 @@ from struct import pack, unpack
 from ..I2C_Handler import I2CTransaction, Jetson_I2C_Handler, I2CResult
 from address_map_grabber import address_map_grabber
 
-#get the register map from the config file
-flywheelControllerRegisterMap = address_map_grabber("../../../Flywheel_Controller/config.h")
+# get the register map from the launch controller config file
+flywheelControllerRegisterMap = address_map_grabber("../../../Launch_Controller/config.h")
 
 class JetsonFlywheelControllerDriver:
     def __init__(self, I2C_Handler: Jetson_I2C_Handler, I2C_Address: int):
@@ -113,20 +113,40 @@ class JetsonFlywheelControllerDriver:
         self._I2C_Handler.submitTransaction(transaction)
         return I2CResult(transaction)
 
-    def actualFlywheelRPM(self) -> I2CResult[float]:
-        """Reads the actual RPM of the flywheel controller
+    def leftActualFlywheelRPM(self) -> I2CResult[float]:
+        """Reads the actual RPM of the left flywheel
 
         Returns:
-            I2CResult[float]: The actual RPM of the flywheel controller
+            I2CResult[float]: The left flywheel's actual RPM
         """
-        
+
+        def decode_actual_rpm(data: bytes) -> float:
+            """Decodes the actual RPM from the flywheel controller's response"""
+            return unpack("<f", data)[0]
+
+        transaction = I2CTransaction(
+            deviceAddress=self._I2C_Address,
+            registerAddress=flywheelControllerRegisterMap["LEFT_ACTUAL_RPM"],
+            readCount=4
+        )
+
+        self._I2C_Handler.submitTransaction(transaction)
+        return I2CResult(transaction, decode_actual_rpm)
+
+    def rightActualFlywheelRPM(self) -> I2CResult[float]:
+        """Reads the actual RPM of the right flywheel
+
+        Returns:
+            I2CResult[float]: The right flywheel's actual RPM
+        """
+
         def decode_actual_rpm(data: bytes) -> float:
             """Decodes the actual RPM from the flywheel controller's response"""
             return unpack("<f", data)[0]
         
         transaction = I2CTransaction(
             deviceAddress=self._I2C_Address,
-            registerAddress=flywheelControllerRegisterMap["ACTUAL_RPM"],
+            registerAddress=flywheelControllerRegisterMap["RIGHT_ACTUAL_RPM"],
             readCount=4
         )
         

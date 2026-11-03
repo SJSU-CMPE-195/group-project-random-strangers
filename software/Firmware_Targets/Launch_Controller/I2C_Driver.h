@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-namespace Flywheel_Controller {
+namespace Launch_Controller {
 
 struct Event_Manager {
     volatile bool fire_solenoid = false;
@@ -21,7 +21,8 @@ struct Controller_Registers {
 
     bool flywheels_armed = false;
     float RPM_target = 0.0f;
-    float RPM_actual = 0.0f;
+    float left_RPM_actual = 0.0f;
+    float right_RPM_actual = 0.0f;
     bool solenoid_armed = false;
 };
 

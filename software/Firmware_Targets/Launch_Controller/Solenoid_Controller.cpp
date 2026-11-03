@@ -5,7 +5,7 @@
 #include "I2C_Driver.h"
 #include "config.h"
 
-namespace Flywheel_Controller {
+namespace Launch_Controller {
 
 Solenoid_Controller solenoid_controller;
 

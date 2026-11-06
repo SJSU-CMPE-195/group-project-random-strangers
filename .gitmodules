@@ -7,3 +7,7 @@
 [submodule "software/Firmware_Targets/common/FaultManager"]
 	path = software/Firmware_Targets/common/FaultManager
 	url = https://github.com/Brendanofawesome/FaultManager.git
+[submodule "software/Firmware_Targets/Launch_Controller/ESP32C3DSHOT"]
+	path = software/Firmware_Targets/Launch_Controller/ESP32C3DSHOT
+	url = https://github.com/Brendanofawesome/DShotRMT_ESP32C3.git
+	branch = ESP32C3-Support

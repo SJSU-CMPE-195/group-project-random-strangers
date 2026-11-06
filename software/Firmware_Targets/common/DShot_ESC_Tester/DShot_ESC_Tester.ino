@@ -1,5 +1,8 @@
 #include <Arduino.h>
-#include "../../Launch_Controller/ESP32C3DSHOT/src/DShotRMT.h"
+#include "..\..\Launch_Controller\ESP32C3DSHOT/src/dshot_definitions.h"
+#include "..\..\Launch_Controller\ESP32C3DSHOT/src/DShotRMT.cpp"
+#include "..\..\Launch_Controller\ESP32C3DSHOT/src/dshot_utils.h"
+#include "..\..\Launch_Controller\ESP32C3DSHOT/src/dshot_init.cpp"
 
 // ---------- User settings ----------
 static constexpr unsigned SERIAL_BAUD = 115200;

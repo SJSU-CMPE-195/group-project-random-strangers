@@ -39,8 +39,8 @@ Demonstrate a functional prototype capable of detecting, tracking, aiming at, an
 - 🚧 **Fully functional mechanical system**
   - 🚧 Gimbal with control in both yaw and pitch axes
     - ✅ Virtual model
-    - 🚧 Physical model
-    - ⬜ Testing
+    - ✅ Physical model
+    - 🚧 Testing
   - 🚧 Flywheel-based dodgeball launching system
     - ✅ Flywheel design
     - ⬜ Launch-trigger design
@@ -51,7 +51,7 @@ Demonstrate a functional prototype capable of detecting, tracking, aiming at, an
 - 🚧 **Fully functional electrical system**
   - ✅ Yaw motor operating with position feedback
   - ✅ Pitch motor operating with position feedback
-  - 🚧 Slip ring installed on the yaw axis
+  - ✅ Slip ring installed on the yaw axis
   - 🚧 Flywheel ESCs operating with feedback
   - 🚧 Motor power supply operational
   - 🚧 JST-style electrical connections implemented
@@ -60,7 +60,7 @@ Demonstrate a functional prototype capable of detecting, tracking, aiming at, an
 
 - 🚧 **System for configuring and controlling motor parameters**
   - 🚧 I2C Drivers for Jetson
-  - 🚧 I2C Drivers for Launch Controller
+  - ✅ I2C Drivers for Launch Controller
   - ⬜ I2C Driver for Gimbal Controllers
   - ⬜ Motor parameters persist across resets
   - ⬜ Web-server control interface
@@ -68,11 +68,11 @@ Demonstrate a functional prototype capable of detecting, tracking, aiming at, an
 ## 4. Targeting and Firing System
 
 - 🚧 **Targeting and Firing system**
-  - ⬜ Camera-to-gimbal coordinate transformation
+  - ✅ Camera-to-gimbal coordinate transformation
   - ⬜ Interceptor Trajectory Estimation
   - ⬜ Web-server control for firing at an arbitrary point on the camera view
-  - ⬜ Intercept-time and position calculator
-  - 🚧 Target tracking and trajectory estimatin
+  - ✅ Intercept-time and position calculator
+  - ✅ Target tracking and trajectory estimatin
   - ⬜ Firing safety interlocks
   - ⬜ Launch confirmation and failure detection
 

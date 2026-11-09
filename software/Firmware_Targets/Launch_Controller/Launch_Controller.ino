@@ -4,12 +4,16 @@
 
 #include <Arduino.h>
 
+#include <cmath>
+#include <cstdlib>
+
 #include "config.h"
+#include "debug_interface.cpp"
 #include "ESC_Controller.h"
 #include "I2C_Driver.h"
 #include "Solenoid_Controller.h"
 
-using namespace Flywheel_Controller;
+using namespace Launch_Controller;
 
 static void halt_on_initialization_error() {
     if (DEBUG) Serial.println("Initialization failed. Halting...");
@@ -24,12 +28,13 @@ static void halt_on_initialization_error() {
 void setup() {
     if (DEBUG) {
         Serial.begin(115200);
-        delay(500);
+        //delay(500);
 
-        Serial.println("DShotRMT Flywheel ESC Controller");
+        Serial.println("DShotRMT Flywheel and ESC Controller");
         Serial.println("Motors and solenoid off");
         SOLENOID_ACTIVE_HIGH ? Serial.println("Solenoid active high") : Serial.println("Solenoid active low");
         Serial.println("Starting...");
+        print_serial_command_help();
     }
 
     const bool i2c_success = initialize_i2c();
@@ -44,6 +49,10 @@ void setup() {
 }
 
 void loop() {
+    if (DEBUG && Serial.available()) {
+        handle_serial_command(Serial.readStringUntil('\n'));
+    }
+
     const uint32_t now = millis();
 
     esc_controller.update(now);

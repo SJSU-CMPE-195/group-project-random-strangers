@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-namespace Flywheel_Controller {
+namespace Launch_Controller {
 
 class Solenoid_Controller {
 public:

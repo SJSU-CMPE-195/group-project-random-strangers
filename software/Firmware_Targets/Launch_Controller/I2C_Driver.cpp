@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-namespace Flywheel_Controller {
+namespace Launch_Controller {
 
 volatile Event_Manager event_manager;
 volatile Controller_Registers I2C_Registers;
@@ -16,13 +16,26 @@ static uint8_t selected_error_id = 0;
 static char selected_error_reason[ERROR_REASON_MAX_LENGTH + 1] = {};
 static uint8_t selected_error_reason_length = 0;
 
+static void print_i2c_byte(const char *operation, const uint8_t register_address, const uint8_t value) {
+    if (!DEBUG) return;
+
+    Serial.print("I2C ");
+    Serial.print(operation);
+    Serial.print(" register 0x");
+    if (register_address < 0x10) Serial.print("0");
+    Serial.print(register_address, HEX);
+    Serial.print(": 0x");
+    if (value < 0x10) Serial.print("0");
+    Serial.println(value, HEX);
+}
+
 static void rebuild_error_set() {
     uint32_t error_set = 0;
     const unsigned active_fault_count = fault_manager.get_active_fault_count();
 
     for (unsigned active_fault_index = 0;
-         active_fault_index < active_fault_count;
-         ++active_fault_index) {
+        active_fault_index < active_fault_count;
+        ++active_fault_index) {
         const uint8_t fault_id = fault_manager.get_active_fault_code(active_fault_index);
         if (fault_id >= 1 && fault_id <= 32) error_set |= 1UL << (fault_id - 1);
     }
@@ -96,6 +109,8 @@ void receiveEvent(const int howMany) {
     while (Wire.available()) {
         const uint8_t incoming_data = Wire.read();
         const uint8_t register_address = active_register_address;
+
+        print_i2c_byte("write", register_address, incoming_data);
 
         switch (register_address) {
             case I2C_ADDRESS_MAP::ERROR_ID:
@@ -191,17 +206,30 @@ void requestEvent() {
             response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_target)[3];
             break;
 
-        case I2C_ADDRESS_MAP::ACTUAL_RPM:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[0];
+        case I2C_ADDRESS_MAP::LEFT_ACTUAL_RPM:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.left_RPM_actual)[0];
             break;
-        case I2C_ADDRESS_MAP::ACTUAL_RPM + 1:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[1];
+        case I2C_ADDRESS_MAP::LEFT_ACTUAL_RPM + 1:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.left_RPM_actual)[1];
             break;
-        case I2C_ADDRESS_MAP::ACTUAL_RPM + 2:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[2];
+        case I2C_ADDRESS_MAP::LEFT_ACTUAL_RPM + 2:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.left_RPM_actual)[2];
             break;
-        case I2C_ADDRESS_MAP::ACTUAL_RPM + 3:
-            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.RPM_actual)[3];
+        case I2C_ADDRESS_MAP::LEFT_ACTUAL_RPM + 3:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.left_RPM_actual)[3];
+            break;
+
+        case I2C_ADDRESS_MAP::RIGHT_ACTUAL_RPM:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.right_RPM_actual)[0];
+            break;
+        case I2C_ADDRESS_MAP::RIGHT_ACTUAL_RPM + 1:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.right_RPM_actual)[1];
+            break;
+        case I2C_ADDRESS_MAP::RIGHT_ACTUAL_RPM + 2:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.right_RPM_actual)[2];
+            break;
+        case I2C_ADDRESS_MAP::RIGHT_ACTUAL_RPM + 3:
+            response = reinterpret_cast<const volatile uint8_t *>(&I2C_Registers.right_RPM_actual)[3];
             break;
 
         case I2C_ADDRESS_MAP::SOLENOID_ARMED:
@@ -214,13 +242,21 @@ void requestEvent() {
 
         case I2C_ADDRESS_MAP::ERROR_REASON_START:
             if (selected_error_reason_length == 0) {
+                print_i2c_byte("read", active_register_address, response);
                 Wire.slaveWrite(&response, 1);
             } else {
+                if (DEBUG) {
+                    Serial.print("I2C read register 0x");
+                    Serial.print(active_register_address, HEX);
+                    Serial.print(": ");
+                    Serial.println(selected_error_reason);
+                }
                 Wire.slaveWrite(reinterpret_cast<uint8_t *>(selected_error_reason), selected_error_reason_length);
             }
             return;
     }
 
+    print_i2c_byte("read", active_register_address, response);
     Wire.slaveWrite(&response, 1);
 }
 

@@ -1,21 +1,19 @@
 #pragma once
 
 #include <stdint.h>
-
 #include <DShotRMT.h>
-
 #include "../common/FaultManager/FaultManager.h"
 
-namespace Flywheel_Controller {
+namespace Launch_Controller {
 
-static constexpr bool DEBUG = false;
+static constexpr bool DEBUG = true;
 
 // --------- I2C Settings ---------
 static constexpr uint8_t I2C_ADDRESS = 0x62;
 
 static constexpr uint32_t I2C_FREQUENCY = 400000;
-static constexpr gpio_num_t SDA_PIN = GPIO_NUM_NC;
-static constexpr gpio_num_t SCL_PIN = GPIO_NUM_NC;
+static constexpr gpio_num_t SDA_PIN = GPIO_NUM_3;
+static constexpr gpio_num_t SCL_PIN = GPIO_NUM_2;
 
 enum I2C_ADDRESS_MAP : uint8_t {
     READY = 0x00, //R: tell if the peripheral is booted
@@ -33,10 +31,11 @@ enum I2C_ADDRESS_MAP : uint8_t {
 
     FLYWHEELS_ARMED = 0x10, //R/W
     RPM_TARGET = 0x11, //R/W (float 4 bytes)
-    ACTUAL_RPM = 0x15, //R (float 4 bytes): will always read 0 if bidirectional DShot is not available
+    LEFT_ACTUAL_RPM = 0x15, //R (float 4 bytes): will always read 0 if bidirectional DShot is not available
+    RIGHT_ACTUAL_RPM = 0x19, //R (float 4 bytes): will always read 0 if bidirectional DShot is not available
 
-    SOLENOID_ARMED = 0x19, //R/W
-    SOLENOID_FIRE = 0x1A, //W
+    SOLENOID_ARMED = 0x1D, //R/W
+    SOLENOID_FIRE = 0x1E, //W
 };
 
 // --------- Fault Settings ---------
@@ -62,14 +61,14 @@ using Controller_Fault_Manager = FaultManager<
     FaultCondition<"Invalid RPM", FAULT_INVALID_RPM_TARGET>
 >;
 
-using Controller_Fault_Id = Controller_Fault_Manager::FaultId;
+using Controller_Fault_Id = Controller_Fault_Manager::FaultId_t;
 
 inline Controller_Fault_Manager fault_manager;
 
 static constexpr uint8_t ERROR_REASON_MAX_LENGTH = 127;
 
 // --------- DSHOT Settings ---------
-static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_NC, GPIO_NUM_NC};
+static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_10, GPIO_NUM_9};
 static constexpr dshot_mode_t DSHOT_MODE = DSHOT600;
 static constexpr uint32_t DSHOT_REFRESH_MS = 20;
 
@@ -84,7 +83,7 @@ static constexpr float RPM_PID_KD = 0.0f;
 static constexpr float RPM_PID_INTEGRAL_LIMIT = 100000.0f;
 
 // --------- Solenoid Settings ---------
-static constexpr gpio_num_t SOLENOID_PIN = GPIO_NUM_NC;
+static constexpr gpio_num_t SOLENOID_PIN = GPIO_NUM_7;
 static constexpr bool SOLENOID_ACTIVE_HIGH = true;
 
 static constexpr uint32_t SOLENOID_SHOT_TIME_MS = 100;

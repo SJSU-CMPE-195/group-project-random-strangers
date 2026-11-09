@@ -4,7 +4,7 @@
 
 #include <DShotRMT.h>
 
-namespace Flywheel_Controller {
+namespace Launch_Controller {
 
 struct RPM_PID {
     float integral = 0.0f;

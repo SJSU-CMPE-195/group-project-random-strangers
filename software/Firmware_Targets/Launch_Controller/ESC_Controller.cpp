@@ -7,7 +7,7 @@
 #include "I2C_Driver.h"
 #include "config.h"
 
-namespace Flywheel_Controller {
+namespace Launch_Controller {
 
 static void reset_rpm_pid(RPM_PID &pid) {
     pid.integral = 0.0f;
@@ -52,13 +52,11 @@ static dshot_result_t send_esc_throttle(ESC &esc, const float throttle_percent) 
     return esc.comm.sendThrottlePercent(constrain(throttle_percent, 0.0f, 100.0f));
 }
 
-ESC::ESC(const gpio_num_t esc_pin)
-    : pin(esc_pin),
-      comm(esc_pin, DSHOT_MODE, DSHOT_BIDIRECTIONAL, MOTOR_MAGNET_COUNT) {}
+ESC::ESC(const gpio_num_t esc_pin): pin(esc_pin),
+    comm(esc_pin, DSHOT_MODE, DSHOT_BIDIRECTIONAL, MOTOR_MAGNET_COUNT) {}
 
-ESC_Controller::ESC_Controller()
-    : left_esc(ESC_PINS[0]),
-      right_esc(ESC_PINS[1]) {}
+ESC_Controller::ESC_Controller(): left_esc(ESC_PINS[0]),
+    right_esc(ESC_PINS[1]) {}
 
 ESC_Controller esc_controller;
 
@@ -115,7 +113,8 @@ void ESC_Controller::force_safe_state() {
 
     I2C_Registers.flywheels_armed = false;
     I2C_Registers.RPM_target = 0.0f;
-    I2C_Registers.RPM_actual = 0.0f;
+    I2C_Registers.left_RPM_actual = 0.0f;
+    I2C_Registers.right_RPM_actual = 0.0f;
 
     event_manager.arm_escs = false;
     event_manager.disarm_escs = false;
@@ -142,7 +141,8 @@ void ESC_Controller::handle_arm_events(const uint32_t now) {
 
         I2C_Registers.flywheels_armed = false;
         I2C_Registers.RPM_target = 0.0f;
-        I2C_Registers.RPM_actual = 0.0f;
+        I2C_Registers.left_RPM_actual = 0.0f;
+        I2C_Registers.right_RPM_actual = 0.0f;
 
         if (was_armed && DEBUG) Serial.println("Flywheel ESCs disarmed; target cleared");
     } else if (event_manager.arm_escs) {
@@ -195,7 +195,8 @@ void ESC_Controller::update_throttle(const uint32_t now) {
             right_esc.telemetry_received = true;
         }
 
-        I2C_Registers.RPM_actual = (left_esc.rpm + right_esc.rpm) * 0.5f;
+        I2C_Registers.left_RPM_actual = left_esc.rpm;
+        I2C_Registers.right_RPM_actual = right_esc.rpm;
 
         if (left_esc.armed && (!left_esc.telemetry_received || now - left_esc.last_telemetry_ms > RPM_TELEMETRY_TIMEOUT_MS)) {
             mark_dshot_error(FAULT_LEFT_ESC_TELEMETRY, "Error: Left ESC RPM telemetry timed out");
@@ -216,6 +217,21 @@ void ESC_Controller::update_throttle(const uint32_t now) {
             left_esc.throttle_percent = update_rpm_pid(left_rpm_pid, target_rpm, left_esc.rpm, now);
             right_esc.throttle_percent = update_rpm_pid(right_rpm_pid, target_rpm, right_esc.rpm, now);
         }
+
+        //output actual RPM
+        if(DEBUG){
+            const uint32_t ACTUAL_RPM_UPDATE_INTERVAL_MS = 1000;
+            static uint32_t NEXT_UPDATE_REQUIRED = 0;
+            if(NEXT_UPDATE_REQUIRED <= now){
+                NEXT_UPDATE_REQUIRED = now + ACTUAL_RPM_UPDATE_INTERVAL_MS;
+                Serial.print("RPM Target: ");
+                Serial.print(I2C_Registers.RPM_target);
+                Serial.print(" RPM Actual L/R: ");
+                Serial.print(I2C_Registers.left_RPM_actual);
+                Serial.print(" / ");
+                Serial.println(I2C_Registers.right_RPM_actual);
+            }
+        }
     } else {
         // Standard DShot has no RPM feedback; interpret target as 0-100% throttle.
         float throttle_percent = I2C_Registers.RPM_target;
@@ -224,7 +240,8 @@ void ESC_Controller::update_throttle(const uint32_t now) {
 
         left_esc.throttle_percent = left_esc.armed ? throttle_percent : 0.0f;
         right_esc.throttle_percent = right_esc.armed ? throttle_percent : 0.0f;
-        I2C_Registers.RPM_actual = 0.0f;
+        I2C_Registers.left_RPM_actual = 0.0f;
+        I2C_Registers.right_RPM_actual = 0.0f;
     }
 
     if (I2C_Registers.master_error || !left_esc.armed || !right_esc.armed) {
@@ -260,6 +277,7 @@ void ESC_Controller::update_throttle(const uint32_t now) {
         Serial.println(right_esc.throttle_percent);
     }
 }
+
 
 void ESC_Controller::update(const uint32_t now) {
     if (I2C_Registers.master_error) {

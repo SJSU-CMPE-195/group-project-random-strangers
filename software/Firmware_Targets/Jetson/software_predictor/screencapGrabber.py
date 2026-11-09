@@ -8,9 +8,12 @@ import time
 
 # from projectileMotion import calculateFunction, predictorFunction
 from projectileMotion import BallKalman #new kalman filter function
+from I2C_Driver.Jetson_Gimbal_Controller_Driver import get_coords
 
 
 imgoinginsane.init()
+
+#turretOutput = TurretOutput()
 
 device = imgoinginsane.Device(0)
 
@@ -453,6 +456,7 @@ def updateProjectilePhysics(t, x, y, z):
     )
 
     intercept = ballfilter.getFinalIntercept()
+    #get_coords(intercept)
 
     return intercept
 #configure zed cam
@@ -510,73 +514,61 @@ print("ZED running")
 
 try:
 
+    while True:
 
-   while True:
+        if (
+            zed.grab(runtime_params)
+            != sl.ERROR_CODE.SUCCESS
+        ):
+            continue
 
+        timestamp = zed.get_timestamp(
+            sl.TIME_REFERENCE.IMAGE
+        )
+        t = timestamp.get_nanoseconds() / 1e9
 
-       if (
-           zed.grab(runtime_params)
-           != sl.ERROR_CODE.SUCCESS
-       ):
-           continue
+        zed.retrieve_image(
+            zed_image,
+            sl.VIEW.LEFT
+        )
 
+        zed.retrieve_measure(
+            point_cloud,
+            sl.MEASURE.XYZ
+        )
 
-       timestamp = zed.get_timestamp(
-           sl.TIME_REFERENCE.IMAGE
-       )
-       t = timestamp.get_nanoseconds() / 1e9
+        frame_bgra = zed_image.get_data()
 
+        frame = cv2.cvtColor(
+            frame_bgra,
+            cv2.COLOR_BGRA2BGR
+        )
 
-       zed.retrieve_image(
-           zed_image,
-           sl.VIEW.LEFT
-       )
+        frame_h, frame_w = frame.shape[:2]
 
+        (
+            input_tensor,
+            scale,
+            pad_x,
+            pad_y
+        ) = preprocess(frame)
 
-       zed.retrieve_measure(
-           point_cloud,
-           sl.MEASURE.XYZ
-       )
+        output = infer(
+            input_tensor
+        )
 
+        detections = decode(
+            output,
+            scale,
+            pad_x,
+            pad_y,
+            frame_w,
+            frame_h
+        )
 
-       frame_bgra = zed_image.get_data()
-
-
-       frame = cv2.cvtColor(
-           frame_bgra,
-           cv2.COLOR_BGRA2BGR
-       )
-
-
-       frame_h, frame_w = frame.shape[:2]
-
-
-       (
-           input_tensor,
-           scale,
-           pad_x,
-           pad_y
-       ) = preprocess(frame)
-
-
-       output = infer(
-           input_tensor
-       )
-
-
-       detections = decode(
-           output,
-           scale,
-           pad_x,
-           pad_y,
-           frame_w,
-           frame_h
-       )
-
-
-       # IMPORTANT:
-       # This stays INSIDE while True
-       for det in detections:
+        # IMPORTANT:
+        # This stays INSIDE while True
+        for det in detections:
 
             u = int(
                 (det["x1"] + det["x2"]) / 2
@@ -613,28 +605,27 @@ try:
 
                 point = intercept["point"]
 
+                yawDegrees = intercept["yawDegrees"]
+                pitchDegrees = intercept["pitchDegrees"]
+
                 print(
-                    f"INTERCEPT XYZ=("
+                    f"FINAL INTERCEPT XYZ=("
                     f"{point[0]:.3f}, "
                     f"{point[1]:.3f}, "
                     f"{point[2]:.3f}) m"
                 )
 
                 print(
-                    f"Intercept time="
-                    f"{intercept['interceptTime']:.3f}s "
-                    f"flight time="
-                    f"{intercept['flightTime']:.3f}s"
+                    f"Aim yaw={yawDegrees:.2f} deg "
+                    f"pitch={pitchDegrees:.2f} deg"
                 )
 
-                print(
-                    f"Aim yaw="
-                    f"{intercept['yawDegrees']:.2f} deg "
-                    f"pitch="
-                    f"{intercept['pitchDegrees']:.2f} deg"
+                get_coords(
+                    point[0],
+                    point[1],
+                    point[2]
                 )
 
 finally:
-
     zed.close()
     cudaContext.pop()

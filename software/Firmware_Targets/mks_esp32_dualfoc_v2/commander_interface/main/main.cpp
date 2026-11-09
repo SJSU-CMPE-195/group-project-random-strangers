@@ -13,14 +13,21 @@
 #include <current_sense/InlineCurrentSense.h>
 
 // User parameters
-#define DISABLE_ENCODERS 1
+#define DISABLE_ENCODERS 0 //change from 1 EH
 #define DISABLE_MXLEMMING_OBSERVER 1
 #define DISABLE_CURRENT_SENSE 0
-#define DISABLE_MOTOR_0 1
+#define DISABLE_MOTOR_0 0 //change from 1 EH
 #define DISABLE_MOTOR_1 0
 
 static constexpr float USER_MAX_MOTOR_VOLTAGE = 15.0f;
 static constexpr float USER_MAX_MOTOR_CURRENT = 1.0f;
+
+static esp_timer_handle_t foc_timer = nullptr;
+static esp_timer_handle_t movement_timer = nullptr;
+static esp_timer_handle_t commander_timer = nullptr;
+
+static volatile float yaw_target = 0.0f;
+static volatile float pitch_target = 0.0f; //files to be held by the jetson.
 
 // Observer attach/detach thresholds.
 // Detach below the lower threshold.
@@ -209,7 +216,12 @@ static void init_motors() {
 		motor0.current_limit = USER_MAX_MOTOR_CURRENT;
 
 		motor0.useMonitoring(Serial);
-		motor0.monitor_variables = _MON_TARGET | _MON_VEL | _MON_ANGLE | _MON_VOLT_Q | _MON_CURR_Q;
+		motor0.monitor_variables =
+			_MON_TARGET |
+			_MON_VEL |
+			_MON_ANGLE |
+			_MON_VOLT_Q |
+			_MON_CURR_Q;
 
 		#if BOARD_CURRENT_SENSE_TYPE == 0 && !DISABLE_CURRENT_SENSE
 			currentSense0.linkDriver(&driver0);
@@ -219,25 +231,45 @@ static void init_motors() {
 
 		#if !DISABLE_ENCODERS
 			hall0.init();
-			hall0.enableInterrupts(doHall0A, doHall0B, doHall0C);
+			hall0.enableInterrupts(
+				doHall0A,
+				doHall0B,
+				doHall0C
+			);
+
 			motor0.linkSensor(&hall0);
+
 		#elif !DISABLE_MXLEMMING_OBSERVER
 			motor0.sensor_direction = Direction::CW;
 			motor0.zero_electric_angle = 0;
 
-			// Start detached. It will attach once the requested velocity exceeds
-			// OBSERVER_ATTACH_VELOCITY.
 			motor0.linkSensor(nullptr);
 			observer0_attached = false;
 		#endif
+
+
+		// ---------------------------------------------------------
+		// TURRET ANGLE CONTROL
+		// Motor 0 is assumed to be YAW.
+		// ---------------------------------------------------------
+
+		motor0.controller = MotionControlType::angle;
+
+		// Outer position-control loop gain.
+		motor0.P_angle.P = 15.0f;
+
+		// Maximum angular speed in rad/s.
+		// Starting value -- tune later.
+		motor0.velocity_limit = 8.0f;
+
 
 		motor0.init();
 		motor0.disable();
 
 		#if !DISABLE_ENCODERS
 			motor0.initFOC();
+
 		#elif !DISABLE_MXLEMMING_OBSERVER
-			// Temporarily attach for FOC initialization, then detach again.
 			motor0.linkSensor(&observer0);
 			observer0_attached = true;
 
@@ -247,8 +279,13 @@ static void init_motors() {
 			observer0_attached = false;
 		#endif
 
-		commander.add('A', doMotor0, motor0_label);
+		commander.add(
+			'A',
+			doMotor0,
+			motor0_label
+		);
 	#endif
+
 
 	#if !DISABLE_MOTOR_1
 		motor1.voltage_sensor_align = min(2.0f, USER_MAX_MOTOR_VOLTAGE);
@@ -263,7 +300,12 @@ static void init_motors() {
 		motor1.current_limit = USER_MAX_MOTOR_CURRENT;
 
 		motor1.useMonitoring(Serial);
-		motor1.monitor_variables = _MON_TARGET | _MON_VEL | _MON_ANGLE | _MON_VOLT_Q | _MON_CURR_Q;
+		motor1.monitor_variables =
+			_MON_TARGET |
+			_MON_VEL |
+			_MON_ANGLE |
+			_MON_VOLT_Q |
+			_MON_CURR_Q;
 
 		#if BOARD_CURRENT_SENSE_TYPE == 0 && !DISABLE_CURRENT_SENSE
 			currentSense1.skip_align = true;
@@ -274,25 +316,45 @@ static void init_motors() {
 
 		#if !DISABLE_ENCODERS
 			hall1.init();
-			hall1.enableInterrupts(doHall1A, doHall1B, doHall1C);
+			hall1.enableInterrupts(
+				doHall1A,
+				doHall1B,
+				doHall1C
+			);
+
 			motor1.linkSensor(&hall1);
+
 		#elif !DISABLE_MXLEMMING_OBSERVER
 			motor1.sensor_direction = Direction::CW;
 			motor1.zero_electric_angle = 0;
 
-			// Start detached. It will attach once the requested velocity exceeds
-			// OBSERVER_ATTACH_VELOCITY.
 			motor1.linkSensor(nullptr);
 			observer1_attached = false;
 		#endif
+
+
+		// ---------------------------------------------------------
+		// TURRET ANGLE CONTROL
+		// Motor 1 is assumed to be PITCH.
+		// ---------------------------------------------------------
+
+		motor1.controller = MotionControlType::angle;
+
+		// Outer position-control loop gain.
+		motor1.P_angle.P = 15.0f;
+
+		// Maximum angular speed in rad/s.
+		// Starting value -- tune later.
+		motor1.velocity_limit = 8.0f;
+
 
 		motor1.init();
 		motor1.disable();
 
 		#if !DISABLE_ENCODERS
 			motor1.initFOC();
+
 		#elif !DISABLE_MXLEMMING_OBSERVER
-			// Temporarily attach for FOC initialization, then detach again.
 			motor1.linkSensor(&observer1);
 			observer1_attached = true;
 
@@ -302,8 +364,20 @@ static void init_motors() {
 			observer1_attached = false;
 		#endif
 
-		commander.add('B', doMotor1, motor1_label);
+		commander.add(
+			'B',
+			doMotor1,
+			motor1_label
+		);
 	#endif
+}
+
+void set_turret_target(
+    float yawRadians,
+    float pitchRadians
+) {
+    yaw_target = yawRadians;
+    pitch_target = pitchRadians;
 }
 
 static void foc_timer_callback(void* /*arg*/) {
@@ -316,7 +390,7 @@ static void foc_timer_callback(void* /*arg*/) {
 	#endif
 
 	#if !DISABLE_MOTOR_1
-		#if DISABLE_ENCODERS && !DISABLE_MXLEMMING_OBSERVER
+		#if 	 && !DISABLE_MXLEMMING_OBSERVER
 			update_motor1_observer_attachment();
 		#endif
 
@@ -325,13 +399,18 @@ static void foc_timer_callback(void* /*arg*/) {
 }
 
 static void movement_timer_callback(void* /*arg*/) {
-	#if !DISABLE_MOTOR_0
-		motor0.move();
-	#endif
 
-	#if !DISABLE_MOTOR_1
-		motor1.move();
-	#endif
+    #if !DISABLE_MOTOR_0
+        motor0.move(
+            yaw_target
+        );
+    #endif
+
+    #if !DISABLE_MOTOR_1
+        motor1.move(
+            pitch_target
+        );
+    #endif
 }
 
 static void commander_timer_callback(void* /*arg*/) {

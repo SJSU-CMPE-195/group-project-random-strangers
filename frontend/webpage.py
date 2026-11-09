@@ -1,15 +1,21 @@
-from flask import Flask, render_template_string
-import subprocess
+import sys
 from pathlib import Path
+from flask import Flask, Response, render_template_string
 
-BASE_DIR = Path(__file__).resolve().parent
 
-SCREENCAP_PATH = (
-    BASE_DIR
+from screencapGrabber import generate_frames
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+PREDICTOR_DIR = (
+    PROJECT_ROOT
+    / "software"
+    / "Firmware_Targets"
+    / "Jetson"
     / "software_predictor"
-    / "screencapGrabber.py"
 )
 
+sys.path.append(str(PREDICTOR_DIR))
 
 
 app = Flask(__name__)
@@ -78,15 +84,33 @@ def index():
 @app.route("/fire", methods=["POST"])
 def fire():
 
-    print("Starting ZED camera...")
+    return """
+    <html>
+        <body style="
+            background:#111;
+            text-align:center;
+            color:white;
+        ">
 
-    subprocess.Popen([
-        "python3",
-        str(SCREENCAP_PATH)
-    ])
+            <h1>ZED Camera</h1>
 
-    return render_template_string(PAGE)
+            <img
+                src="/video_feed"
+                style="width:80%; max-width:900px;"
+            >
 
+        </body>
+    </html>
+    """
+
+
+@app.route("/video_feed")
+def video_feed():
+
+    return Response(
+        generate_frames(),
+        mimetype="multipart/x-mixed-replace; boundary=frame"
+    )
 
 if __name__ == "__main__":
     app.run(

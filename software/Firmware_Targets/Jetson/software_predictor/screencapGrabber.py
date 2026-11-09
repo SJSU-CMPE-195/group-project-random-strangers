@@ -519,124 +519,139 @@ point_cloud = sl.Mat()
 print("ZED running")
 
 
-# ============================================================
-# MAIN LOOP
-# ============================================================
+#did a lot of code replacing here to get the ZED camera feed to appear on the webpage /frontend/webpge.py.
+def generate_frames():
 
-try:
+    try:
 
-    while True:
+        while True:
 
-        if (
-            zed.grab(runtime_params)
-            != sl.ERROR_CODE.SUCCESS
-        ):
-            continue
-
-        timestamp = zed.get_timestamp(
-            sl.TIME_REFERENCE.IMAGE
-        )
-        t = timestamp.get_nanoseconds() / 1e9
-
-        zed.retrieve_image(
-            zed_image,
-            sl.VIEW.LEFT
-        )
-
-        zed.retrieve_measure(
-            point_cloud,
-            sl.MEASURE.XYZ
-        )
-
-        frame_bgra = zed_image.get_data()
-
-        frame = cv2.cvtColor(
-            frame_bgra,
-            cv2.COLOR_BGRA2BGR
-        )
-
-        frame_h, frame_w = frame.shape[:2]
-
-        (
-            input_tensor,
-            scale,
-            pad_x,
-            pad_y
-        ) = preprocess(frame)
-
-        output = infer(
-            input_tensor
-        )
-
-        detections = decode(
-            output,
-            scale,
-            pad_x,
-            pad_y,
-            frame_w,
-            frame_h
-        )
-
-        # IMPORTANT:
-        # This stays INSIDE while True
-        for det in detections:
-
-            u = int(
-                (det["x1"] + det["x2"]) / 2
-            )
-
-            v = int(
-                (det["y1"] + det["y2"]) / 2
-            )
-
-            xyz = get_xyz(
-                point_cloud,
-                u,
-                v
-            )
-
-            if xyz is None:
+            if (
+                zed.grab(runtime_params)
+                != sl.ERROR_CODE.SUCCESS
+            ):
                 continue
 
-            x, y, z = xyz
-
-            intercept = updateProjectilePhysics(
-                t,
-                x,
-                y,
-                z
+            timestamp = zed.get_timestamp(
+                sl.TIME_REFERENCE.IMAGE
             )
 
-            print(
-                f"conf={det['confidence']:.2f} "
-                f"XYZ=({x:.3f}, {y:.3f}, {z:.3f}) m"
+            t = (
+                timestamp.get_nanoseconds()
+                / 1e9
             )
 
-            if intercept is not None:
+            zed.retrieve_image(
+                zed_image,
+                sl.VIEW.LEFT
+            )
 
-                point = intercept["point"]
+            zed.retrieve_measure(
+                point_cloud,
+                sl.MEASURE.XYZ
+            )
 
-                yawDegrees = intercept["yawDegrees"]
-                pitchDegrees = intercept["pitchDegrees"]
+            frame_bgra = zed_image.get_data()
 
-                print(
-                    f"FINAL INTERCEPT XYZ=("
-                    f"{point[0]:.3f}, "
-                    f"{point[1]:.3f}, "
-                    f"{point[2]:.3f}) m"
+            frame = cv2.cvtColor(
+                frame_bgra,
+                cv2.COLOR_BGRA2BGR
+            )
+
+            frame_h, frame_w = frame.shape[:2]
+
+            (
+                input_tensor,
+                scale,
+                pad_x,
+                pad_y
+            ) = preprocess(frame)
+
+            output = infer(
+                input_tensor
+            )
+
+            detections = decode(
+                output,
+                scale,
+                pad_x,
+                pad_y,
+                frame_w,
+                frame_h
+            )
+
+            for det in detections:
+
+                u = int(
+                    (
+                        det["x1"]
+                        + det["x2"]
+                    ) / 2
+                )
+
+                v = int(
+                    (
+                        det["y1"]
+                        + det["y2"]
+                    ) / 2
+                )
+
+                xyz = get_xyz(
+                    point_cloud,
+                    u,
+                    v
+                )
+
+                if xyz is None:
+                    continue
+
+                x, y, z = xyz
+
+                intercept = updateProjectilePhysics(
+                    t,
+                    x,
+                    y,
+                    z
                 )
 
                 print(
-                    f"Aim yaw={yawDegrees:.2f} deg "
-                    f"pitch={pitchDegrees:.2f} deg"
+                    f"conf={det['confidence']:.2f} "
+                    f"XYZ=({x:.3f}, {y:.3f}, {z:.3f}) m"
                 )
 
-                get_coords(
-                    point[0],
-                    point[1],
-                    point[2]
-                )
+                if intercept is not None:
 
-finally:
-    zed.close()
-    cudaContext.pop()
+                    point = intercept["point"]
+
+                    print(
+                        f"FINAL INTERCEPT XYZ=("
+                        f"{point[0]:.3f}, "
+                        f"{point[1]:.3f}, "
+                        f"{point[2]:.3f}) m"
+                    )
+
+                    get_coords(
+                        point[0],
+                        point[1],
+                        point[2]
+                    )
+
+            # Encode current frame for browser streaming
+            success, buffer = cv2.imencode(
+                ".jpg",
+                frame
+            )
+
+            if not success:
+                continue
+
+            yield (
+                b"--frame\r\n"
+                b"Content-Type: image/jpeg\r\n\r\n"
+                + buffer.tobytes()
+                + b"\r\n"
+            )
+
+    finally:
+        zed.close()
+        cudaContext.pop()

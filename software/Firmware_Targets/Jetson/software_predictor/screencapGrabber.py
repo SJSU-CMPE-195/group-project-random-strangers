@@ -4,6 +4,9 @@ import tensorrt as trt
 #import pycuda.autoinit
 import pycuda.driver as imgoinginsane
 import pyzed.sl as sl
+
+import sys
+from pathlib import Path
 import time
 
 # from projectileMotion import calculateFunction, predictorFunction
@@ -31,7 +34,15 @@ IOUIndex =0.45
 #Tensorrt setup for loading model into memory and creates a model context
 logger = trt.Logger(trt.Logger.WARNING)
 
-with open("best.engine", "rb") as f: #open engine
+
+JETSON_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(JETSON_DIR))
+
+
+BASE_DIR = Path(__file__).resolve().parent
+ENGINE_PATH = BASE_DIR.parents[2] / "best.engine"
+
+with open(Best.engine , "rb") as f: #open engine
     runtime = trt.Runtime(logger) #runtime init
     engine = runtime.deserialize_cuda_engine(f.read()) #memory load
 

@@ -11,8 +11,14 @@ import time
 
 # from projectileMotion import calculateFunction, predictorFunction
 from projectileMotion import BallKalman #new kalman filter function
-from I2C_Driver.Jetson_Gimbal_Controller_Driver import get_coords
 
+JETSON_DIR = Path(__file__).resolve().parent.parent
+
+sys.path.append(
+    str(JETSON_DIR)
+)
+
+from I2C_Driver.Jetson_Gimbal_Controller_Driver import get_coords
 
 imgoinginsane.init()
 
@@ -42,7 +48,7 @@ sys.path.append(str(JETSON_DIR))
 BASE_DIR = Path(__file__).resolve().parent
 ENGINE_PATH = BASE_DIR.parents[2] / "best.engine"
 
-with open(Best.engine , "rb") as f: #open engine
+with open(ENGINE_PATH , "rb") as f: #open engine
     runtime = trt.Runtime(logger) #runtime init
     engine = runtime.deserialize_cuda_engine(f.read()) #memory load
 
@@ -186,7 +192,7 @@ def infer(input_tensor):
     )
 
     # Wait for GPU operations to finish
-    stream.synchronize()
+    stream.synchronize(
 
     # Return independent copy of results
     return hostOutput.copy()
@@ -581,6 +587,25 @@ def generate_frames():
             )
 
             for det in detections:
+
+
+                cv2.rectangle(
+                    frame,
+                    (det["x1"], det["y1"]),
+                    (det["x2"], det["y2"]),
+                    (0, 255, 0),
+                    2
+    )
+
+                cv2.putText(
+                    frame,
+                    f"{det['confidence']:.2f}",
+                    (det["x1"], det["y1"] - 8),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.6,
+                    (0, 255, 0),
+                    2
+    )
 
                 u = int(
                     (

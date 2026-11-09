@@ -3,7 +3,7 @@ from pathlib import Path
 from flask import Flask, Response, render_template_string
 
 
-from screencapGrabber import generate_frames
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -17,6 +17,7 @@ PREDICTOR_DIR = (
 
 sys.path.append(str(PREDICTOR_DIR))
 
+from screencapGrabber import generate_frames
 
 app = Flask(__name__)
 

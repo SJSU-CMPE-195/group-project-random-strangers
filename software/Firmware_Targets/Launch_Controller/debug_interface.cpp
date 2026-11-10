@@ -1,11 +1,12 @@
 #include <Arduino.h>
 
 #include "config.h"
+#include "debug_interface.h"
 #include "I2C_Driver.h"
 
 namespace Launch_Controller {
 
-static void print_serial_command_help() {
+void print_serial_command_help() {
     Serial.println("Commands:");
     Serial.println("  ARM 1|2|S");
     Serial.println("  DISARM 1|2|S");
@@ -34,7 +35,7 @@ static bool parse_rpm(const String &value, float &rpm) {
     return end != text && *end == '\0' && isfinite(rpm) && rpm >= 0.0f;
 }
 
-static void handle_serial_command(String line) {
+void handle_serial_command(String line) {
     line.trim();
     line.toUpperCase();
 

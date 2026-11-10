@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <DShotRMT.h>
+#include "ESP32C3DSHOT\DShotRMT.h"
 #include "../common/FaultManager/FaultManager.h"
 
 namespace Launch_Controller {
@@ -65,11 +65,11 @@ using Controller_Fault_Id = Controller_Fault_Manager::FaultId_t;
 
 inline Controller_Fault_Manager fault_manager;
 
-static constexpr uint8_t ERROR_REASON_MAX_LENGTH = 127;
+static constexpr uint8_t ERROR_REASON_MAX_LENGTH = 32;
 
 // --------- DSHOT Settings ---------
-static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_10, GPIO_NUM_9};
-static constexpr dshot_mode_t DSHOT_MODE = DSHOT600;
+static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_21, GPIO_NUM_20};
+static constexpr dshot_mode_t DSHOT_MODE = DSHOT300;
 static constexpr uint32_t DSHOT_REFRESH_MS = 20;
 
 static constexpr bool DSHOT_BIDIRECTIONAL = true;
@@ -83,7 +83,7 @@ static constexpr float RPM_PID_KD = 0.0f;
 static constexpr float RPM_PID_INTEGRAL_LIMIT = 100000.0f;
 
 // --------- Solenoid Settings ---------
-static constexpr gpio_num_t SOLENOID_PIN = GPIO_NUM_7;
+static constexpr gpio_num_t SOLENOID_PIN = GPIO_NUM_1;
 static constexpr bool SOLENOID_ACTIVE_HIGH = true;
 
 static constexpr uint32_t SOLENOID_SHOT_TIME_MS = 100;

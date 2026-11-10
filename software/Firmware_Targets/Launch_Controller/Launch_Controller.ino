@@ -4,11 +4,10 @@
 
 #include <Arduino.h>
 
-#include <cmath>
 #include <cstdlib>
 
 #include "config.h"
-#include "debug_interface.cpp"
+#include "debug_interface.h"
 #include "ESC_Controller.h"
 #include "I2C_Driver.h"
 #include "Solenoid_Controller.h"
@@ -22,6 +21,8 @@ static void halt_on_initialization_error() {
         esc_controller.force_safe_state();
         solenoid_controller.force_safe_state();
         delay(1000);
+
+        if(DEBUG) Serial.println("Initialization failed...");
     }
 }
 

@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include <DShotRMT.h>
+#include "ESP32C3DSHOT\DShotRMT.h"
 
 namespace Launch_Controller {
 

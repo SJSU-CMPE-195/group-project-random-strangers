@@ -39,23 +39,49 @@ PAGE = """
         }
 
         .fire-button {
-            width: 320px;
-            height: 320px;
+    width: 320px;
+    height: 320px;
 
-            border-radius: 50%;
-            border: 12px solid #2e7d32;
+    border-radius: 50%;
+    border: 8px solid #c79a00;
 
-            background: #4caf50;
+    background: #ffd93d;
+    color: black;
 
-            font-size: 150px;
+    font-size: 0;
+    cursor: pointer;
 
-            cursor: pointer;
+    position: relative;
 }
 
-        .fire-button:active {
-            transform: scale(0.96);
-            background: #cc0000;
-        }
+.fire-button::before {
+    content: "●   ●";
+    position: absolute;
+
+    top: 75px;
+    left: 0;
+    width: 100%;
+
+    font-size: 55px;
+    text-align: center;
+}
+
+.fire-button::after {
+    content: "⌣";
+    position: absolute;
+
+    top: 120px;
+    left: 0;
+    width: 100%;
+
+    font-size: 125px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.fire-button:active {
+    transform: scale(0.96);
+}
     </style>
 </head>
 
@@ -63,7 +89,7 @@ PAGE = """
 
     <form action="/fire" method="post">
         <button class="fire-button" type="submit">
-            🙂
+            HI FRIEND!
         </button>
     </form>
 
@@ -122,7 +148,7 @@ def fire():
 
         document.getElementById("tracking").innerHTML =
             text || "Waiting for ball...";
-    }, 100);
+    }, 500);
 </script>
             
 

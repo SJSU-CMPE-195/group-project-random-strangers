@@ -590,7 +590,7 @@ def generate_frames():
 
             for det in detections:
 
-
+                #detects ball and puts boxes out.   
                 cv2.rectangle(
                     frame,
                     (det["x1"], det["y1"]),
@@ -664,15 +664,15 @@ def generate_frames():
                     )
 
                 trackingStatus["current"] = {
-                    "x": point[0],
-                    "y": point[1],
-                    "z": point[2],
+                    "x": float(x),
+                    "y": float(y),
+                    "z": float(z)
                 }
 
                 trackingStatus["final"] = {
-                    "x": point[0],
-                    "y": point[1],
-                    "z": point[2]
+                    "x": float(point[0]),
+                    "y": float(point[1]),
+                    "z": float(point[2])
                 }
 
                 

@@ -634,6 +634,12 @@ def generate_frames():
 
                 x, y, z = xyz
 
+                trackingStatus["current"] = {
+                    "x": float(x),
+                    "y": float(y),
+                    "z": float(z)
+                    }
+                
                 intercept = updateProjectilePhysics(
                     t,
                     x,
@@ -650,6 +656,12 @@ def generate_frames():
 
                     point = intercept["point"]
 
+                    trackingStatus["final"] = {
+                        "x": float(point[0]),
+                        "y": float(point[1]),
+                        "z": float(point[2])
+                     }
+
                     print(
                         f"FINAL INTERCEPT XYZ=("
                         f"{point[0]:.3f}, "
@@ -663,17 +675,7 @@ def generate_frames():
                         point[2]
                     )
 
-                trackingStatus["current"] = {
-                    "x": float(x),
-                    "y": float(y),
-                    "z": float(z)
-                }
-
-                trackingStatus["final"] = {
-                    "x": float(point[0]),
-                    "y": float(point[1]),
-                    "z": float(point[2])
-                }
+               
 
                 
 

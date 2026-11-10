@@ -1,7 +1,10 @@
 import sys
 from pathlib import Path
 from flask import Flask, Response, render_template_string, jsonify
+import logging
 
+log = logging.getLogger("werkzeug")
+log.setLevel(logging.ERROR)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 PREDICTOR_DIR = (

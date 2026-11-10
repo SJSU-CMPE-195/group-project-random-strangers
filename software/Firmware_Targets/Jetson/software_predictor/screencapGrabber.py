@@ -20,10 +20,12 @@ sys.path.append(
 
 from I2C_Driver.Jetson_Gimbal_Controller_Driver import get_coords
 
+trackingStatus = { 
+    "current": None, 
+    "future": None
+}
+
 imgoinginsane.init()
-
-#turretOutput = TurretOutput()
-
 device = imgoinginsane.Device(0)
 
 cudaContext = device.retain_primary_context()
@@ -192,7 +194,7 @@ def infer(input_tensor):
     )
 
     # Wait for GPU operations to finish
-    stream.synchronize(
+    stream.synchronize()
 
     # Return independent copy of results
     return hostOutput.copy()
@@ -661,6 +663,20 @@ def generate_frames():
                         point[2]
                     )
 
+                trackingStatus["current"] = {
+                    "x": point[0],
+                    "y": point[1],
+                    "z": point[2],
+                }
+
+                trackingStatus["final"] = {
+                    "x": point[0],
+                    "y": point[1],
+                    "z": point[2]
+                }
+
+                
+
             # Encode current frame for browser streaming
             success, buffer = cv2.imencode(
                 ".jpg",
@@ -669,7 +685,7 @@ def generate_frames():
 
             if not success:
                 continue
-
+                    
             yield (
                 b"--frame\r\n"
                 b"Content-Type: image/jpeg\r\n\r\n"

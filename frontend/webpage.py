@@ -1,9 +1,6 @@
 import sys
 from pathlib import Path
-from flask import Flask, Response, render_template_string
-
-
-
+from flask import Flask, Response, render_template_string, jsonify
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -17,7 +14,7 @@ PREDICTOR_DIR = (
 
 sys.path.append(str(PREDICTOR_DIR))
 
-from screencapGrabber import generate_frames
+from screencapGrabber import generate_frames, trackingStatus
 
 app = Flask(__name__)
 
@@ -46,16 +43,14 @@ PAGE = """
             height: 320px;
 
             border-radius: 50%;
-            border: 12px solid #7a0000;
+            border: 12px solid #2e7d32;
 
-            background: red;
-            color: white;
+            background: #4caf50;
 
-            font-size: 64px;
-            font-weight: bold;
+            font-size: 150px;
 
             cursor: pointer;
-        }
+}
 
         .fire-button:active {
             transform: scale(0.96);
@@ -68,7 +63,7 @@ PAGE = """
 
     <form action="/fire" method="post">
         <button class="fire-button" type="submit">
-            FIRE
+            🙂
         </button>
     </form>
 
@@ -82,7 +77,7 @@ def index():
     return render_template_string(PAGE)
 
 
-@app.route("/fire", methods=["POST"])
+@app.route("/fire", methods=["GET", "POST"])
 def fire():
 
     return """
@@ -99,6 +94,38 @@ def fire():
                 src="/video_feed"
                 style="width:80%; max-width:900px;"
             >
+        <div id="tracking">
+    Waiting for ball...
+</div>
+
+<script>
+    setInterval(async () => {
+        const response = await fetch("/status");
+        const data = await response.json();
+
+        let text = "";
+
+        if (data.current) {
+            text +=
+                `Ball: X=${data.current.x.toFixed(2)} ` +
+                `Y=${data.current.y.toFixed(2)} ` +
+                `Z=${data.current.z.toFixed(2)}<br>`;
+        }
+
+        if (data.final) {
+            text +=
+                `<strong>FINAL: ` +
+                `X=${data.final.x.toFixed(2)} ` +
+                `Y=${data.final.y.toFixed(2)} ` +
+                `Z=${data.final.z.toFixed(2)}</strong>`;
+        }
+
+        document.getElementById("tracking").innerHTML =
+            text || "Waiting for ball...";
+    }, 100);
+</script>
+            
+
 
         </body>
     </html>
@@ -113,7 +140,15 @@ def video_feed():
         mimetype="multipart/x-mixed-replace; boundary=frame"
     )
 
+@app.route("/status")
+def status():
+    return jsonify(trackingStatus)
+
+
+
+
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=5001

@@ -1,117 +1,187 @@
-/*
-# made some ESP32 protocol assumptions, -
-# I2C address: 0x08 
-# Register: 0x10
-# Payload: 4 bytes
-#   bytes 0-1: signed int16 yaw * 100, big-endian
-#   bytes 2-3: signed int16 pitch * 100, big-endian
-# 
-# Numbers are all multipled by 1000, then turned into 4 bits/byte values for you to use.
-# Example:
-# yaw = 12.34  -> 1234
-# pitch = -5.67 -> -567
-#
-# LMK if Pitch and Yaw are swapped... I'm actually not sure which is which XD 
-#
-# Look at /Jetson/I2C_Driver/JetsonGimbalController.py, function 'send_angles' for more details 
-#
-#
-#
-#
-*/
 
 #include "I2C_Driver.h"
-
+#include "config.h"
 #include <Arduino.h>
 #include <Wire.h>
+#include <cstring>
+#include <cmath>
 
-#include "config.h"
+// Implementation of the I2C driver functions
+// Initialize I2C: Configure its device address and register callbacks
+// Receive data: Process register selections and writes from Jetson
+// Send data: Return requested register values to Jetson
 
-namespace Gimbal_Controller {
+// Variables to store register data
+static float currentAngle = 0.0f;
+static float targetAngle = 0.0f;
+static uint8_t controllerStatus = 0;
 
-//Define shared registers
-I2C_Registers_t I2C_Registers;
+// Register currently selected by Jetson
+static uint8_t selectedRegister =
+    I2C_ADDRESS_MAP::READY;
 
-//Track selected register
-static volatile uint8_t active_register_address = 0;
+// Protect shared variables accessed by different ESP32 tasks
+static portMUX_TYPE registerMutex =
+    portMUX_INITIALIZER_UNLOCKED;
+
+// Ensure float is exactly 4 bytes
+static_assert(sizeof(float) == 4, "Expected 4-byte float");
 
 
-//INITIALIZE I2C
+// Callback: Jetson WRITES to ESP32
+static void receiveEvent(int numBytes) {
 
-bool initialize_i2c() {
+    // Make sure at least one byte was received
+    if (numBytes < 1) return;
 
-    //Configure ESP32 as I2C peripheral
-    if (!Wire.begin(
-            I2C_ADDRESS,
-            SDA_PIN,
-            SCL_PIN,
-            I2C_FREQUENCY)) {
+    // First byte is the register address
+    uint8_t reg = Wire.read();
+    numBytes--;
 
-        return false;
+    // Store which register Jetson selected
+    portENTER_CRITICAL(&registerMutex);
+    selectedRegister = reg;
+    portEXIT_CRITICAL(&registerMutex);
+
+    // If only the register address was sent,
+    // Jetson is selecting a register for reading.
+    if (numBytes == 0) return;
+
+    // Check if Jetson is writing to TARGET_ANGLE
+    if (reg == I2C_ADDRESS_MAP::TARGET_ANGLE &&
+        numBytes == sizeof(float)) {
+
+        uint8_t bytes[4];
+
+        // Read the 4 data bytes
+        for (int i = 0; i < 4; i++) {
+            bytes[i] = Wire.read();
+        }
+
+        // Convert received bytes into a float
+        float value;
+        memcpy(&value, bytes, sizeof(value));
+
+        // Only store valid finite values
+        if (std::isfinite(value)) {
+            portENTER_CRITICAL(&registerMutex);
+            targetAngle = value;
+            portEXIT_CRITICAL(&registerMutex);
+        }
     }
 
-    //Attach communication callbacks
-    Wire.onReceive(receiveEvent);
-    Wire.onRequest(requestEvent);
-
-    return true;
-}
-
-
-//RECEIVE FROM JETSON
-
-void receiveEvent(int howMany) {
-
-    if (howMany < 1 || !Wire.available()) {
-        return;
-    }
-
-    // First byte selects register
-    active_register_address = Wire.read();
-
-    // No writable control registers in this version.
-    // Discard additional bytes.
+    // Discard any remaining or invalid bytes
     while (Wire.available()) {
         Wire.read();
     }
 }
 
 
-//RESPOND TO JETSON
+// Callback: Jetson READS from ESP32
+static void requestEvent() {
 
-void requestEvent() {
+    // Take a consistent snapshot of the selected register
+    uint8_t reg;
+    float angleSnapshot = 0.0f;
+    uint8_t readySnapshot = 0;
 
-    uint8_t value = 0;
+    portENTER_CRITICAL(&registerMutex);
 
-    switch (active_register_address) {
+    reg = selectedRegister;
+
+    if (reg == I2C_ADDRESS_MAP::CURRENT_ANGLE) {
+        angleSnapshot = currentAngle;
+    }
+    else if (reg == I2C_ADDRESS_MAP::TARGET_ANGLE) {
+        angleSnapshot = targetAngle;
+    }
+    else if (reg == I2C_ADDRESS_MAP::READY) {
+        readySnapshot = ready;
+    }
+
+    portEXIT_CRITICAL(&registerMutex);
+
+    // Check which register Jetson selected
+    switch (reg) {
+
+        case I2C_ADDRESS_MAP::CURRENT_ANGLE:
+
+            // Send 4 bytes containing currentAngle
+            Wire.write(
+                (const uint8_t*)&angleSnapshot,
+                sizeof(angleSnapshot)
+            );
+            break;
+
+        case I2C_ADDRESS_MAP::TARGET_ANGLE:
+
+            // Send the stored target angle as 4 bytes
+            Wire.write(
+                (const uint8_t*)&angleSnapshot,
+                sizeof(angleSnapshot)
+            );
+            break;
 
         case I2C_ADDRESS_MAP::READY:
-            value = I2C_Registers.ready;
-            break;
 
-        case I2C_ADDRESS_MAP::STATUS:
-            value = I2C_Registers.status;
-            break;
-
-        case I2C_ADDRESS_MAP::TEST_VALUE:
-            value = I2C_Registers.test_value;
-            break;
-
-        case I2C_ADDRESS_MAP::SENSOR_OK:
-            value = I2C_Registers.sensor_ok;
-            break;
-
-        case I2C_ADDRESS_MAP::ELECTRICAL_ANGLE:
-            value = I2C_Registers.electrical_angle;
+            // Send the 1-byte status value
+            Wire.write(readySnapshot);
             break;
 
         default:
-            value = 0;
+
+            // Unknown register selected
+            Wire.write((uint8_t)0xFF);
             break;
     }
-
-    // Send single-byte response
-    Wire.write(value);
 }
 
-} // namespace Gimbal_Controller
+
+// Initialize ESP32 as an I2C target
+bool initialize_i2c() {
+
+    // Register callback for incoming writes
+    Wire.onReceive(receiveEvent);
+
+    // Register callback for incoming reads
+    Wire.onRequest(requestEvent);
+
+    // Initialize I2C using config.h settings
+    return Wire.begin(
+        (uint8_t)I2C_ADDRESS,
+        SDA_PIN,
+        SCL_PIN,
+        I2C_FREQUENCY
+    );
+}
+
+// Update current angle from the sensor
+void setCurrentAngle(float angle) {
+
+    // Only store valid angle measurements
+    if (!std::isfinite(angle)) return;
+
+    portENTER_CRITICAL(&registerMutex);
+    currentAngle = angle;
+    portEXIT_CRITICAL(&registerMutex);
+}
+
+
+// Get the latest stored current angle
+float getCurrentAngle() {
+
+    float angle;
+
+    portENTER_CRITICAL(&registerMutex);
+    angle = currentAngle;
+    portEXIT_CRITICAL(&registerMutex);
+
+    return angle;
+}
+
+// Update the initialization-ready bit
+void setReady(bool value) {
+    portENTER_CRITICAL(&registerMutex);
+    ready = value ? 1 : 0;
+    portEXIT_CRITICAL(&registerMutex);
+}

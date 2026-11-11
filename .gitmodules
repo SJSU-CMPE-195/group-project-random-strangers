@@ -11,3 +11,6 @@
 	path = software/Firmware_Targets/Launch_Controller/ESP32C3DSHOT
 	url = https://github.com/Brendanofawesome/DShotRMT_ESP32C3.git
 	branch = ESP32C3-Support
+[submodule "software/Firmware_Targets/Launch_Controller/DShotRMT_NEO"]
+	path = software/Firmware_Targets/Launch_Controller/DShotRMT_NEO
+	url = https://github.com/DrGlaucous/DShotRMT_NEO.git

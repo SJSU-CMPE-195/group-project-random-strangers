@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <cmath>
+#include <cstdlib>
 
 #include "config.h"
 #include "debug_interface.h"
@@ -6,83 +8,138 @@
 
 namespace Launch_Controller {
 
-void print_serial_command_help() {
-    Serial.println("Commands:");
-    Serial.println("  ARM 1|2|S");
-    Serial.println("  DISARM 1|2|S");
-    Serial.println("  TARGET 1|2 <RPM>");
-    Serial.println("  FAULTS");
+namespace {
+
+constexpr unsigned MAX_COMMAND_TOKENS = 4;
+
+bool parse_non_negative_float(const String &text, float &result) {
+    if (text.length() == 0) {
+        return false;
+    }
+
+    const char *start = text.c_str();
+    char *end = nullptr;
+
+    result = strtof(start, &end);
+
+    return end != start && *end == '\0' && std::isfinite(result) && result >= 0.0f;
 }
 
-static void print_faults() {
-    Serial.print("Master fault state: ");
-    Serial.println(fault_manager.get_master_fault_state() ? "ACTIVE" : "CLEAR");
+unsigned tokenize_command(
+    String line,
+    String *tokens,
+    unsigned maximum_tokens
+) {
+    unsigned token_count = 0;
 
-    const unsigned active_fault_count = fault_manager.get_active_fault_count();
-    for (unsigned fault_index = 0; fault_index < active_fault_count; ++fault_index) {
+    line.trim();
+
+    while (line.length() > 0 && token_count < maximum_tokens) {
+        line.trim();
+
+        const int separator = line.indexOf(' ');
+
+        if (separator < 0) {
+            tokens[token_count++] = line;
+            break;
+        }
+
+        tokens[token_count++] = line.substring(0, separator);
+        line = line.substring(separator + 1);
+    }
+
+    return token_count;
+}
+
+void print_faults() {
+    Serial.print("Master fault state: ");
+    Serial.println(
+        fault_manager.get_master_fault_state() ? "ACTIVE" : "CLEAR"
+    );
+
+    const unsigned active_fault_count =
+        fault_manager.get_active_fault_count();
+
+    if (active_fault_count == 0) {
+        Serial.println("No active faults.");
+        return;
+    }
+
+    for (unsigned index = 0; index < active_fault_count; ++index) {
         Serial.print("[");
-        Serial.print(fault_manager.get_active_fault_code(fault_index));
+        Serial.print(fault_manager.get_active_fault_code(index));
         Serial.print("] ");
-        Serial.println(fault_manager.get_active_fault_reason(fault_index));
+        Serial.println(fault_manager.get_active_fault_reason(index));
     }
 }
 
-static bool parse_rpm(const String &value, float &rpm) {
-    char *end = nullptr;
-    const char *text = value.c_str();
-    rpm = strtof(text, &end);
+void print_invalid_command() {
+    Serial.println("Invalid command.");
+    print_serial_command_help();
+}
 
-    return end != text && *end == '\0' && isfinite(rpm) && rpm >= 0.0f;
+} // namespace
+
+void print_serial_command_help() {
+    Serial.println("Commands:");
+    Serial.println("  ARM M|S");
+    Serial.println("  DISARM M|S");
+    Serial.println(DSHOT_BIDIRECTIONAL ? "  TARGET M <RPM>" : "  TARGET M <%>");
+    Serial.println("  FIRE S");
+    Serial.println("  FAULTS");
 }
 
 void handle_serial_command(String line) {
     line.trim();
     line.toUpperCase();
 
-    if (line == "FAULTS") {
+    if (line.length() == 0) {
+        return;
+    }
+
+    String tokens[MAX_COMMAND_TOKENS];
+    const unsigned token_count =
+        tokenize_command(line, tokens, MAX_COMMAND_TOKENS);
+
+    const String &command = tokens[0];
+
+    if (command == "FAULTS") {
+        if (token_count != 1) {
+            Serial.println("FAULTS does not accept arguments.");
+            return;
+        }
+
         print_faults();
         return;
     }
 
-    const int first_space = line.indexOf(' ');
-    if (first_space < 0) {
-        Serial.println("Invalid command.");
-        print_serial_command_help();
-        return;
-    }
-
-    const String command = line.substring(0, first_space);
-    String arguments = line.substring(first_space + 1);
-    arguments.trim();
-
-    const int argument_space = arguments.indexOf(' ');
-    const String selector = argument_space < 0 ? arguments : arguments.substring(0, argument_space);
-    String value = argument_space < 0 ? "" : arguments.substring(argument_space + 1);
-    value.trim();
-
-    if (selector != "1" && selector != "2" && selector != "S") {
-        Serial.println("Invalid selector. Use 1, 2, or S.");
-        return;
-    }
-
     if (command == "ARM" || command == "DISARM") {
-        if (value.length() != 0) {
-            Serial.println("ARM and DISARM accept one selector only.");
+        if (token_count != 2) {
+            Serial.print(command);
+            Serial.println(" requires exactly one selector: M or S.");
             return;
         }
 
-        const bool arm = command == "ARM";
-        if (selector == "S") {
-            if (arm) {
-                event_manager.arm_solenoid = true;
-            } else {
-                event_manager.disarm_solenoid = true;
-            }
-        } else {
-            if (arm) {
+        const String &selector = tokens[1];
+
+        if (selector != "M" && selector != "S") {
+            Serial.println("Invalid selector. Use M for ESCs or S for solenoid.");
+            return;
+        }
+
+        const bool arm_command = command == "ARM";
+
+        if (selector == "M") {
+            if (arm_command) {
                 event_manager.arm_escs = true;
             } else {
                 event_manager.disarm_escs = true;
+            }
+        } else {
+            if (arm_command) {
+                event_manager.arm_solenoid = true;
+            } else {
+                event_manager.disarm_solenoid = true;
             }
         }
 
@@ -93,27 +150,47 @@ void handle_serial_command(String line) {
     }
 
     if (command == "TARGET") {
-        if (selector == "S" || value.length() == 0) {
-            Serial.println("TARGET requires selector 1 or 2 and an RPM value.");
+        if (token_count != 3) {
+            Serial.println("TARGET requires: TARGET M <RPM>.");
+            return;
+        }
+
+        // Selector is accepted for command compatibility but is not differentiated.
+        if (tokens[1] != "M") {
+            Serial.println("Invalid target selector. Use 1 or 2.");
             return;
         }
 
         float rpm = 0.0f;
-        if (!parse_rpm(value, rpm)) {
+
+        if (!parse_non_negative_float(tokens[2], rpm)) {
             Serial.println("Invalid RPM. Use a non-negative number.");
             return;
         }
 
         I2C_Registers.RPM_target = rpm;
+
         Serial.print("TARGET ");
-        Serial.print(selector);
+        Serial.print(tokens[1]);
         Serial.print(" ");
-        Serial.println(rpm);
+        Serial.println(rpm, 2);
         return;
     }
 
-    Serial.println("Unknown command.");
-    print_serial_command_help();
+    if (command == "FIRE") {
+        if (token_count != 2 || tokens[1] != "S") {
+            Serial.println("FIRE requires the selector S.");
+            return;
+        }
+
+        event_manager.fire_solenoid = true;
+        Serial.println("FIRE S");
+        return;
+    }
+
+    Serial.print("Unknown command: ");
+    Serial.println(command);
+    print_invalid_command();
 }
 
-} //namespace Launch_Controller
+} // namespace Launch_Controller

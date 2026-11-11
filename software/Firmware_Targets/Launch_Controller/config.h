@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "ESP32C3DSHOT\DShotRMT.h"
+#include "ESP32C3DSHOT/src/DShotRMT.h"
 #include "../common/FaultManager/FaultManager.h"
 
 namespace Launch_Controller {
@@ -70,10 +70,10 @@ static constexpr uint8_t ERROR_REASON_MAX_LENGTH = 32;
 // --------- DSHOT Settings ---------
 static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_21, GPIO_NUM_20};
 static constexpr dshot_mode_t DSHOT_MODE = DSHOT300;
-static constexpr uint32_t DSHOT_REFRESH_MS = 20;
+static constexpr uint32_t DSHOT_REFRESH_MS = 1;
 
-static constexpr bool DSHOT_BIDIRECTIONAL = true;
-static constexpr uint32_t RPM_TELEMETRY_TIMEOUT_MS = 500;
+static constexpr bool DSHOT_BIDIRECTIONAL = false;
+static constexpr uint32_t RPM_TELEMETRY_TIMEOUT_MS = 1000;
 
 static constexpr uint16_t MOTOR_MAGNET_COUNT = 14;
 
@@ -86,6 +86,6 @@ static constexpr float RPM_PID_INTEGRAL_LIMIT = 100000.0f;
 static constexpr gpio_num_t SOLENOID_PIN = GPIO_NUM_1;
 static constexpr bool SOLENOID_ACTIVE_HIGH = true;
 
-static constexpr uint32_t SOLENOID_SHOT_TIME_MS = 100;
+static constexpr uint32_t SOLENOID_SHOT_TIME_MS = 600;
 
 }; //namespace Flywheel Controller

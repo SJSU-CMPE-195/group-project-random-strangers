@@ -14,19 +14,19 @@
 #define SCL_PIN 26
 
 // I2C register addresses
-namespace I2C_ADDRESS_MAP {
+enum I2C_ADDRESS_MAP : uint8_t {
 
     // Read-only: 1 when initialization is complete
     // Data type: uint8_t (1 byte)
-    constexpr uint8_t READY = 0x00;
+    READY = 0x00,
 
     // Read/write: target angle in radians
     // Data type: float (4 bytes)
-    constexpr uint8_t TARGET_ANGLE = 0x01;
+    TARGET_ANGLE = 0x01,
 
     // Read-only: current measured angle in radians
     // Data type: float (4 bytes)
-    constexpr uint8_t CURRENT_ANGLE = 0x02;
+    CURRENT_ANGLE = 0x02
 }
 
 // I2C communication frequency

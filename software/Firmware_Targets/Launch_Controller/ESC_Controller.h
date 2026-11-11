@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "ESP32C3DSHOT\DShotRMT.h"
+#include "ESP32C3DSHOT/src/DShotRMT.h"
 
 namespace Launch_Controller {
 
@@ -20,7 +20,6 @@ struct ESC {
     float throttle_percent = 0.0f;
     float rpm = 0.0f;
     uint32_t last_telemetry_ms = 0;
-    bool telemetry_received = false;
 
     explicit ESC(gpio_num_t esc_pin);
 };

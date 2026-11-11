@@ -4,6 +4,7 @@
 
 #include <math.h>
 
+
 #include "I2C_Driver.h"
 #include "config.h"
 
@@ -153,8 +154,6 @@ void ESC_Controller::handle_arm_events(const uint32_t now) {
         I2C_Registers.flywheels_armed = true;
         left_esc.last_telemetry_ms = now;
         right_esc.last_telemetry_ms = now;
-        left_esc.telemetry_received = false;
-        right_esc.telemetry_received = false;
         reset_rpm_pid(left_rpm_pid);
         reset_rpm_pid(right_rpm_pid);
 
@@ -187,22 +186,50 @@ void ESC_Controller::update_throttle(const uint32_t now) {
         if (left_telemetry.success) {
             left_esc.rpm = static_cast<float>(left_telemetry.motor_rpm);
             left_esc.last_telemetry_ms = now;
-            left_esc.telemetry_received = true;
+            I2C_Registers.left_RPM_actual = left_esc.rpm;
         }
         if (right_telemetry.success) {
             right_esc.rpm = static_cast<float>(right_telemetry.motor_rpm);
             right_esc.last_telemetry_ms = now;
-            right_esc.telemetry_received = true;
+            I2C_Registers.right_RPM_actual = right_esc.rpm;
         }
 
-        I2C_Registers.left_RPM_actual = left_esc.rpm;
-        I2C_Registers.right_RPM_actual = right_esc.rpm;
+        //telemetry debugging :(
+        static uint32_t last_report_ms = 0;
+        static uint32_t left_ok = 0;
+        static uint32_t right_ok = 0;
 
-        if (left_esc.armed && (!left_esc.telemetry_received || now - left_esc.last_telemetry_ms > RPM_TELEMETRY_TIMEOUT_MS)) {
+        left_ok += left_telemetry.success;
+        right_ok += right_telemetry.success;
+
+        if (DEBUG && now - last_report_ms >= 3000) {
+            last_report_ms = now;
+
+            Serial.printf(
+                "Telemetry valid/sec L/R: %lu/%lu; latest codes: %d/%d. ",
+                static_cast<unsigned long>(left_ok),
+                static_cast<unsigned long>(right_ok),
+                static_cast<int>(left_telemetry.result_code),
+                static_cast<int>(right_telemetry.result_code)
+            );
+
+            Serial.print("Last RPM ");
+            if(left_telemetry.success) Serial.print(left_telemetry.motor_rpm); else Serial.print("--");
+            Serial.print('\\');
+            if(right_telemetry.success) Serial.print(right_telemetry.motor_rpm); else Serial.print("--");
+
+
+            left_ok = 0;
+            right_ok = 0;
+        }
+        //telemetry debugging
+
+
+        if (left_esc.armed && (now - left_esc.last_telemetry_ms > RPM_TELEMETRY_TIMEOUT_MS)) {
             mark_dshot_error(FAULT_LEFT_ESC_TELEMETRY, "Error: Left ESC RPM telemetry timed out");
         }
 
-        if (right_esc.armed && (!right_esc.telemetry_received || now - right_esc.last_telemetry_ms > RPM_TELEMETRY_TIMEOUT_MS)) {
+        if (right_esc.armed && (now - right_esc.last_telemetry_ms > RPM_TELEMETRY_TIMEOUT_MS)) {
             mark_dshot_error(FAULT_RIGHT_ESC_TELEMETRY, "Error: Right ESC RPM telemetry timed out");
         }
 
@@ -216,21 +243,6 @@ void ESC_Controller::update_throttle(const uint32_t now) {
 
             left_esc.throttle_percent = update_rpm_pid(left_rpm_pid, target_rpm, left_esc.rpm, now);
             right_esc.throttle_percent = update_rpm_pid(right_rpm_pid, target_rpm, right_esc.rpm, now);
-        }
-
-        //output actual RPM
-        if(DEBUG){
-            const uint32_t ACTUAL_RPM_UPDATE_INTERVAL_MS = 1000;
-            static uint32_t NEXT_UPDATE_REQUIRED = 0;
-            if(NEXT_UPDATE_REQUIRED <= now){
-                NEXT_UPDATE_REQUIRED = now + ACTUAL_RPM_UPDATE_INTERVAL_MS;
-                Serial.print("RPM Target: ");
-                Serial.print(I2C_Registers.RPM_target);
-                Serial.print(" RPM Actual L/R: ");
-                Serial.print(I2C_Registers.left_RPM_actual);
-                Serial.print(" / ");
-                Serial.println(I2C_Registers.right_RPM_actual);
-            }
         }
     } else {
         // Standard DShot has no RPM feedback; interpret target as 0-100% throttle.
@@ -266,12 +278,8 @@ void ESC_Controller::update_throttle(const uint32_t now) {
 
     if (I2C_Registers.master_error) force_safe_state();
 
-    if (DEBUG && (now / 1000 != previous_send_ms / 1000)) {
-        Serial.print("ESC RPM L/R: ");
-        Serial.print(left_esc.rpm);
-        Serial.print(" / ");
-        Serial.print(right_esc.rpm);
-        Serial.print("; throttle % L/R: ");
+    if (DEBUG && (now / 3000 != previous_send_ms / 3000)) {
+        Serial.print("throttle % L/R: ");
         Serial.print(left_esc.throttle_percent);
         Serial.print(" / ");
         Serial.println(right_esc.throttle_percent);

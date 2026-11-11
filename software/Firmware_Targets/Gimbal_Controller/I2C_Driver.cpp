@@ -1,3 +1,24 @@
+/*
+# made some ESP32 protocol assumptions, -
+# I2C address: 0x08 
+# Register: 0x10
+# Payload: 4 bytes
+#   bytes 0-1: signed int16 yaw * 100, big-endian
+#   bytes 2-3: signed int16 pitch * 100, big-endian
+# 
+# Numbers are all multipled by 1000, then turned into 4 bits/byte values for you to use.
+# Example:
+# yaw = 12.34  -> 1234
+# pitch = -5.67 -> -567
+#
+# LMK if Pitch and Yaw are swapped... I'm actually not sure which is which XD 
+#
+# Look at /Jetson/I2C_Driver/JetsonGimbalController.py, function 'send_angles' for more details 
+#
+#
+#
+#
+*/
 
 #include "I2C_Driver.h"
 

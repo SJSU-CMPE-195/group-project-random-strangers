@@ -65,12 +65,12 @@ using Controller_Fault_Id = Controller_Fault_Manager::FaultId_t;
 
 inline Controller_Fault_Manager fault_manager;
 
-static constexpr uint8_t ERROR_REASON_MAX_LENGTH = 32;
+static constexpr uint8_t ERROR_REASON_MAX_LENGTH = 31;
 
 // --------- DSHOT Settings ---------
 static constexpr gpio_num_t ESC_PINS[2] = {GPIO_NUM_21, GPIO_NUM_20};
 static constexpr dshot_mode_t DSHOT_MODE = DSHOT300;
-static constexpr uint32_t DSHOT_REFRESH_MS = 1;
+static constexpr uint32_t DSHOT_REFRESH_MS = 7;
 
 static constexpr bool DSHOT_BIDIRECTIONAL = false;
 static constexpr uint32_t RPM_TELEMETRY_TIMEOUT_MS = 1000;
@@ -79,7 +79,7 @@ static constexpr uint16_t MOTOR_MAGNET_COUNT = 14;
 
 static constexpr float RPM_PID_KP = 0.002f;
 static constexpr float RPM_PID_KI = 0.0005f;
-static constexpr float RPM_PID_KD = 0.0f;
+static constexpr float RPM_PID_KD = 0f;
 static constexpr float RPM_PID_INTEGRAL_LIMIT = 100000.0f;
 
 // --------- Solenoid Settings ---------

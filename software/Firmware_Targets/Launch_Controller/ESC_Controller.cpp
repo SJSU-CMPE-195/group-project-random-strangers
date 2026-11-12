@@ -4,9 +4,10 @@
 
 #include <math.h>
 
-
 #include "I2C_Driver.h"
 #include "config.h"
+
+constexpr uint32_t debug_update_interval_ms = 100;
 
 namespace Launch_Controller {
 
@@ -183,12 +184,12 @@ void ESC_Controller::update_throttle(const uint32_t now) {
         const dshot_result_t left_telemetry = left_esc.comm.getTelemetry();
         const dshot_result_t right_telemetry = right_esc.comm.getTelemetry();
 
-        if (left_telemetry.success) {
+        if (left_telemetry.success && left_telemetry.telemetry_type == 1) {
             left_esc.rpm = static_cast<float>(left_telemetry.motor_rpm);
             left_esc.last_telemetry_ms = now;
             I2C_Registers.left_RPM_actual = left_esc.rpm;
         }
-        if (right_telemetry.success) {
+        if (right_telemetry.success && right_telemetry.telemetry_type == 1) {
             right_esc.rpm = static_cast<float>(right_telemetry.motor_rpm);
             right_esc.last_telemetry_ms = now;
             I2C_Registers.right_RPM_actual = right_esc.rpm;
@@ -199,8 +200,8 @@ void ESC_Controller::update_throttle(const uint32_t now) {
         static uint32_t left_ok = 0;
         static uint32_t right_ok = 0;
 
-        left_ok += left_telemetry.success;
-        right_ok += right_telemetry.success;
+        left_ok += left_telemetry.success && left_telemetry.telemetry_type == 1;
+        right_ok += right_telemetry.success && right_telemetry.telemetry_type == 1;
 
         if (DEBUG && now - last_report_ms >= 3000) {
             last_report_ms = now;
@@ -214,9 +215,9 @@ void ESC_Controller::update_throttle(const uint32_t now) {
             );
 
             Serial.print("Last RPM ");
-            if(left_telemetry.success) Serial.print(left_telemetry.motor_rpm); else Serial.print("--");
+            if(left_telemetry.success && left_telemetry.telemetry_type == 1) Serial.print(left_telemetry.motor_rpm); else Serial.print("--");
             Serial.print('\\');
-            if(right_telemetry.success) Serial.print(right_telemetry.motor_rpm); else Serial.print("--");
+            if(right_telemetry.success && right_telemetry.telemetry_type == 1) Serial.print(right_telemetry.motor_rpm); else Serial.print("--");
 
 
             left_ok = 0;
@@ -241,8 +242,22 @@ void ESC_Controller::update_throttle(const uint32_t now) {
                 I2C_Registers.RPM_target = 0.0f;
             }
 
-            left_esc.throttle_percent = update_rpm_pid(left_rpm_pid, target_rpm, left_esc.rpm, now);
-            right_esc.throttle_percent = update_rpm_pid(right_rpm_pid, target_rpm, right_esc.rpm, now);
+            if(left_telemetry.success && left_telemetry.telemetry_type == 1) left_esc.throttle_percent = update_rpm_pid(left_rpm_pid, target_rpm, left_esc.rpm, now);
+            if(right_telemetry.success && right_telemetry.telemetry_type == 1) right_esc.throttle_percent = update_rpm_pid(right_rpm_pid, target_rpm, right_esc.rpm, now);
+
+            static uint32_t last_pid_report_ms = 0;
+            if (DEBUG && now - last_pid_report_ms >= 100) {
+                last_pid_report_ms = now;
+                Serial.printf("PID target=%.0f rpm=%.0f/%.0f throttle=%.2f/%.2f I=%.2f/%.2f age_ms=%lu/%lu fresh=%u/%u\n",
+                    static_cast<double>(target_rpm),
+                    static_cast<double>(left_esc.rpm), static_cast<double>(right_esc.rpm),
+                    static_cast<double>(left_esc.throttle_percent), static_cast<double>(right_esc.throttle_percent),
+                    static_cast<double>(RPM_PID_KI * left_rpm_pid.integral), static_cast<double>(RPM_PID_KI * right_rpm_pid.integral),
+                    static_cast<unsigned long>(now - left_esc.last_telemetry_ms),
+                    static_cast<unsigned long>(now - right_esc.last_telemetry_ms),
+                    static_cast<unsigned>(left_telemetry.success && left_telemetry.telemetry_type == 1),
+                    static_cast<unsigned>(right_telemetry.success && right_telemetry.telemetry_type == 1));
+            }
         }
     } else {
         // Standard DShot has no RPM feedback; interpret target as 0-100% throttle.

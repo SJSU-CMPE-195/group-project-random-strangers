@@ -1,6 +1,15 @@
 import sys
+
 from pathlib import Path
-from flask import Flask, Response, render_template_string, jsonify
+from flask import (
+    Flask,
+    Response,
+    render_template_string,
+    jsonify,
+    redirect
+)
+
+import BANG
 import logging
 
 log = logging.getLogger("werkzeug")
@@ -153,8 +162,24 @@ def fire():
             text || "Waiting for ball...";
     }, 500);
 </script>
-            
 
+
+         <form action="/reset" method="get">
+    <button class="smiley-button" type="submit">
+        🙂
+    </button>
+</form>   
+<style>
+.smiley-button {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #c79a00;
+    background: #ffd93d;
+    font-size: 55px;
+    cursor: pointer;
+}
+</style>
 
         </body>
     </html>
@@ -173,7 +198,10 @@ def video_feed():
 def status():
     return jsonify(trackingStatus)
 
-
+@app.route("/reset")
+def reset():
+    BANG.reset()
+    return redirect("/")
 
 
 if __name__ == "__main__":

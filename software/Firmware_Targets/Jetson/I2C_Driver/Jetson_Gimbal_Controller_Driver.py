@@ -6,8 +6,8 @@ from I2C_Handler import I2CTransaction, Jetson_I2C_Handler
 #IF CAMERA IS OFFSET FROM TURRET, NEW MATH NEEDS TO BE DONE!!!!!!!
 
 
-GIMBAL_I2C_ADDRESS = 0x08 #Assume Gimbal Address, feel free to alter this
-TARGET_ANGLE_REGISTER = 0x10 #this aswell
+GIMBAL_I2C_ADDRESS = 0x54 #Assume Gimbal Address, feel free to alter this
+TARGET_ANGLE_REGISTER = 0x01 #this aswell
 
 transactionQueue = Queue()
 
@@ -94,14 +94,12 @@ def send_angles(yaw, pitch):
 
 ###
 # I2C PROTOCOL ASSUMPTIONS:
-# ESP32 address: 0x08
-# angle register: 0x10
-#
+
 # Payload is four bytes:
 # [yaw high][yaw low][pitch high][pitch low]
 #
 # yaw/pitch are signed int16 values
-# representing degrees * 100.
+
 
 # TODO: ESP32 receiver must decode this same format.
 ### 

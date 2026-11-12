@@ -4,6 +4,8 @@ import tensorrt as trt
 #import pycuda.autoinit
 import pycuda.driver as imgoinginsane
 import pyzed.sl as sl
+import BANG as BANG
+
 
 import sys
 from pathlib import Path
@@ -529,7 +531,7 @@ print("ZED running")
 
 #did a lot of code replacing here to get the ZED camera feed to appear on the webpage /frontend/webpge.py.
 def generate_frames():
-
+    has_fired = False
     try:
 
         while True:
@@ -669,16 +671,19 @@ def generate_frames():
                         f"{point[2]:.3f}) m"
                     )
 
-                    get_coords(
+                    yawDegrees, pitchDegrees = get_coords( #GETS CURRENT ANGLE ! ONCE LOCATION IS REACHED
                         point[0],
                         point[1],
                         point[2]
                     )
 
+
+                    if (not has_fired and BANG.gimbalCurrent)( #FIRE THE GUN!!
+                        yawDegrees,
+                        pitchDegrees
+                    ):
+                        BANG.fire()
                
-
-                
-
             # Encode current frame for browser streaming
             success, buffer = cv2.imencode(
                 ".jpg",

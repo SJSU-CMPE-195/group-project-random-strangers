@@ -10,6 +10,7 @@
 #include <SimpleFOC.h>
 #include <math.h>
 
+
 // ======================================
 // ORIGINAL MOTOR CONFIGURATION
 // ======================================
